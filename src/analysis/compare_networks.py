@@ -1,0 +1,1 @@
+#compare multiple networks (e.g. from common directory) and save restuls to csv file
