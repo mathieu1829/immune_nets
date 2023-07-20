@@ -6,6 +6,7 @@ from Bio.Align import PairwiseAligner
 from Bio.Align import substitution_matrices
 import logging
 import pandas as pd
+from common_methods import *
 
 aligner = PairwiseAligner()
 aligner.substitution_matrix = substitution_matrices.load("BLOSUM62")
