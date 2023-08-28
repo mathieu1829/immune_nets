@@ -143,6 +143,9 @@ venv.bak/
 .dmypy.json
 dmypy.json
 
+
+.pg/
+cellranger-working-dir/
 # Pyre type checker
 .pyre/
 
