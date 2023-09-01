@@ -1,11 +1,23 @@
 with import <nixpkgs> {};
 
+let
+  my-python-packages = ps: with ps; [
+    pandas
+	numpy
+	scipy
+	scikit-learn
+	biopython
+	matplotlib
+	pony
+    # other python packages
+  ];
+in
 stdenv.mkDerivation {
   name = "postgres-env";
   buildInputs = [];
-
+  
   nativeBuildInputs = with pkgs.buildPackages; [
-    python38
+    (python3.withPackages my-python-packages)
     sratoolkit
     vim
     postgresql_15
