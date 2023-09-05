@@ -1,5 +1,6 @@
 import unittest
 import pandas as pd
+from pathlib import Path
 import numpy as np
 from src.creation.algoritms.common_methods import *
 from src.creation.algoritms.simple_blosum_distance import *
@@ -8,7 +9,7 @@ class TestSimpleBlosumDistance(unittest.TestCase):
 
     @classmethod
     def setUpClass(self):
-        path = "test_data/test_clonotypes.csv"
+        path = Path(__file__).parent / "test_data/test_clonotypes.csv"
         df = pd.read_csv(path)
         df.name = "some name"
         df['tcra_aa'] = df['cdr3s_aa'].apply(lambda x: split_tcr_column(x, subunit="TRA"))
