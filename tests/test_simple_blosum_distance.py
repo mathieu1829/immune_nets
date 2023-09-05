@@ -15,15 +15,18 @@ class TestSimpleBlosumDistance(unittest.TestCase):
         df['tcrb_aa'] = df['cdr3s_aa'].apply(lambda x: split_tcr_column(x, subunit="TRB"))
         self.df = df
         self.blosum = BLOSUM62(df_strategy)
+        aligner = PairwiseAligner()
+        aligner.substitution_matrix = substitution_matrices.load("BLOSUM62")
+        self.aligner = aligner
 
     def test_tcr_alig_identical_strings(self):
 
-        result = self.blosum.tcr_alig("GLYYGQ","GLYYGQ")
+        result = tcr_alig("GLYYGQ","GLYYGQ",self.aligner)
         self.assertEqual(35, result)  # add assertion here
 
     def test_tcr_alig_different_strings(self):
 
-        result = self.blosum.tcr_alig("GLAAAQ","GLYYGQ")
+        result = tcr_alig("GLAAAQ","GLYYGQ",self.aligner)
         self.assertEqual(11, result)
 
     def test_blosum_network(self):
