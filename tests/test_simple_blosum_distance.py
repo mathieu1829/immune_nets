@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from src.creation.algoritms.common_methods import *
 from src.creation.algoritms.simple_blosum_distance import *
-from src.creation.algoritms.df_strategy import *
+from src.creation.outputStrategies.df_strategy import *
 class TestSimpleBlosumDistance(unittest.TestCase):
 
     @classmethod
