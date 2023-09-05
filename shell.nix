@@ -9,6 +9,7 @@ let
 	biopython
 	matplotlib
 	pony
+	psycopg2
     # other python packages
   ];
 in

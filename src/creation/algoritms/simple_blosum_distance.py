@@ -10,7 +10,7 @@ class BLOSUM62(algorithm):
     aligner = PairwiseAligner()
     aligner.substitution_matrix = substitution_matrices.load("BLOSUM62")
 
-    def creationAlgorithm(self,clonotypes):
+    def creationAlgorithm(self,clonotypes, **kwargs):
         tcr_npa = clonotypes[["tcra_aa", "tcrb_aa"]].dropna().to_numpy()
         dist_al_trcb = np.zeros(np.shape(tcr_npa)[0] * np.shape(tcr_npa)[0]).reshape(np.shape(tcr_npa)[0],
                                                                                      np.shape(tcr_npa)[0])

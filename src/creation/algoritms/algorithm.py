@@ -20,6 +20,6 @@ class algorithm(ABC):
 
     @validateCreationAlgorithm
     @abstractmethod
-    def createGraph(self,clonotypes): #method used to create a graph
-        return self.creationAlgorithm(clonotypes) #implement this to specify algorithm
+    def createGraph(self,clonotypes,**kwargs): #method used to create a graph
+        return self.creationAlgorithm(clonotypes, **kwargs) #implement this to specify algorithm
     

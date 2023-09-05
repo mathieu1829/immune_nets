@@ -32,6 +32,7 @@ class TestSimpleBlosumDistance(unittest.TestCase):
 
     def test_blosum_network(self):
         df_net = self.blosum.createGraph(self.df)
+        # print(df_net)
         pd.testing.assert_frame_equal(pd.DataFrame(data={'r1': [16,17], 'r2': [15,16]}), df_net)
 
 if __name__ == '__main__':
