@@ -11,7 +11,7 @@ class TestSimpleBlosumDistance(unittest.TestCase):
     def setUpClass(self):
         path = Path(__file__).parent / "test_data/test_clonotypes.csv"
         df = pd.read_csv(path)
-        df.name = "some name"
+        df.name = "MyTest"
         df['tcra_aa'] = df['cdr3s_aa'].apply(lambda x: split_tcr_column(x, subunit="TRA"))
         df['tcrb_aa'] = df['cdr3s_aa'].apply(lambda x: split_tcr_column(x, subunit="TRB"))
         self.df = df
