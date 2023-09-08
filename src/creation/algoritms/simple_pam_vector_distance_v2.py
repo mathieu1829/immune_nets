@@ -2,7 +2,6 @@
 
 import numpy as np
 from common_methods import *
-import logging
 import pandas as pd
 from scipy.spatial.distance import pdist
 from scipy.spatial.distance import squareform
@@ -13,12 +12,11 @@ class PAM250_vector_v2(algorithm):
     aligner = PairwiseAligner()
     aligner.substitution_matrix = substitution_matrices.load("PAM250")
 
-    def creationAlgorithm(self,clonotypes):
+    def creationAlgorithm(self,clonotypes, **kwargs):
         tcr_npa = clonotypes[["tcra_aa", "tcrb_aa"]].dropna().to_numpy()
         dist_al_trcb = np.zeros(np.shape(tcr_npa)[0] * np.shape(tcr_npa)[0]).reshape(np.shape(tcr_npa)[0],
                                                                                      np.shape(tcr_npa)[0])
         dist_al_trcb += -1
-        matrix_len = len(dist_al_trcb)
 
         unique_amino_acids = np.array(['A','R','N','D','C','Q','E','G','H','I','L','K','M','F','P','S','T','W','Y','V',''])
         
