@@ -1,7 +1,7 @@
 # generate all types networks and save it in specified directory
 import argparse
 from algoritms.common_methods import *
-from algoritms.simple_blosum_distance import *
+from algoritms.simple_distance import *
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-i','--input', help='Provide path to file with clonotypes')
