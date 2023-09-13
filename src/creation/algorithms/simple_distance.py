@@ -3,14 +3,13 @@
 import numpy as np
 import logging
 import pandas as pd
-from src.creation.algoritms.algorithm import *
-from src.creation.algoritms.common_methods import *
+from src.creation.algorithms.common_methods import *
+from src.creation.algorithms.algorithm import *
 
-class PAM250(algorithm):
+class SimpleDistance(algorithm):
     aligner = PairwiseAligner()
-    aligner.substitution_matrix = substitution_matrices.load("PAM250")
-
-    def creationAlgorithm(self,clonotypes,**kwargs):
+    def creationAlgorithm(self,clonotypes, matrix, **kwargs):
+        self.aligner.substitution_matrix = substitution_matrices.load(matrix)
         tcr_npa = clonotypes[["tcra_aa", "tcrb_aa"]].dropna().to_numpy()
         dist_al_trcb = np.zeros(np.shape(tcr_npa)[0] * np.shape(tcr_npa)[0]).reshape(np.shape(tcr_npa)[0],
                                                                                      np.shape(tcr_npa)[0])
@@ -23,14 +22,14 @@ class PAM250(algorithm):
                 dist_al_trcb[y][x] = dist_al_trcb[x][y]
 
 
-        treshold = 0.8 # todo -> treat as parameter
+        threshold = 0.8 # todo -> treat as parameter
         for x in range(0, len(dist_al_trcb)):
             self_score = dist_al_trcb[x][x]
             for y in range(0, len(dist_al_trcb)):
                 dist_al_trcb[x][y] /= self_score
 
         dist_al_trcb = np.tril(dist_al_trcb, k=-1)
-        matrix_cutoff = np.where(dist_al_trcb > treshold)
+        matrix_cutoff = np.where(dist_al_trcb > threshold)
 
         d = {'r1': matrix_cutoff[0], 'r2': matrix_cutoff[1]}
         df_net = pd.DataFrame(data=d)
