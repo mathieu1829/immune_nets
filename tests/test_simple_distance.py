@@ -5,7 +5,7 @@ import numpy as np
 from src.creation.algorithms.common_methods import *
 from src.creation.algorithms.simple_distance import *
 from src.creation.enums.matrices import *
-from src.creation.outputStrategies.db_strategy import *
+from src.creation.outputStrategies.df_strategy import *
 class TestSimpleDistance(unittest.TestCase):
 
     @classmethod
@@ -16,7 +16,7 @@ class TestSimpleDistance(unittest.TestCase):
         df['tcra_aa'] = df['cdr3s_aa'].apply(lambda x: split_tcr_column(x, subunit="TRA"))
         df['tcrb_aa'] = df['cdr3s_aa'].apply(lambda x: split_tcr_column(x, subunit="TRB"))
         self.df = df
-        self.blosum = SimpleDistance(db_strategy)
+        self.blosum = SimpleDistance(df_strategy)
         aligner = PairwiseAligner()
         aligner.substitution_matrix = substitution_matrices.load("BLOSUM62")
         self.aligner = aligner
