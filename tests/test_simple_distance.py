@@ -5,6 +5,7 @@ import numpy as np
 from src.creation.algorithms.common_methods import *
 from src.creation.algorithms.simple_distance import *
 from src.creation.enums.matrices import *
+from src.creation.enums.utils import * 
 from src.creation.outputStrategies.df_strategy import *
 class TestSimpleDistance(unittest.TestCase):
 
@@ -32,9 +33,21 @@ class TestSimpleDistance(unittest.TestCase):
         self.assertEqual(11, result)
 
     def test_blosum_network(self):
-        df_net = self.blosum.createGraph(clonotypes=self.df, matrix=Matrices.BLOSUM62)
-        # print(df_net)
-        pd.testing.assert_frame_equal(pd.DataFrame(data={'r1': [16,17], 'r2': [15,16]}), df_net)
+        for dist in makeEnumDict(Matrices):
+            df_net = self.blosum.createGraph(clonotypes=self.df, matrix=getattr(Matrices,dist))
+            match dist:
+                case "PAM250":
+                    expected_df = pd.DataFrame(data={'r1': [16,17,17], 'r2': [15,15,16]}) 
+                case "PAM30":
+                    expected_df = pd.DataFrame(data={'r1': [16], 'r2': [15]}) 
+                case _:
+                    expected_df = pd.DataFrame(data={'r1': [16,17], 'r2': [15,16]})
+            if not df_net.equals(expected_df):
+                print(f"Error occured while creating matrix: {dist}\n")
+                print("Corrupted net:")
+                print(df_net)
+                print("")
+            pd.testing.assert_frame_equal(expected_df, df_net)
 
 if __name__ == '__main__':
     unittest.main()
