@@ -70,11 +70,13 @@ class simple_vector_distance(algorithm):
         squareform(pdist(clonotypes[["a0","b0", "a1", "b1", "a2", "b2", "a3", "b3", "a4", "b4", "a5", "b5"]])),
         columns = clonotypes.index,
         index = clonotypes.index
-        ) if threshold is None else threshold
-
-        threshold = np.mean(dist_mat) / 4
+        ) 
+        
+        threshold = np.nanmean(dist_mat.to_numpy()) / 4 if threshold is None else threshold
+        # threshold = np.mean(dist_mat.fillna(0).to_numpy()) / 4 if threshold is None else threshold #produces smaller threshold
         dist_mat = np.tril(dist_mat, k=-1)
-        matrix_cutoff = np.where(dist_mat > threshold)
+        # threshold = np.nanmean(dist_mat) / 4 if threshold is None else threshold #produces even smaller threshold
+        matrix_cutoff = np.where((dist_mat < threshold) & (dist_mat > 0))
 
         d = {'r1': matrix_cutoff[0], 'r2': matrix_cutoff[1]}
         df_net = pd.DataFrame(data=d)

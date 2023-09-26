@@ -1,6 +1,5 @@
 # return graph (dataframe) based on another df with clonotypes
 import numpy as np
-from common_methods import *
 import pandas as pd
 from scipy.spatial.distance import pdist
 from scipy.spatial.distance import squareform
@@ -69,20 +68,20 @@ class simple_vector_distance_v2(algorithm):
         squareform(pdist(clonotypes[["a0", "a1", "a2", "a3", "a4", "a5"]])),
         columns = clonotypes.index,
         index = clonotypes.index
-        ) if threshold_alfa is None else threshold_alfa
+        ) 
         
         dist_mat_beta = pd.DataFrame(
         squareform(pdist(clonotypes[["b0", "b1", "b2", "b3", "b4", "b5"]])),
         columns = clonotypes.index,
         index = clonotypes.index
-        ) if threshold_beta is None else threshold_beta
+        ) 
 
 
-        treshold_alpha = np.mean(dist_mat_alpha) / 4# todo -> treat as parameter, and in this case we could make different tresholds for alpha and beta
-        treshold_beta = np.mean(dist_mat_beta) / 4# todo -> treat as parameter, and in this case we could make different tresholds for alpha and beta
+        treshold_alpha = np.nanmean(dist_mat_alpha.to_numpy()) / 4 if threshold_alfa is None else threshold_alfa# todo -> treat as parameter, and in this case we could make different tresholds for alpha and beta
+        treshold_beta = np.nanmean(dist_mat_beta.to_numpy())  / 4 if threshold_beta is None else threshold_beta# todo -> treat as parameter, and in this case we could make different tresholds for alpha and beta
         dist_mat_alpha = np.tril(dist_mat_alpha, k=-1)
         dist_mat_beta = np.tril(dist_mat_beta, k=-1)
-        matrix_cutoff = np.where((dist_mat_alpha > treshold_alpha) & (dist_mat_beta > treshold_beta))
+        matrix_cutoff = np.where(((dist_mat_alpha < treshold_alpha) & (dist_mat_alpha > 0)) & ((dist_mat_beta < treshold_beta) & (dist_mat_beta > 0)))
 
         d = {'r1': matrix_cutoff[0], 'r2': matrix_cutoff[1]}
         df_net = pd.DataFrame(data=d)
