@@ -49,7 +49,7 @@ class TestSimpleVectorDistance(unittest.TestCase):
                 print(df_net)
                 print("Good net:")
                 print(expected_df)
-                df_net.to_csv(f"expected_{dist}_vector.csv")
+                # df_net.to_csv(f"expected_{dist}_vector.csv")
                 print("")
             pd.testing.assert_frame_equal(expected_df, df_net)
 
