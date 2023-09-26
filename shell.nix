@@ -10,6 +10,7 @@ let
 	matplotlib
 	pony
 	psycopg2
+  python-dotenv
     # other python packages
   ];
 in
