@@ -5,11 +5,9 @@ from src.creation.algorithms.simple_distance import *
 from src.creation.algorithms.simple_vector_distance_v2 import *
 from src.creation.algorithms.simple_vector_distance import *
 
-from src.creation.inputStrategies.db_strategy import *
-from src.creation.outputStrategies.db_strategy import db_strategy as db_output_strategy
-from src.creation.inputStrategies.csv_strategy import *
+from src.creation.io_strategies.db_strategy import db_strategy 
+from src.creation.io_strategies.csv_strategy import csv_strategy
 from src.creation.enums.matrices import *
-
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-i','--input', help='Provide path to file with clonotypes')
@@ -23,21 +21,18 @@ def main():
     input_strategy = args.input_strategy
     match input_strategy:
         case "db":
-            df = db_strategy("data")
+            df = db_strategy().input()
         case "csv":
-            df = csv_strategy(path)
+            df = csv_strategy().input(path)
     if df is None:
         print("ERROR: invalid strategy")
 
-    SimpleDistance(db_output_strategy).createGraph(clonotypes=df,matrix=Matrices.BLOSUM62)
-    SimpleDistance(db_output_strategy).createGraph(clonotypes=df,matrix=Matrices.PAM250)
-    simple_vector_distance(db_output_strategy).createGraph(clonotypes=df,matrix=Matrices.BLOSUM62)
-    simple_vector_distance(db_output_strategy).createGraph(clonotypes=df,matrix=Matrices.PAM250)
-    simple_vector_distance_v2(db_output_strategy).createGraph(clonotypes=df,matrix=Matrices.BLOSUM62)
-    simple_vector_distance_v2(db_output_strategy).createGraph(clonotypes=df,matrix=Matrices.PAM250)
-
-
+    SimpleDistance(db_strategy().output).createGraph(clonotypes=df,matrix=Matrices.BLOSUM62)
+    SimpleDistance(db_strategy().output).createGraph(clonotypes=df,matrix=Matrices.PAM250)
+    simple_vector_distance(db_strategy().output).createGraph(clonotypes=df,matrix=Matrices.BLOSUM62)
+    simple_vector_distance(db_strategy().output).createGraph(clonotypes=df,matrix=Matrices.PAM250)
+    simple_vector_distance_v2(db_strategy().output).createGraph(clonotypes=df,matrix=Matrices.BLOSUM62)
+    simple_vector_distance_v2(db_strategy().output).createGraph(clonotypes=df,matrix=Matrices.PAM250)
 
 if __name__ == "__main__":
-
     main()
