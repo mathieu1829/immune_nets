@@ -54,7 +54,7 @@ stdenv.mkDerivation {
     export SRA=$CRSRA
     export PGPORT="$PORT"
     export PGHOST="$PGDATA"
-    [ ! -d $PGDATA ] && pg_ctl initdb -o "-U postgres" && cat "$postgresConf" >> $PGDATA/postgresql.conf
+    [ ! -d $PGDATA ] && pg_ctl initdb -o "-U postgres --no-locale" && cat "$postgresConf" >> $PGDATA/postgresql.conf
     pg_ctl -o "-p $PGPORT -k $PGDATA" start
     alias fin="pg_ctl stop && exit"
     alias pg="psql -p $PGPORT -U postgres"
