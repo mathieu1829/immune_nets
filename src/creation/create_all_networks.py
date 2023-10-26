@@ -1,24 +1,60 @@
 # generate all types networks and save it in specified directory
 import argparse
-from algoritms.common_methods import *
-from algoritms.simple_distance import *
+from src.creation.algorithms.common_methods import *
+from src.creation.algorithms.simple_distance import *
+from src.creation.algorithms.simple_vector_distance_v2 import *
+from src.creation.algorithms.simple_vector_distance import *
+from pathlib import Path
+import importlib
+import os
+
+from src.creation.io_strategies.db_strategy import db_strategy 
+from src.creation.io_strategies.csv_strategy import csv_strategy
+from src.creation.enums.matrices import *
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-i','--input', help='Provide path to file with clonotypes')
+parser.add_argument('-s','--input_strategy', help='Provide strategy to process input data (csv, db)')
+parser.add_argument('-g','--output_strategy', help='Provide strategy to process output data ')
 parser.add_argument('-o','--output', help='Provide path to location where the results shall be saved.')
+
+def getAllAlgorithms():
+    path = Path(__file__).parent / "algorithms" 
+    argList = [ algo.rstrip(".py") for algo in os.listdir(path) if algo != "algorithm.py" and algo != "__pycache__" and algo != "common_methods.py" ]
+    algoList = []
+    for algo in argList:
+        some_algorithm = importlib.import_module(f'src.creation.algorithms.{algo}', package=None)
+        exec(f"algoList.append(some_algorithm.{algo}(db_strategy().output))")
+    return algoList
+
+       
+    
+
 
 def main():
     args = parser.parse_args()
     path = args.input #"..\\..\\tests\\test_data\\test_clonotypes.csv"
-    df = pd.read_csv(path)
-    df['tcra_aa'] = df['cdr3s_aa'].apply(lambda x: split_tcr_column(x, subunit="TRA"))
-    df['tcrb_aa'] = df['cdr3s_aa'].apply(lambda x: split_tcr_column(x, subunit="TRB"))
+    # path = "tests/test_data/test_clonotypes.csv"
+    input_strategy = args.input_strategy
+    match input_strategy:
+        case "db":
+            df = db_strategy().input()
+        case "csv":
+            df = csv_strategy().input(path)
+            df.name = "testData"
+    if df is None:
+        print("ERROR: invalid strategy")
 
-    df_net = create_BLOSUM62_network(df)
-    df_net.to_csv(args.output + "results.csv")
+    for algo in getAllAlgorithms():
+        for dist in [ Matrices.BLOSUM62 , Matrices.PAM250 ]:
+            algo.createGraph(clonotypes=df,matrix=dist)
 
-
+    # SimpleDistance(db_strategy().output).createGraph(clonotypes=df,matrix=Matrices.BLOSUM62)
+    # SimpleDistance(db_strategy().output).createGraph(clonotypes=df,matrix=Matrices.PAM250)
+    # simple_vector_distance(db_strategy().output).createGraph(clonotypes=df,matrix=Matrices.BLOSUM62)
+    # simple_vector_distance(db_strategy().output).createGraph(clonotypes=df,matrix=Matrices.PAM250)
+    # simple_vector_distance_v2(db_strategy().output).createGraph(clonotypes=df,matrix=Matrices.BLOSUM62)
+    # simple_vector_distance_v2(db_strategy().output).createGraph(clonotypes=df,matrix=Matrices.PAM250)
 
 if __name__ == "__main__":
-
     main()

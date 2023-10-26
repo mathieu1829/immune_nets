@@ -6,7 +6,7 @@ import pandas as pd
 from src.creation.algorithms.common_methods import *
 from src.creation.algorithms.algorithm import *
 
-class SimpleDistance(algorithm):
+class simple_distance(algorithm):
     aligner = PairwiseAligner()
     def creationAlgorithm(self,clonotypes, matrix, **kwargs):
         self.aligner.substitution_matrix = substitution_matrices.load(matrix)
