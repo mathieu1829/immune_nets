@@ -10,6 +10,7 @@ let
 	matplotlib
 	pony
 	psycopg2
+	igraph
   python-dotenv
     # other python packages
   ];
