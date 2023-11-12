@@ -9,8 +9,4 @@ def split_tcr_column(x, subunit):
         if s[0] == subunit:
             return s[1]
 
-def tcr_alig(x, ref, aligner):
-    if x != None:
-        alignments = pairwise2.align.localds(x, ref, aligner.substitution_matrix, -10, -1)
-        return alignments[0].score
     

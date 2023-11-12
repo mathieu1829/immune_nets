@@ -4,12 +4,11 @@ import numpy as np
 import logging
 import pandas as pd
 from src.creation.algorithms.common_methods import *
+from src.creation.distance.alignment import sequenceAligner
 from src.creation.algorithms.algorithm import *
 
 class simple_distance(algorithm):
-    aligner = PairwiseAligner()
-    def creationAlgorithm(self,clonotypes, matrix, **kwargs):
-        self.aligner.substitution_matrix = substitution_matrices.load(matrix)
+    def creationAlgorithm(self,clonotypes, distanceFun, **kwargs):
         tcr_npa = clonotypes[["tcra_aa", "tcrb_aa"]].dropna().to_numpy()
         dist_al_trcb = np.zeros(np.shape(tcr_npa)[0] * np.shape(tcr_npa)[0]).reshape(np.shape(tcr_npa)[0],
                                                                                      np.shape(tcr_npa)[0])
@@ -18,7 +17,7 @@ class simple_distance(algorithm):
         for x in range(0, matrix_len):
             logging.info(str(x) + " out of str " + str(matrix_len) + "rows process in triangular similarity matrix")
             for y in range(0 + x, matrix_len):
-                dist_al_trcb[x][y] = tcr_alig(tcr_npa[x][0], tcr_npa[y][0],self.aligner) + tcr_alig(tcr_npa[x][1], tcr_npa[y][1],self.aligner)
+                dist_al_trcb[x][y] = distanceFun(tcr_npa[x][0], tcr_npa[y][0]) + distanceFun(tcr_npa[x][1], tcr_npa[y][1])
                 dist_al_trcb[y][x] = dist_al_trcb[x][y]
 
 

@@ -12,6 +12,7 @@ class algorithm(ABC):
         def algorithmValidator(self,**overrideKwargs):
             assert type(overrideKwargs['clonotypes']) == type(pd.DataFrame()), f"Expected clonotype, got ${type(overrideKwargs['clonotypes'])}"
             assert hasattr(overrideKwargs['clonotypes'],"name") , f"Clonotype table has no name"
+            #check whether it has both clonotypes and distance fun
             mergedKwargs = {**self.kwargs,**overrideKwargs}
             onlyKwargs = {key:self.kwargs[key] for key in self.kwargs if not key in overrideKwargs}
             finalArgs = { key:mergedKwargs[key] for key in mergedKwargs if not key in onlyKwargs }

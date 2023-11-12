@@ -8,10 +8,7 @@ from scipy.spatial.distance import pdist
 from scipy.spatial.distance import squareform
 
 class simple_vector_distance(algorithm):
-
-    aligner = PairwiseAligner()
-    def creationAlgorithm(self, clonotypes, matrix, threshold = None, **kwargs):
-        self.aligner.substitution_matrix = substitution_matrices.load(matrix)
+    def creationAlgorithm(self, clonotypes, distanceFun, threshold = None, **kwargs):
         tcr_npa = clonotypes[["tcra_aa", "tcrb_aa"]].dropna().to_numpy()
         dist_al_trcb = np.zeros(np.shape(tcr_npa)[0] * np.shape(tcr_npa)[0]).reshape(np.shape(tcr_npa)[0],
                                                                                      np.shape(tcr_npa)[0])
@@ -53,18 +50,18 @@ class simple_vector_distance(algorithm):
         for i in range(len(beta_profile)):
             consensus_beta_seq+=consensus_beta_arr[i]
         
-        clonotypes['alpha_closest_to_consensus'] = clonotypes['tcra_aa'].apply(lambda x: tcr_alig(x,consensus_alpha_seq,self.aligner))
-        clonotypes['beta_closest_to_consensus'] = clonotypes['tcrb_aa'].apply(lambda x: tcr_alig(x,consensus_beta_seq,self.aligner))
+        clonotypes['alpha_closest_to_consensus'] = clonotypes['tcra_aa'].apply(lambda x: distanceFun(x,consensus_alpha_seq))
+        clonotypes['beta_closest_to_consensus'] = clonotypes['tcrb_aa'].apply(lambda x: distanceFun(x,consensus_beta_seq))
 
 
         closest_alpha = clonotypes[['tcra_aa','alpha_closest_to_consensus']].sort_values('alpha_closest_to_consensus').dropna().to_numpy()[-6:,0]
         closest_beta = clonotypes[['tcrb_aa','beta_closest_to_consensus']].sort_values('beta_closest_to_consensus').dropna().to_numpy()[-6:,0]
 
         for idx,amino in enumerate(closest_alpha):
-            clonotypes[f'a{idx}'] = clonotypes['tcra_aa'].apply(lambda x : tcr_alig(x,amino,self.aligner))
+            clonotypes[f'a{idx}'] = clonotypes['tcra_aa'].apply(lambda x : distanceFun(x,amino))
 
         for idx,amino in enumerate(closest_beta):
-            clonotypes[f'b{idx}'] = clonotypes['tcrb_aa'].apply(lambda x : tcr_alig(x,amino,self.aligner))
+            clonotypes[f'b{idx}'] = clonotypes['tcrb_aa'].apply(lambda x : distanceFun(x,amino))
 
         dist_mat = pd.DataFrame(
         squareform(pdist(clonotypes[["a0","b0", "a1", "b1", "a2", "b2", "a3", "b3", "a4", "b4", "a5", "b5"]])),
