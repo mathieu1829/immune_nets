@@ -7,7 +7,7 @@ def graphletComposition(raw_network):
     edges = raw_network.shape[0]
     vertices = np.unique(raw_network.to_numpy().flatten())
     vertice_num = vertices.shape[0]
-    graph = ig.GraphBase(vertice_num, raw_network.to_numpy())
+    graph = ig.Graph(raw_network.to_numpy())
     edge_density = float(graph.ecount()) / float( 0.5 * vertice_num * (vertice_num-1) )
     #percolation_threshold = ummm threshold?
     density = graph.density()
@@ -20,6 +20,8 @@ def graphletComposition(raw_network):
     closeness = graph.closeness()
     assortativity = graph.assortativity()
     assortativity_degree = graph.assortativity_degree()
+    
+    
 
     paths = np.array(graph.distances(vertices))
     mean_shortest_path = paths[paths != float('inf')].mean()

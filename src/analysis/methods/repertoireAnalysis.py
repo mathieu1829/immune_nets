@@ -1,6 +1,10 @@
 import numpy as np
 import pandas as pd
 from src.creation.io_strategies.csv_strategy import csv_strategy
+from src.creation.distance.hamming import hammingDistance 
+from src.creation.algorithms.simple_distance import simple_distance
+from src.creation.io_strategies.df_strategy import df_strategy
+import igraph as ig
 
 
 df = pd.read_csv("10k_PBMC_5pv2_nextgem_Chromium_Controller_10k_PBMC_5pv2_nextgem_Chromium_Controller_vdj_t_clonotypes.csv")
@@ -25,6 +29,16 @@ def repertoireAnalysis(repertoire):
     shannon_index_tcra = transform(unique_tcra_distribution).sum()
     shannon_index_tcrb = transform(unique_tcrb_distribution).sum()
     shannon_index_all_tcr = transform(unique_all_tcr_distribution).sum()
+
+    ### if no graph as been provided create one
+    df_net = simple_distance(df_strategy.output).createGraph(clonotypes = repertoire,distanceFun = hammingDistance,threshold = 1)
+    net = ig.Graph(df_net.to_numpy().flatten())
+    clusters = net.community_fastgreedy()
+    
+
+    
+    
+    
     
     print(simpson_index_tcrb)
 
