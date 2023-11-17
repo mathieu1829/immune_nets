@@ -7,7 +7,7 @@ from src.creation.algorithms.common_methods import *
 from src.creation.algorithms.algorithm import *
 
 @algorithm
-def simple_distance(clonotypes, distanceFun,threshold = 0.8 , **kwargs):
+def simple_distance(clonotypes, distanceFun, threshold = 0.8, **kwargs):
     tcr_npa = clonotypes[["tcra_aa", "tcrb_aa"]].dropna().to_numpy()
     dist_al_trcb = np.zeros(np.shape(tcr_npa)[0] * np.shape(tcr_npa)[0]).reshape(np.shape(tcr_npa)[0],
                                                                                  np.shape(tcr_npa)[0])
