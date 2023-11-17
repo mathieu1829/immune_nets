@@ -26,15 +26,10 @@ class db_strategy():
         df['tcrb_aa'] = df['cdr3s_aa'].apply(lambda x: split_tcr_column(x, subunit="TRB"))
         df.name = "data"
         return df
-    @staticmethod
     def output(self, algo, **kwargs):
         load_dotenv(); 
-        username = os.environ["POSTGRES_USER"]
-        password = os.environ["POSTGRES_PASSWORD"]
-        database = os.environ["POSTGRES_DB"]
-        host = os.environ["POSTGRES_HOST"]
-        df = algo(self, **kwargs) 
-        conn = psycopg2.connect(user=username,password=password, port=password, host=host, database=database)
+        df = algo( **kwargs) 
+        conn = psycopg2.connect(user=self.username,password=self.password, port=self.port, host=self.host, database=self.database)
         cur = conn.cursor()
         cur.execute(f'''CREATE TABLE IF NOT EXISTS runs 
         (ID uuid PRIMARY KEY DEFAULT gen_random_uuid(),

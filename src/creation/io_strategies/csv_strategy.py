@@ -7,9 +7,8 @@ class csv_strategy():
         df['tcra_aa'] = df['cdr3s_aa'].apply(lambda x: split_tcr_column(x, subunit="TRA"))
         df['tcrb_aa'] = df['cdr3s_aa'].apply(lambda x: split_tcr_column(x, subunit="TRB"))
         return df
-    @staticmethod
     def output(self, algo, **kwargs):
-        immune_net = algo(self, **kwargs)
+        immune_net = algo(**kwargs)
         immune_net.to_csv(immune_net.df.name+"_net.csv")
         return None 
 
