@@ -7,6 +7,8 @@ from src.creation.algorithms.simple_vector_distance import *
 from pathlib import Path
 import importlib
 import os
+import inspect 
+from src.creation.distance.alignment import sequenceAligner
 
 from src.creation.io_strategies.db_strategy import db_strategy 
 from src.creation.io_strategies.csv_strategy import csv_strategy
@@ -24,8 +26,10 @@ def getAllAlgorithms():
     algoList = []
     for algo in argList:
         some_algorithm = importlib.import_module(f'src.creation.algorithms.{algo}', package=None)
-        exec(f"algoList.append(some_algorithm.{algo}(db_strategy().output))")
+        algoList.append(dict(inspect.getmembers(some_algorithm,predicate=inspect.isfunction))[algo])
+        # print(dict(inspect.getmembers(some_algorithm,predicate=inspect.isfunction)))
     return algoList
+    
 
        
     
@@ -46,8 +50,8 @@ def main():
         print("ERROR: invalid strategy")
 
     for algo in getAllAlgorithms():
-        for dist in [ Matrices.BLOSUM62 , Matrices.PAM250 ]:
-            algo.createGraph(clonotypes=df,matrix=dist)
+        for dist in [sequenceAligner('BLOSUM62').tcr_alig, sequenceAligner('PAM250').tcr_alig]:
+            algo(clonotypes=df, distanceFun=dist, strategy = db_strategy().output)
 
     # SimpleDistance(db_strategy().output).createGraph(clonotypes=df,matrix=Matrices.BLOSUM62)
     # SimpleDistance(db_strategy().output).createGraph(clonotypes=df,matrix=Matrices.PAM250)
@@ -58,3 +62,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    # getAllAlgorithms()
