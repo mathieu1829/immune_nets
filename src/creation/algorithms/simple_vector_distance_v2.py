@@ -5,9 +5,12 @@ from scipy.spatial.distance import pdist
 from scipy.spatial.distance import squareform
 from src.creation.algorithms.common_methods import *
 from src.creation.algorithms.algorithm import *
+from src.creation.immuneNetwork import immuneNetwork
 
 @algorithm
-def simple_vector_distance_v2(clonotypes, distanceFun, threshold_alfa = None, threshold_beta = None, **kwargs):
+def simple_vector_distance_v2(repertoire, distance, threshold_alfa = None, threshold_beta = None, **kwargs):
+    clonotypes = repertoire.clones
+    distanceFun = distance.tcr_dist
     tcr_npa = clonotypes[["tcra_aa", "tcrb_aa"]].dropna().to_numpy()
     dist_al_trcb = np.zeros(np.shape(tcr_npa)[0] * np.shape(tcr_npa)[0]).reshape(np.shape(tcr_npa)[0],
                                                                                  np.shape(tcr_npa)[0])
@@ -84,6 +87,8 @@ def simple_vector_distance_v2(clonotypes, distanceFun, threshold_alfa = None, th
     d = {'r1': matrix_cutoff[0], 'r2': matrix_cutoff[1]}
     df_net = pd.DataFrame(data=d)
     df_net.name = clonotypes.name
-    return df_net
+    immuneNet = immuneNetwork(df_net, "simple_vector_distance_v2", repertoire.sampleIDs,str(distance) , {"threshold_alfa":threshold_alfa, "threshold_beta":threshold_beta} ) 
+
+    return immuneNet
 
 

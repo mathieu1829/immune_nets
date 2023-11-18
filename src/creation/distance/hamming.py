@@ -1,4 +1,8 @@
 from scipy.spatial.distance import hamming
 
-def hammingDistance(x,ref):
-    return -hamming(list(x), list(ref))
+
+class hammingDistance:
+    def tcr_dist(self,x,ref):
+        return -hamming(list(x), list(ref))
+    def __str__(self):
+        return "hamming"

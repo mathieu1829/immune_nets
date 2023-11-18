@@ -5,9 +5,13 @@ import logging
 import pandas as pd
 from src.creation.algorithms.common_methods import *
 from src.creation.algorithms.algorithm import *
+from src.creation.immuneNetwork import immuneNetwork
+
 
 @algorithm
-def simple_distance(clonotypes, distanceFun, threshold = 0.8, **kwargs):
+def simple_distance(repertoire, distance, threshold = 0.8, **kwargs):
+    clonotypes = repertoire.clones
+    distanceFun = distance.tcr_dist
     tcr_npa = clonotypes[["tcra_aa", "tcrb_aa"]].dropna().to_numpy()
     dist_al_trcb = np.zeros(np.shape(tcr_npa)[0] * np.shape(tcr_npa)[0]).reshape(np.shape(tcr_npa)[0],
                                                                                  np.shape(tcr_npa)[0])
@@ -30,5 +34,7 @@ def simple_distance(clonotypes, distanceFun, threshold = 0.8, **kwargs):
     d = {'r1': matrix_cutoff[0], 'r2': matrix_cutoff[1]}
     df_net = pd.DataFrame(data=d)
     df_net.name = clonotypes.name
-    return df_net
+    immuneNet = immuneNetwork(df_net, "simple_distance", repertoire.sampleIDs,str(distance) , threshold  ) 
+
+    return immuneNet
 

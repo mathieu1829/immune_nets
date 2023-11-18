@@ -32,7 +32,7 @@ def repertoireAnalysis(repertoire):
 
     ### if no graph as been provided create one
     df_net = simple_distance(df_strategy.output).createGraph(clonotypes = repertoire,distanceFun = hammingDistance,threshold = 1)
-    net = ig.Graph(df_net.to_numpy().flatten())
+    net = ig.GraphBase(df_net.to_numpy().flatten())
     clusters = net.community_fastgreedy()
     
 
