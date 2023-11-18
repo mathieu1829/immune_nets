@@ -11,16 +11,18 @@ class csv_strategy():
         if type(paths) == str:
             paths = [paths]
         df_list = []
-        sampleIDs = []
+        sampleIDs = {}
+        dfSize = 0;
         for path in paths:
             sample_df =  pd.read_csv(path)
             df_list.append(sample_df)
             hardcodeID = path.split('/')[-1][:32] 
+            dfSize+=len(sample_df)
             if checkUUID(hardcodeID):
-                sampleIDs.append(hardcodeID)
+                sampleIDs[hardcodeID] = dfSize
             else:
                 newUUID = uuid.uuid4().hex
-                sampleIDs.append(newUUID)
+                sampleIDs[newUUID] = dfSize
                 newPath = path.split("/")
                 newPath[-1] =  f'{newUUID}_{newPath[-1]}'
                 newPath = "/".join(newPath)
