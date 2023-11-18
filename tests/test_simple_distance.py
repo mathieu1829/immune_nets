@@ -36,7 +36,7 @@ class TestSimpleDistance(unittest.TestCase):
 
     def test_simple_distance_networks(self):
         for dist in makeEnumDict(Matrices):
-            df_net = simple_distance(repertoire=immuneRepertoire(self.df, {uuid.uuid4().hex: np.arange(len(self.df)).tolist() }), distance=sequenceAligner(dist))
+            df_net = simple_distance(repertoire=immuneRepertoire(self.df, {uuid.uuid4().hex: len(self.df) }), distance=sequenceAligner(dist))
 
             match dist:
                 case "PAM250":
