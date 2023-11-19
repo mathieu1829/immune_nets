@@ -87,7 +87,7 @@ def simple_vector_distance_v2(repertoire, distance, threshold_alfa = None, thres
     d = {'r1': matrix_cutoff[0], 'r2': matrix_cutoff[1]}
     df_net = pd.DataFrame(data=d)
     df_net.name = clonotypes.name
-    immuneNet = immuneNetwork(df_net, "simple_vector_distance_v2", repertoire.sampleIDs,str(distance) , {"threshold_alfa":threshold_alfa, "threshold_beta":threshold_beta} ) 
+    immuneNet = immuneNetwork(df_net, "simple_vector_distance_v2", repertoire.sampleIDs,str(distance) , {"threshold_alfa":threshold_alfa, "threshold_beta":threshold_beta}, len(clonotypes) ) 
 
     return immuneNet
 

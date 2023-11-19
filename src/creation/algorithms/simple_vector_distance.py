@@ -82,7 +82,7 @@ def simple_vector_distance( repertoire, distance, threshold = None, **kwargs):
     d = {'r1': matrix_cutoff[0], 'r2': matrix_cutoff[1]}
     df_net = pd.DataFrame(data=d)
     df_net.name = clonotypes.name
-    immuneNet = immuneNetwork(df_net, "simple_vector_distance", repertoire.sampleIDs,str(distance) , threshold  ) 
+    immuneNet = immuneNetwork(df_net, "simple_vector_distance", repertoire.sampleIDs,str(distance) , threshold , len(clonotypes) ) 
 
     return immuneNet
 

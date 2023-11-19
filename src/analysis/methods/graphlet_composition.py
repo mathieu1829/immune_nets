@@ -3,13 +3,27 @@ import igraph as ig
 import numpy as np
 import pandas as pd
 
-def graphletComposition(raw_network):
-    edges = raw_network.shape[0]
-    vertices = np.unique(raw_network.to_numpy().flatten())
+def graphletComposition(immuneNet):
+    edges = immuneNet.network.shape[0]
+    vertices = np.unique(immuneNet.network.to_numpy().flatten())
     vertice_num = vertices.shape[0]
-    graph = ig.Graph(raw_network.to_numpy())
+    isolated_vertices = [ i for i in np.arange(immuneNet.sampleSize) if not i in vertices ]
+
+    #transform
+    # active = isolated_vertices
+    # outOfBound = vertices[vertices > vertice_num]
+    # minGraph = immuneNet.network.to_numpy()
+    # for i in outOfBound:
+    #     np.place(minGraph, minGraph == outOfBound, active.pop(0))
+
+
+
+    # graph = ig.Graph(minGraph)
+    graph = ig.Graph(immuneNet.network.to_numpy())
+    graph.add_vertices(immuneNet.sampleSize - graph.vcount())
+
     edge_density = float(graph.ecount()) / float( 0.5 * vertice_num * (vertice_num-1) )
-    #percolation_threshold = ummm threshold?
+    percolation_threshold = immuneNet.threshold
     density = graph.density()
     eccentrity = graph.eccentrity()
     eigenvector_centrality = graph.eigenvector_centrality()
@@ -26,19 +40,13 @@ def graphletComposition(raw_network):
     paths = np.array(graph.distances(vertices))
     mean_shortest_path = paths[paths != float('inf')].mean()
 
-    pagerank_of_nonexisting_vertices = np.delete(np.array(graph.pagerank()),vertices).sum()
-    pagerank_distribution = np.array([ i + (pagerank_of_nonexisting_vertices / vertices.shape[0]) for i in np.array(graph.pagerank())[vertices]])
-   #pagerank_distribution = np.array(graph.pagerank()) #or maybe just like that
+    pagerank_distribution = np.array(graph.pagerank()) 
 
 
-    degree_distribution_of_nonexisting_vertices = np.delete(np.array(graph.degree_distribution()),vertices).sum()
-    degree_distribution = np.array([ i + (degree_distribution_of_nonexisting_vertices / vertices.shape[0]) for i in np.array(graph.degree_distribution())[vertices]])
-    #degree_distribution = np.array(graph.degree_distribution()) #or maybe just like that
+    degree_distribution = np.array(graph.degree_distribution()) 
 
     components = graph.components()
-    componentList = np.array([ components[i].vcount for i in range(components) if components[i].vcount != 1 ])
+    componentList = np.array([ len(i) for i in components])
     component_count = componentList.shape[0]
-    component_size_distribution = { component_size:(float(count)/float(component_count)) for component_size, count in np.unique(componentList)}
-    # component_count = len(graph.components())
-    # componentList = np.array([ components[i].vcount for i in range(components) ])
-    # component_size_distribution = { component_size:(float(count)/float(component_count)) for component_size, count in np.unique(componentList)}
+    component_size_distribution = { component_size:(float((componentList == component_size).sum())/float(component_count)) for component_size in np.unique(componentList)}
+    return [ vertice_num,isolated_vertices,edge_density,percolation_threshold,density,eccentrity,eigenvector_centrality,harmonic_centrality,giant_component,betweenness,diameter,closeness, assortativity, assortativity_degree, mean_shortest_path, pagerank_distribution, degree_distribution, component_count,component_size_distribution]

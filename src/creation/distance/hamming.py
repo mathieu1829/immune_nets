@@ -3,6 +3,9 @@ from scipy.spatial.distance import hamming
 
 class hammingDistance:
     def tcr_dist(self,x,ref):
-        return -hamming(list(x), list(ref))
+        longer,shorter = (x,ref) if len(x) > len(ref) else (ref,x)
+        shorter = "".join([shorter,"".join([" " for i in range(len(longer)-len(shorter))])])
+        return -sum([ i != j for i,j in zip(longer,shorter)])
+        # return -hamming(list(longer), list(shorter))
     def __str__(self):
         return "hamming"

@@ -9,7 +9,7 @@ from src.creation.immuneNetwork import immuneNetwork
 
 
 @algorithm
-def simple_distance(repertoire, distance, threshold = 0.8, **kwargs):
+def simple_beta_distance(repertoire, distance, threshold = 0.8, **kwargs):
     clonotypes = repertoire.clones
     distanceFun = distance.tcr_dist
     tcr_npa = clonotypes[["tcra_aa", "tcrb_aa"]].dropna().to_numpy()
@@ -20,15 +20,16 @@ def simple_distance(repertoire, distance, threshold = 0.8, **kwargs):
     for x in range(0, matrix_len):
         logging.info(str(x) + " out of str " + str(matrix_len) + "rows process in triangular similarity matrix")
         for y in range(0 + x, matrix_len):
-            dist_al_trcb[x][y] = distanceFun(tcr_npa[x][0], tcr_npa[y][0]) + distanceFun(tcr_npa[x][1], tcr_npa[y][1])
+            dist_al_trcb[x][y] = distanceFun(tcr_npa[x][1], tcr_npa[y][1])
             dist_al_trcb[y][x] = dist_al_trcb[x][y]
 
-    for x in range(0, len(dist_al_trcb)):
-        self_score = dist_al_trcb[x][x]
-        for y in range(0, len(dist_al_trcb)):
-            dist_al_trcb[x][y] /= self_score
+    # for x in range(0, len(dist_al_trcb)):
+    #     self_score = dist_al_trcb[x][x]
+    #     for y in range(0, len(dist_al_trcb)):
+    #         dist_al_trcb[x][y] /= self_score
 
     dist_al_trcb = np.tril(dist_al_trcb, k=-1)
+    print(dist_al_trcb)
     matrix_cutoff = np.where(dist_al_trcb > threshold)
 
     d = {'r1': matrix_cutoff[0], 'r2': matrix_cutoff[1]}
