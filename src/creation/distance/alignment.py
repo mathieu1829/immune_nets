@@ -11,14 +11,19 @@ class sequenceAligner:
     def getMatrix(self):
         return self.__matrix
 
-    def __init__(self, matrix):
+    def __init__(self, matrix,switch_self_score=False):
         self.setMatrix(matrix)
+        self.switch_self_score = switch_self_score
+
+        
         
 
     def tcr_dist(self,x, ref):
+        if ref != None:
+            self_score = pairwise2.align.localds(ref, ref, self.__aligner.substitution_matrix, -10, -1)
         if x != None:
             alignments = pairwise2.align.localds(x, ref, self.__aligner.substitution_matrix, -10, -1)
-            return alignments[0].score
+            return 1 - (alignments[0].score / self_score) 
     def __str__(self):
         return self.__matrix
 

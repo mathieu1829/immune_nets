@@ -29,8 +29,11 @@ def simple_beta_distance(repertoire, distance, threshold = 0.8, **kwargs):
     #         dist_al_trcb[x][y] /= self_score
 
     dist_al_trcb = np.tril(dist_al_trcb, k=-1)
+    for i in range(len(dist_al_trcb)):
+        for j in range(i,len(dist_al_trcb)):
+            dist_al_trcb[i,j] = float('INF')
+    matrix_cutoff = np.where(dist_al_trcb < threshold)
     print(dist_al_trcb)
-    matrix_cutoff = np.where(dist_al_trcb > threshold)
 
     d = {'r1': matrix_cutoff[0], 'r2': matrix_cutoff[1]}
     df_net = pd.DataFrame(data=d)

@@ -23,13 +23,11 @@ def simple_distance(repertoire, distance, threshold = 0.8, **kwargs):
             dist_al_trcb[x][y] = distanceFun(tcr_npa[x][0], tcr_npa[y][0]) + distanceFun(tcr_npa[x][1], tcr_npa[y][1])
             dist_al_trcb[y][x] = dist_al_trcb[x][y]
 
-    for x in range(0, len(dist_al_trcb)):
-        self_score = dist_al_trcb[x][x]
-        for y in range(0, len(dist_al_trcb)):
-            dist_al_trcb[x][y] /= self_score
-
     dist_al_trcb = np.tril(dist_al_trcb, k=-1)
-    matrix_cutoff = np.where(dist_al_trcb > threshold)
+    for i in range(len(dist_al_trcb)):
+        for j in range(i,len(dist_al_trcb)):
+            dist_al_trcb[i,j] = float('INF')
+    matrix_cutoff = np.where(dist_al_trcb < threshold)
 
     d = {'r1': matrix_cutoff[0], 'r2': matrix_cutoff[1]}
     df_net = pd.DataFrame(data=d)

@@ -77,7 +77,10 @@ def simple_vector_distance( repertoire, distance, threshold = None, **kwargs):
     # threshold = np.mean(dist_mat.fillna(0).to_numpy()) / 4 if threshold is None else threshold #produces smaller threshold
     dist_mat = np.tril(dist_mat, k=-1)
     # threshold = np.nanmean(dist_mat) / 4 if threshold is None else threshold #produces even smaller threshold
-    matrix_cutoff = np.where((dist_mat < threshold) & (dist_mat > 0))
+    for i in range(len(dist_mat)):
+        for j in range(i,len(dist_mat)):
+            dist_mat[i,j] = float('INF')
+    matrix_cutoff = np.where(dist_mat < threshold)
 
     d = {'r1': matrix_cutoff[0], 'r2': matrix_cutoff[1]}
     df_net = pd.DataFrame(data=d)

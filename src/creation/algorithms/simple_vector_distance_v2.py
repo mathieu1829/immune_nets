@@ -81,8 +81,14 @@ def simple_vector_distance_v2(repertoire, distance, threshold_alfa = None, thres
     treshold_alpha = np.nanmean(dist_mat_alpha.to_numpy()) / 4 if threshold_alfa is None else threshold_alfa# todo -> treat as parameter, and in this case we could make different tresholds for alpha and beta
     treshold_beta = np.nanmean(dist_mat_beta.to_numpy())  / 4 if threshold_beta is None else threshold_beta# todo -> treat as parameter, and in this case we could make different tresholds for alpha and beta
     dist_mat_alpha = np.tril(dist_mat_alpha, k=-1)
+    for i in range(len(dist_mat_alpha)):
+        for j in range(i,len(dist_mat_alpha)):
+            dist_mat_alpha[i,j] = float('INF')
     dist_mat_beta = np.tril(dist_mat_beta, k=-1)
-    matrix_cutoff = np.where(((dist_mat_alpha < treshold_alpha) & (dist_mat_alpha > 0)) & ((dist_mat_beta < treshold_beta) & (dist_mat_beta > 0)))
+    for i in range(len(dist_mat_beta)):
+        for j in range(i,len(dist_mat_beta)):
+            dist_mat_beta[i,j] = float('INF')
+    matrix_cutoff = np.where((dist_mat_alpha < treshold_alpha) & (dist_mat_beta < treshold_beta))
 
     d = {'r1': matrix_cutoff[0], 'r2': matrix_cutoff[1]}
     df_net = pd.DataFrame(data=d)
