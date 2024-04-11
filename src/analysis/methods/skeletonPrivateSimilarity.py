@@ -15,12 +15,12 @@ def skeleton_similarity(repertoire, minNodeCount=10, minCloneCount=100):
     clusters = net.community_fastgreedy()
     clusters = list(clusters.as_clustering(clusters.optimal_count))
     clusters.sort(key = lambda x : len(x))
-    public_clusters = clusters[-20:]
-    for idx, cluster in enumerate(public_clusters):
-        public_clusters[idx] = np.delete(cluster, [ i for i,v in enumerate(cluster) if repertoire.clones.iloc[v]['frequency'] >= minCloneCount] )
-    public_clusters = [i for i in public_clusters if len(i) and len(i)>=minNodeCount ]
+    private_clusters = clusters[-20:]
+    for idx, cluster in enumerate(private_clusters):
+        private_clusters[idx] = np.delete(cluster, [ i for i,v in enumerate(cluster) if repertoire.clones.iloc[v]['frequency'] >= minCloneCount] )
+    private_clusters = [i for i in private_clusters if len(i) and len(i)>=minNodeCount ]
     
-    cluster_candidates = [e for i in public_clusters for e in i]
+    cluster_candidates = [e for i in private_clusters for e in i]
     new_repertoire = immuneRepertoire(clones=repertoire.clones.iloc[cluster_candidates],sampleIDs=repertoire.sampleIDs[cluster_candidates]) 
     immuneNet = simple_beta_distance(repertoire = new_repertoire,distance = hammingDistance(),threshold = -2)
     df_net = immuneNet.network
@@ -31,8 +31,8 @@ def skeleton_similarity(repertoire, minNodeCount=10, minCloneCount=100):
     clusters = net.community_fastgreedy()
     clusters = list(clusters.as_clustering(clusters.optimal_count))
     clusters.sort(key = lambda x : len(x))
-    public_clusters = clusters[-20:]
-    for idx, cluster in enumerate(public_clusters):
-        public_clusters[idx] = np.delete(cluster, [ i for i,v in enumerate(cluster) if repertoire.clones.iloc[v]['frequency'] >= minCloneCount] )
-    public_clusters = [i for i in public_clusters if len(i) and len(i)>=minNodeCount ]
-    return public_clusters
+    private_clusters = clusters
+    for idx, cluster in enumerate(private_clusters):
+        private_clusters[idx] = np.delete(cluster, [ i for i,v in enumerate(cluster) if repertoire.clones.iloc[v]['frequency'] >= minCloneCount] )
+    private_clusters = [i for i in private_clusters if len(i) and np.unique(new_repertoire.sampleIDs[i]) == 1 ]
+    return private_clusters

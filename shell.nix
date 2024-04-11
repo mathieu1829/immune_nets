@@ -4,13 +4,15 @@ let
   my-python-packages = ps: with ps; [
     pandas
 	numpy
-	scipy
-	scikit-learn
-	biopython
-	matplotlib
-	pony
-	psycopg2
-	igraph
+	# scipy
+	# scikit-learn
+	# biopython
+	# matplotlib
+	# pony
+	# psycopg2
+	# igraph
+	# keras
+	# tensorflow
   python-dotenv
     # other python packages
   ];
@@ -21,7 +23,7 @@ stdenv.mkDerivation {
   
   nativeBuildInputs = with pkgs.buildPackages; [
     (python3.withPackages my-python-packages)
-    sratoolkit
+    # sratoolkit
     vim
     postgresql_15
   ];
