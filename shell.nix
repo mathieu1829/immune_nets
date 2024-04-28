@@ -1,35 +1,9 @@
-with import <nixpkgs> {};
-
+{ pkgs ? import <nixpkgs> {}}:
 let
-  my-python-packages = ps: with ps; [
-    pandas
-	numpy
-	# scipy
-	# scikit-learn
-	# biopython
-	# matplotlib
-	# pony
-	# psycopg2
-	# igraph
-	# keras
-	# tensorflow
-  python-dotenv
-    # other python packages
-  ];
-in
-stdenv.mkDerivation {
-  name = "postgres-env";
-  buildInputs = [];
-  
-  nativeBuildInputs = with pkgs.buildPackages; [
-    (python3.withPackages my-python-packages)
-    # sratoolkit
-    vim
-    postgresql_15
-  ];
-
-  postgresConf =
-    writeText "postgresql.conf"
+  PGDATA = "${toString ./.}/.pg";
+  PORT = "5432";
+  CRSRA = "SRR14243987";
+  postgresConf = pkgs.writeText "postgresql.conf"
       ''
         # Add Custom Settings
         log_min_messages = warning
@@ -46,21 +20,40 @@ stdenv.mkDerivation {
         logging_collector = on
         log_min_error_statement = error
       '';
+  fhs = pkgs.buildFHSUserEnv {
+    name = "my-fhs-environment";
 
-  PGDATA = "${toString ./.}/.pg";
-  PORT = "5432";
-  CRSRA = "SRR14243987";
-  shellHook = ''
-    echo "Using ${postgresql_15.name}."
+    targetPkgs = _: [
+      pkgs.micromamba
+	  pkgs.postgresql_15
+    ];
 
-    # Setup: other env variables
-    export SRA=$CRSRA
-    export PGPORT="$PORT"
-    export PGHOST="$PGDATA"
-    [ ! -d $PGDATA ] && pg_ctl initdb -o "-U postgres --no-locale" && cat "$postgresConf" >> $PGDATA/postgresql.conf
-    pg_ctl -o "-p $PGPORT -k $PGDATA" start
-    alias fin="pg_ctl stop && exit"
-    alias pg="psql -p $PGPORT -U postgres"
-    alias dcrds="sh ./scripts/clonotype-processor.sh -s $SRA -n $(date -I) -d ../datasets"
-  '';
-}
+    profile = ''
+      set -e
+      eval "$(micromamba shell hook --shell=posix)"
+      export MAMBA_ROOT_PREFIX=${builtins.getEnv "PWD"}/.mamba
+	 	  
+      micromamba create -q -n immune-nets
+      micromamba activate immune-nets
+	  micromamba install --yes -f env.yml -c conda-forge
+
+	  echo "Using ${pkgs.postgresql_15.name}."
+
+	  # Setup: other env variables
+	  export SRA=${CRSRA}
+	  export PGPORT="${PORT}"
+	  export PGHOST="${PGDATA}"
+	  export PGDATA="${PGDATA}"
+	  [ ! -d ${PGDATA} ] && pg_ctl initdb -o "-U postgres --no-locale" && cat "${postgresConf}" >> ${PGDATA}/postgresql.conf
+	  pg_ctl -o "-p $PGPORT -k ${PGDATA}" start
+	  micromamba run scripts/envrc
+	  echo all done
+
+
+      set +e
+    '';
+  };
+in fhs.env
+
+
+ 

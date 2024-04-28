@@ -1,0 +1,4 @@
+
+alias fin="pg_ctl stop && exit"
+alias pg="psql -p $PGPORT -U postgres"
+alias dcrds="sh ./scripts/clonotype-processor.sh -s $SRA -n $(date -I) -d ../datasets"
