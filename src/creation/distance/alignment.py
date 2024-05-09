@@ -1,4 +1,3 @@
-from Bio import pairwise2
 from Bio.Align import PairwiseAligner
 from Bio.Align import substitution_matrices
 import numpy as np
