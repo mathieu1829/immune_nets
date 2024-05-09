@@ -8,6 +8,8 @@ class sequenceAligner:
         self.__matrix = matrix
         self.__aligner = PairwiseAligner()
         self.__aligner.substitution_matrix = substitution_matrices.load(matrix)
+        self.__aligner.open_gap_score = -10;
+        self.__aligner.extend_gap_score = -1;
 
     def getMatrix(self):
         return self.__matrix
@@ -24,12 +26,13 @@ class sequenceAligner:
         assert x != None, f"x is None, can't calculate distace"
         assert ref != None, f"ref is None, can't calculate distace"
         
-        self_score_x = pairwise2.align.localds(x, x, self.__aligner.substitution_matrix, -10, -1)
-        self_score_ref = pairwise2.align.localds(ref, ref, self.__aligner.substitution_matrix, -10, -1)
-        self_score = max(self_score_x[0].score, self_score_ref[0].score)
-        alignments = pairwise2.align.localds(x, ref, self.__aligner.substitution_matrix, -10, -1)
+        self_score_x = self.__aligner.align(x,x)
+        self_score_ref = self.__aligner.align(ref,ref)
 
-        return 1 - (float(alignments[0].score) / float(self_score)) 
+        self_score = max(self_score_x.score, self_score_ref.score)
+        alignments = self.__aligner.align(x, ref)
+
+        return 1 - (float(alignments.score) / float(self_score)) 
     def __str__(self):
         return self.__matrix
 
