@@ -49,12 +49,12 @@ class db_strategy():
         if "matrix" in kwargs:
             matrix = kwargs["matrix"]
         
-        cur.execute(f'''INSERT INTO runs (name, method, distance) VALUES (\'{df.name}\', \'{self.__class__.__name__}\', \'{matrix}\') RETURNING id''')
+        cur.execute(f'''INSERT INTO runs (name, method, distance) VALUES (\'{df.network.name}\', \'{self.__class__.__name__}\', \'{matrix}\') RETURNING id''')
         # In case we decided to name runs with 
         # cur.execute(f'''INSERT INTO runs (name, matrix) VALUES (\'{self.__class__.__name__}\', \'{matrix}\') RETURNING id''')
         uuid = cur.fetchone()[0]
-        for idx in df.index:
-            cur.execute(f'''INSERT INTO results(r1,r2,run_id) VALUES ({df["r1"][idx]},{df["r2"][idx]},\'{uuid}')''')
+        for idx in df.network.index:
+            cur.execute(f'''INSERT INTO results(r1,r2,run_id) VALUES ({df.network["r1"][idx]},{df.network["r2"][idx]},\'{uuid}')''')
             conn.commit()
 
         conn.close()

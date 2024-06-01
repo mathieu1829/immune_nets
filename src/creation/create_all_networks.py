@@ -2,6 +2,7 @@
 import argparse
 from src.creation.algorithms.common_methods import *
 from src.creation.algorithms.simple_distance import *
+from src.creation.distance.alignment import sequenceAligner
 from src.creation.algorithms.simple_vector_distance_v2 import *
 from src.creation.algorithms.simple_vector_distance import *
 from pathlib import Path
@@ -9,10 +10,14 @@ import importlib
 import os
 import inspect 
 from src.creation.distance.alignment import sequenceAligner
+from src.creation.distance.hamming import hammingDistance
+from src.creation.distance.negativeHamming import negativeHammingDistance
+from src.creation.immuneRepertoire import immuneRepertoire
 
 from src.creation.io_strategies.db_strategy import db_strategy 
-from src.creation.io_strategies.csv_strategy import csv_strategy
+from src.creation.io_strategies.test_csv_strategy import test_csv_strategy
 from src.creation.enums.matrices import *
+import uuid
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-i','--input', help='Provide path to file with clonotypes')
@@ -37,21 +42,22 @@ def getAllAlgorithms():
 
 def main():
     args = parser.parse_args()
-    path = args.input #"..\\..\\tests\\test_data\\test_clonotypes.csv"
-    # path = "tests/test_data/test_clonotypes.csv"
-    input_strategy = args.input_strategy
+    # path = args.input #"..\\..\\tests\\test_data\\test_clonotypes.csv"
+    path = "tests/test_data/test_clonotypes.csv"
+    # input_strategy = args.input_strategy
+    input_strategy = "csv"
     match input_strategy:
         case "db":
             df = db_strategy().input()
         case "csv":
-            df = csv_strategy().input(path)
-            df.name = "testData"
+            df = test_csv_strategy().input(path)
+            df.clones.name = "testData"
     if df is None:
         print("ERROR: invalid strategy")
 
     for algo in getAllAlgorithms():
-        for dist in [sequenceAligner('BLOSUM62').tcr_alig, sequenceAligner('PAM250').tcr_alig]:
-            algo(clonotypes=df, distanceFun=dist, strategy = db_strategy().output)
+        for dist in [hammingDistance(), negativeHammingDistance(), sequenceAligner('BLOSUM62'), sequenceAligner('PAM250')]:
+            algo(repertoire=df, distance=dist, strategy = db_strategy().output)
 
     # SimpleDistance(db_strategy().output).createGraph(clonotypes=df,matrix=Matrices.BLOSUM62)
     # SimpleDistance(db_strategy().output).createGraph(clonotypes=df,matrix=Matrices.PAM250)
