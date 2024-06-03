@@ -20,9 +20,6 @@ class TestSimpleDistance(unittest.TestCase):
         df['tcra_aa'] = df['cdr3s_aa'].apply(lambda x: split_tcr_column(x, subunit="TRA"))
         df['tcrb_aa'] = df['cdr3s_aa'].apply(lambda x: split_tcr_column(x, subunit="TRB"))
         self.df = df
-        aligner = PairwiseAligner()
-        aligner.substitution_matrix = substitution_matrices.load("BLOSUM62")
-        self.aligner = aligner
 
     def test_tcr_alig_identical_strings(self):
 

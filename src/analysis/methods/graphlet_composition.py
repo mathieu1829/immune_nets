@@ -3,6 +3,21 @@ import igraph as ig
 import numpy as np
 import pandas as pd
 
+import uuid
+import src.creation.io_strategies.df_strategy 
+import src.creation.algorithms.simple_distance 
+import src.creation.distance.alignment
+from src.creation.algorithms.common_methods import *
+from src.creation.distance.alignment import sequenceAligner
+from src.creation.algorithms.simple_distance import *
+from src.creation.enums.matrices import *
+from src.creation.enums.utils import * 
+from src.creation.io_strategies.df_strategy import *
+from src.creation.immuneRepertoire import immuneRepertoire
+df = pd.read_csv("10k_PBMC_5pv2_nextgem_Chromium_Controller_10k_PBMC_5pv2_nextgem_Chromium_Controller_vdj_t_clonotypes.csv").head(1000)
+df.name = "aaa"
+
+
 def graphletComposition(immuneNet):
     edges = immuneNet.network.shape[0]
     vertices = np.unique(immuneNet.network.to_numpy().flatten())
@@ -50,3 +65,7 @@ def graphletComposition(immuneNet):
     component_count = componentList.shape[0]
     component_size_distribution = { component_size:(float((componentList == component_size).sum())/float(component_count)) for component_size in np.unique(componentList)}
     return [ vertice_num,isolated_vertices,edge_density,percolation_threshold,density,eccentrity,eigenvector_centrality,harmonic_centrality,giant_component,betweenness,diameter,closeness, assortativity, assortativity_degree, mean_shortest_path, pagerank_distribution, degree_distribution, component_count,component_size_distribution]
+
+if __name__ == "__main__":
+    df_net = simple_distance(repertoire=immuneRepertoire(df, {uuid.uuid4().hex: len(df) }), distance=sequenceAligner("BLOSUM62"))
+    print(graphletComposition(df_net))
