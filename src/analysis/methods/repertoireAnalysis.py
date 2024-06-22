@@ -39,7 +39,7 @@ def repertoireAnalysis(repertoire, minNodeCount=10, minCloneCount=100):
 
     ### if no graph as been provided create one
     ### public cluster creation
-    immuneNet = simple_beta_distance(repertoire = repertoire,distance = hammingDistance(),threshold = -2)
+    immuneNet = simple_beta_distance(repertoire = repertoire,distance = hammingDistance(),threshold = 2)
     df_net = immuneNet.network
     print(df_net)
     vertices = np.unique(df_net.to_numpy().flatten())

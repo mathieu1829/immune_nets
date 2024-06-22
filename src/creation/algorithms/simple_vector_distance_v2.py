@@ -11,6 +11,11 @@ from src.creation.immuneNetwork import immuneNetwork
 def simple_vector_distance_v2(repertoire, distance, threshold_alfa = None, threshold_beta = None, **kwargs):
     clonotypes = repertoire.clones
     distanceFun = distance.tcr_dist
+
+    distanceFunType = str(distance)
+    if distanceFunType[0:distanceFunType.find('_')] == 'group':
+        raise ValueError("Vector distance algorithm can't handle \"group\" distance functions")
+
     ab_tcr = clonotypes[["tcra_aa", "tcrb_aa"]].dropna()
     tcr_npa = clonotypes[["tcra_aa", "tcrb_aa"]].dropna().to_numpy()
     dist_al_trcb = np.zeros(np.shape(tcr_npa)[0] * np.shape(tcr_npa)[0]).reshape(np.shape(tcr_npa)[0],

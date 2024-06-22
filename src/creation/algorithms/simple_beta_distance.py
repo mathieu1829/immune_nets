@@ -15,13 +15,17 @@ def simple_beta_distance(repertoire, distance, threshold = 0.8, **kwargs):
     tcr_npa = clonotypes[["tcra_aa", "tcrb_aa"]].dropna().to_numpy()
     dist_al_trcb = np.zeros(np.shape(tcr_npa)[0] * np.shape(tcr_npa)[0]).reshape(np.shape(tcr_npa)[0],
                                                                                  np.shape(tcr_npa)[0])
-    dist_al_trcb += -1
-    matrix_len = len(dist_al_trcb)
-    for x in range(0, matrix_len):
-        logging.info(str(x) + " out of str " + str(matrix_len) + "rows process in triangular similarity matrix")
-        for y in range(0 + x, matrix_len):
-            dist_al_trcb[x][y] = distanceFun(tcr_npa[x][1], tcr_npa[y][1])
-            dist_al_trcb[y][x] = dist_al_trcb[x][y]
+    distanceFunType = str(distance)
+    if distanceFunType[0:distanceFunType.find('_')] != 'group':
+        dist_al_trcb += -1
+        matrix_len = len(dist_al_trcb)
+        for x in range(0, matrix_len):
+            logging.info(str(x) + " out of str " + str(matrix_len) + "rows process in triangular similarity matrix")
+            for y in range(0 + x, matrix_len):
+                dist_al_trcb[x][y] = distanceFun(tcr_npa[x][1], tcr_npa[y][1])
+                dist_al_trcb[y][x] = dist_al_trcb[x][y]
+    else:
+        dist_al_trcb = distanceFun(tcr_npa[:,1])
 
     # for x in range(0, len(dist_al_trcb)):
     #     self_score = dist_al_trcb[x][x]
