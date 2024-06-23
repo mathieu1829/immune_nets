@@ -15,11 +15,10 @@ def simple_distance(repertoire, distance, threshold = 0.2, **kwargs):
     tcr_npa = clonotypes[["tcra_aa", "tcrb_aa"]].dropna().to_numpy()
     dist_al_trcb = np.zeros(np.shape(tcr_npa)[0] * np.shape(tcr_npa)[0]).reshape(np.shape(tcr_npa)[0],
                                                                                  np.shape(tcr_npa)[0])
-    distanceFunType = str(distance)
     # print(distanceFun)
     # print(distanceFunType[0:distanceFunType.find('_')])
     dist_al_trcb += -1
-    if distanceFunType[0:distanceFunType.find('_')] != 'group':
+    if distance.group == False:
         # print("not group")
         matrix_len = len(dist_al_trcb)
         for x in range(0, matrix_len):

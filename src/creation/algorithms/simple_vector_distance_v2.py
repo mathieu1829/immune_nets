@@ -12,8 +12,7 @@ def simple_vector_distance_v2(repertoire, distance, threshold_alfa = None, thres
     clonotypes = repertoire.clones
     distanceFun = distance.tcr_dist
 
-    distanceFunType = str(distance)
-    if distanceFunType[0:distanceFunType.find('_')] == 'group':
+    if distance.group == True:
         raise ValueError("Vector distance algorithm can't handle \"group\" distance functions")
 
     ab_tcr = clonotypes[["tcra_aa", "tcrb_aa"]].dropna()

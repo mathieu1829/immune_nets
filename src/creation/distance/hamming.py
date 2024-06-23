@@ -54,5 +54,5 @@ class hammingDistance:
         return name_string
 
 if __name__ == "__main__":
-    df_net = simple_distance(repertoire=immuneRepertoire(df, {uuid.uuid4().hex: len(df) }), distance=hammingDistance(group = False))
+    df_net = simple_distance(repertoire=immuneRepertoire(df, {uuid.uuid4().hex: len(df) }), distance=hammingDistance(group = True))
     print(df_net)

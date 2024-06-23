@@ -15,8 +15,7 @@ def simple_alpha_distance(repertoire, distance, threshold = 0.8, **kwargs):
     tcr_npa = clonotypes[["tcra_aa", "tcrb_aa"]].dropna().to_numpy()
     dist_al_trcb = np.zeros(np.shape(tcr_npa)[0] * np.shape(tcr_npa)[0]).reshape(np.shape(tcr_npa)[0],
                                                                                  np.shape(tcr_npa)[0])
-    distanceFunType = str(distance)
-    if distanceFunType[0:distanceFunType.find('_')] != 'group':
+    if distance.group == False:
         dist_al_trcb += -1
         matrix_len = len(dist_al_trcb)
         for x in range(0, matrix_len):
