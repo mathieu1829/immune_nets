@@ -13,25 +13,37 @@ class sequenceAligner:
     def getMatrix(self):
         return self.__matrix
 
-    def __init__(self, matrix,switch_self_score=False):
+    def __init__(self, matrix,switch_self_score=False, group = False, negative = False):
         self.setMatrix(matrix)
         self.switch_self_score = switch_self_score
+        self.group = group
+        self.negative = negative
 
         
         
 
-    def tcr_dist(self,x, ref):
+    def tcr_dist(self,x, ref = None):
+        if x is None :
+            raise ValueError('\"x\" parameter must not be none')
 
-        assert x != None, f"x is None, can't calculate distace"
-        assert ref != None, f"ref is None, can't calculate distace"
-        
-        self_score_x = self.__aligner.align(x,x)
-        self_score_ref = self.__aligner.align(ref,ref)
+        if ref is not None:
+            if self.group == True:
+                raise ValueError('\"group\" must not be True, when using method in single comparison mode')
+            self_score_x = self.__aligner.align(x,x)
+            self_score_ref = self.__aligner.align(ref,ref)
 
-        self_score = max(self_score_x.score, self_score_ref.score)
-        alignments = self.__aligner.align(x, ref)
+            self_score = max(self_score_x.score, self_score_ref.score)
+            alignments = self.__aligner.align(x, ref)
 
-        return 1 - (float(alignments.score) / float(self_score)) 
+            res = 1 - (float(alignments.score) / float(self_score)) 
+        else:
+            if self.group == False:
+                raise ValueError('\"group\" must be set to true when using method in group mode')
+            tcr = x
+            res = pdist(tcr,metrix = lambda u,v : "insert something here" )
+
+        return res
+
     def __str__(self):
         return self.__matrix
 
