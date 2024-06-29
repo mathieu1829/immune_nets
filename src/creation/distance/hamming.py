@@ -35,7 +35,7 @@ class hammingDistance:
             res = hamming(list(x), list(ref))
         else:
             if self.group == False:
-                raise ValueError('\"group\" must be set to true when using method in group mode')
+                raise ValueError('\"group\" must be set to True when using method in group mode')
             tcr = numerizeTCRSeq(x)
             res = squareform(pdist(tcr,metric="hamming"))
 
