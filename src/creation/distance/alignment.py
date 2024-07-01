@@ -1,6 +1,22 @@
 from Bio.Align import PairwiseAligner
 from Bio.Align import substitution_matrices
 import numpy as np
+from scipy.spatial.distance import pdist
+from scipy.spatial.distance import squareform
+from src.creation.algorithms.common_methods import numerizedTCRtoStr
+from src.creation.algorithms.common_methods import numerizeTCRSeq
+
+import pandas as pd
+import numpy as np
+from src.creation.algorithms.simple_distance import simple_distance
+from src.creation.immuneRepertoire import immuneRepertoire
+from src.creation.algorithms.common_methods import split_tcr_column
+import uuid
+
+df = pd.read_csv("10k_PBMC_5pv2_nextgem_Chromium_Controller_10k_PBMC_5pv2_nextgem_Chromium_Controller_vdj_t_clonotypes.csv").head(1000)
+df.name = "aaa"
+df['tcra_aa'] = df['cdr3s_aa'].apply(lambda x: split_tcr_column(x, subunit="TRA"))
+df['tcrb_aa'] = df['cdr3s_aa'].apply(lambda x: split_tcr_column(x, subunit="TRB"))
 
 class sequenceAligner:
     def setMatrix(self,matrix):
@@ -39,11 +55,22 @@ class sequenceAligner:
         else:
             if self.group == False:
                 raise ValueError('\"group\" must be set to true when using method in group mode')
-            tcr = x
-            res = pdist(tcr,metrix = lambda u,v : "insert something here" )
+            tcr = numerizeTCRSeq(x)
+            res = squareform(pdist(tcr,metric = lambda u,v : self.__aligner.align(numerizedTCRtoStr(u), numerizedTCRtoStr(v)).score ))
+            min_score = res.min()
+            max_score = res.max()
+            res -= min_score
+            res /= (max_score - min_score)
+
 
         return res
 
     def __str__(self):
         return self.__matrix
 
+if __name__ == "__main__":
+    a = sequenceAligner(matrix = "BLOSUM62", group = True)
+    b = np.array(["GLYYGQ","GLAAAQ"])
+    print(a.tcr_dist(b))
+    df_net = simple_distance(repertoire=immuneRepertoire(df, {uuid.uuid4().hex: len(df) }), distance=sequenceAligner(matrix= "BLOSUM62",group = True))
+    print(df_net)

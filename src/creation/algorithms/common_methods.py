@@ -24,11 +24,21 @@ def makeNumeric(aa_tcr):
 def numerizeTCRSeq(aa_tcr):
     return makeNumeric(equalizeTCRSeq(aa_tcr))
 
+def numerizedTCRtoStr(row):
+    toChar = np.vectorize(chr)
+    strRow = ''.join(toChar(row).tolist())
+    
+    return strRow[:strRow.find(' ')] 
+    
+
 if __name__ == "__main__":
     test = np.array(['aa','a','aaa'])
 
     print(equalizeTCRSeq(test))
     print(numerizeTCRSeq(test))
+    a = numerizeTCRSeq(test)
+    print(a[0,])
+    print(f'{numerizedTCRtoStr(a[0,])}b' )
 
     # test = equalizeTCRSeq(test)
 
