@@ -10,8 +10,9 @@ from src.creation.algorithms.simple_distance import simple_distance
 from src.creation.immuneRepertoire import immuneRepertoire
 from src.creation.algorithms.common_methods import split_tcr_column
 import uuid
+from src.creation.utils.pathManager import pathManager
 
-df = pd.read_csv("10k_PBMC_5pv2_nextgem_Chromium_Controller_10k_PBMC_5pv2_nextgem_Chromium_Controller_vdj_t_clonotypes.csv").head(1000)
+df = pd.read_csv(pathManager().testDataPath / "bigTest.csv").head(1000)
 df.name = "aaa"
 df['tcra_aa'] = df['cdr3s_aa'].apply(lambda x: split_tcr_column(x, subunit="TRA"))
 df['tcrb_aa'] = df['cdr3s_aa'].apply(lambda x: split_tcr_column(x, subunit="TRB"))
