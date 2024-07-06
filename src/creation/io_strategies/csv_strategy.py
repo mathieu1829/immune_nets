@@ -22,7 +22,7 @@ class csv_strategy():
             names.append(path.split('/')[-1])
             if checkUUID(newUUID):
                 sampleIDs[newUUID] = dfSize
-                df_list[-1]["sampleID"] = np.array([newUUID] * df_list[-1].shape[0])
+                # df_list[-1]["sampleID"] = np.array([newUUID] * df_list[-1].shape[0])
             else:
                 newUUID = uuid.uuid4().hex
                 sampleIDs[newUUID] = dfSize
