@@ -9,18 +9,13 @@ from src.creation.algorithms.common_methods import numerizeTCRSeq
 import pandas as pd
 import numpy as np
 from src.creation.algorithms.simple_distance import simple_distance
-from src.creation.immuneRepertoire import immuneRepertoire
 from src.creation.algorithms.common_methods import split_tcr_column
 import uuid
 import logging
 from src.creation.utils.pathManager import pathManager
+from src.creation.io_strategies.test_csv_strategy import *
 
-df = pd.read_csv(pathManager().testDataPath / "bigTest.csv").head(1000)
-df.name = "aaa"
-df['tcra_aa'] = df['cdr3s_aa'].apply(lambda x: split_tcr_column(x, subunit="TRA"))
-df['tcrb_aa'] = df['cdr3s_aa'].apply(lambda x: split_tcr_column(x, subunit="TRB"))
-
-logger = logging.getLogger(__name__)
+path = pathManager().testDataPath / "bigTest.csv"
 
 
 class sequenceAligner:
@@ -68,7 +63,7 @@ class sequenceAligner:
             res /= (max_score - min_score)
 
 
-        return res
+        return (-1 if self.negative == True else 1) * res
 
     def __str__(self):
         return self.__matrix
@@ -77,5 +72,5 @@ if __name__ == "__main__":
     a = sequenceAligner(matrix = "BLOSUM62", group = True)
     b = np.array(["GLYYGQ","GLAAAQ"])
     print(a.tcr_dist(b))
-    df_net = simple_distance(repertoire=immuneRepertoire(df, {uuid.uuid4().hex: len(df) }), distance=sequenceAligner(matrix= "BLOSUM62",group = True))
+    df_net = simple_distance(repertoire=test_csv_strategy().input(path), distance=sequenceAligner(matrix= "BLOSUM62",group = True))
     print(df_net)

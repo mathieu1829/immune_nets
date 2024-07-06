@@ -14,7 +14,9 @@ from src.creation.enums.matrices import *
 from src.creation.enums.utils import * 
 from src.creation.io_strategies.df_strategy import *
 from src.creation.immuneRepertoire import immuneRepertoire
-df = pd.read_csv("10k_PBMC_5pv2_nextgem_Chromium_Controller_10k_PBMC_5pv2_nextgem_Chromium_Controller_vdj_t_clonotypes.csv").head(1000)
+from src.creation.utils.pathManager import pathManager
+
+df = pd.read_csv(pathManager().testDataPath / "bigTest.csv").head(1000)
 df.name = "aaa"
 
 

@@ -13,13 +13,16 @@ class csv_strategy():
         df_list = []
         sampleIDs = {}
         dfSize = 0;
+        names = []
         for path in paths:
             sample_df =  pd.read_csv(path)
             df_list.append(sample_df)
-            hardcodeID = path.split('/')[-1][:32] 
+            newUUID = path.split('/')[-1][:32] 
             dfSize+=len(sample_df)
-            if checkUUID(hardcodeID):
-                sampleIDs[hardcodeID] = dfSize
+            names.append(path.split('/')[-1])
+            if checkUUID(newUUID):
+                sampleIDs[newUUID] = dfSize
+                df_list[-1]["sampleID"] = np.array([newUUID] * df_list[-1].shape[0])
             else:
                 newUUID = uuid.uuid4().hex
                 sampleIDs[newUUID] = dfSize
@@ -27,7 +30,9 @@ class csv_strategy():
                 newPath[-1] =  f'{newUUID}_{newPath[-1]}'
                 newPath = "/".join(newPath)
                 os.rename(path,newPath)
+            df_list[-1]["sampleID"] = np.array([newUUID] * df_list[-1].index)
         df = pd.concat(df_list)
+        df.name = "_".join(names)
         df['tcra_aa'] = df['cdr3s_aa'].apply(lambda x: split_tcr_column(x, subunit="TRA"))
         df['tcrb_aa'] = df['cdr3s_aa'].apply(lambda x: split_tcr_column(x, subunit="TRB"))
         return immuneRepertoire(clones = df, sampleIDs = sampleIDs)

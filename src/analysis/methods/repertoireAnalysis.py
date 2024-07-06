@@ -11,10 +11,10 @@ from src.creation.immuneRepertoire import immuneRepertoire
 from src.creation.algorithms.common_methods import *
 import igraph as ig
 import uuid
+from src.creation.utils.pathManager import pathManager
+from src.creation.io_strategies.test_csv_strategy import *
 
-
-df = pd.read_csv("10k_PBMC_5pv2_nextgem_Chromium_Controller_10k_PBMC_5pv2_nextgem_Chromium_Controller_vdj_t_clonotypes.csv").head(1000)
-df.name = "aaa"
+path = pathManager().testDataPath / "bigTest.csv"
 
 class repertoireAnalysis:
     def __init__(self,repertoire, minNodeCount=10, minCloneCount=100):
@@ -59,23 +59,9 @@ class repertoireAnalysis:
         self.public_cluster_count = len(public_clusters)
 
 
-        # immuneNet = simple_beta_distance(repertoire = repertoire,distance = negativeHammingDistance(),threshold = 1)
-        # df_net = immuneNet.network
-        # vertices = np.unique(df_net.to_numpy().flatten())
-        # net = ig.Graph(df_net.to_numpy())
-        # net.add_vertices(immuneNet.sampleSize - net.vcount())
-        # clusters = net.community_fastgreedy()
-        # clusters = list(clusters.as_clustering(clusters.optimal_count))
-        # clusters.sort(key = lambda x : len(x))
-        # private_clusters = clusters[-20:]
-        # for idx, cluster in enumerate(private_clusters):
-        #     private_clusters[idx] = np.delete(cluster, [ i for i,v in enumerate(cluster) if repertoire.clones.iloc[v]['frequency'] >= minCloneCount] )
-        # private_clusters = [i for i in private_clusters if len(i) and len(i)==1 ]
-        # private_count = sum([len(i) for i in private_clusters])
-        # private_cluster_count = len(private_clusters)
         
     def toList(self): 
         return [self.num_of_tcra, self.num_of_tcrb, self.num_of_all_tcr, self.unique_tcra_distribution, self.unique_tcrb_distribution, self.unique_all_tcr_distribution, self.simpson_index_tcra, self.simpson_index_tcrb, self.simpson_index_all_tcr, self.shannon_index_tcra, self.shannon_index_tcrb, self.shannon_index_all_tcr, self.public_count, self.public_cluster_count]
 
 if __name__ == "__main__":
-    print(repertoireAnalysis(immuneRepertoire(df, {uuid.uuid4().hex:len(df)})))
+    print(repertoireAnalysis(test_csv_strategy().input(path)))

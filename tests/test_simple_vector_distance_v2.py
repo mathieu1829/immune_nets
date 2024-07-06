@@ -9,22 +9,16 @@ from src.creation.algorithms.simple_vector_distance_v2 import *
 from src.creation.enums.matrices import *
 from src.creation.enums.utils import * 
 from src.creation.distance.alignment import sequenceAligner
-from src.creation.io_strategies.df_strategy import *
+from src.creation.io_strategies.test_csv_strategy import *
 class TestSimpleVectorDistance(unittest.TestCase):
 
     @classmethod
     def setUpClass(self):
-        path = Path(__file__).parent / "test_data/test_clonotypes.csv"
-        df = pd.read_csv(path)
-        df.name = "MyTest"
-        df['tcra_aa'] = df['cdr3s_aa'].apply(lambda x: split_tcr_column(x, subunit="TRA"))
-        df['tcrb_aa'] = df['cdr3s_aa'].apply(lambda x: split_tcr_column(x, subunit="TRB"))
-        self.df = df
-
+        self.path = Path(__file__).parent / "test_data/test_clonotypes.csv"
 
     def test_simple_vector_network(self):
         for dist in makeEnumDict(Matrices):
-            df_net = simple_vector_distance_v2(repertoire=immuneRepertoire(self.df, {uuid.uuid4().hex: len(self.df) }), distance=sequenceAligner(dist))
+            df_net = simple_vector_distance_v2(repertoire=test_csv_strategy().input(self.path), distance=sequenceAligner(dist))
             expected_df = pd.DataFrame(data={'r1': [16,17], 'r2': [15,16]})
             match dist:
                 case "PAM250":

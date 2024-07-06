@@ -8,18 +8,14 @@ from src.creation.distance.alignment import sequenceAligner
 from src.creation.algorithms.simple_distance import *
 from src.creation.enums.matrices import *
 from src.creation.enums.utils import * 
-from src.creation.io_strategies.df_strategy import *
+from src.creation.io_strategies.test_csv_strategy import *
 from src.creation.immuneRepertoire import immuneRepertoire
 class TestSimpleDistance(unittest.TestCase):
 
     @classmethod
     def setUpClass(self):
-        path = Path(__file__).parent / "test_data/test_clonotypes.csv"
-        df = pd.read_csv(path)
-        df.name = "MyTest"
-        df['tcra_aa'] = df['cdr3s_aa'].apply(lambda x: split_tcr_column(x, subunit="TRA"))
-        df['tcrb_aa'] = df['cdr3s_aa'].apply(lambda x: split_tcr_column(x, subunit="TRB"))
-        self.df = df
+        self.path = Path(__file__).parent / "test_data/test_clonotypes.csv"
+        
 
     def test_tcr_alig_identical_strings(self):
 
@@ -41,11 +37,18 @@ class TestSimpleDistance(unittest.TestCase):
     def test_simple_distance_networks(self):
         for dist in makeEnumDict(Matrices):
             print(f"testing distance: {dist}")
-            df_net = simple_distance(repertoire=immuneRepertoire(self.df, {uuid.uuid4().hex: len(self.df) }), distance=sequenceAligner(dist))
+            df_net = simple_distance(repertoire=test_csv_strategy().input(self.path), distance=sequenceAligner(dist))
 
             match dist:
                 case "PAM250":
                     expected_df = pd.DataFrame(data={'r1': [16,17,17], 'r2': [15,15,16]}) 
+                    # print(test_csv_strategy().input(self.path).clones) 
+                    # print(df_net.network)
+                    # new_clonotypes = test_csv_strategy().input(self.path).clones.iloc[np.unique(df_net.network.to_numpy() + 1)]
+                    # new_clonotypes.name = test_csv_strategy().input(self.path).clones.name 
+                    # new_repertoire = immuneRepertoire(clones=new_clonotypes,sampleIDs={ i:(new_clonotypes["sampleID"].to_numpy() == i).sum() for i in np.unique(new_clonotypes["sampleID"].to_numpy())}) 
+                    # second_df_net = simple_distance(repertoire=new_repertoire, distance = sequenceAligner(dist))
+                    # print(second_df_net.network)
                     # expected_df = pd.DataFrame(data={'r1': [15,15,15,15,16,16,16,16,16,17,17,17,17,17,17], 'r2': [15,15,16,]}) 
                 case "PAM30":
                     expected_df = pd.DataFrame(data={'r1': [16], 'r2': [15]}) 
