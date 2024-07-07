@@ -42,14 +42,6 @@ class TestSimpleDistance(unittest.TestCase):
             match dist:
                 case "PAM250":
                     expected_df = pd.DataFrame(data={'r1': [16,17,17], 'r2': [15,15,16]}) 
-                    # print(test_csv_strategy().input(self.path).clones) 
-                    # print(df_net.network)
-                    # new_clonotypes = test_csv_strategy().input(self.path).clones.iloc[np.unique(df_net.network.to_numpy() + 1)]
-                    # new_clonotypes.name = test_csv_strategy().input(self.path).clones.name 
-                    # new_repertoire = immuneRepertoire(clones=new_clonotypes,sampleIDs={ i:(new_clonotypes["sampleID"].to_numpy() == i).sum() for i in np.unique(new_clonotypes["sampleID"].to_numpy())}) 
-                    # second_df_net = simple_distance(repertoire=new_repertoire, distance = sequenceAligner(dist))
-                    # print(second_df_net.network)
-                    # expected_df = pd.DataFrame(data={'r1': [15,15,15,15,16,16,16,16,16,17,17,17,17,17,17], 'r2': [15,15,16,]}) 
                 case "PAM30":
                     expected_df = pd.DataFrame(data={'r1': [16], 'r2': [15]}) 
                 case _:
