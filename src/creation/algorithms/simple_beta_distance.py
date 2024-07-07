@@ -30,8 +30,8 @@ def simple_beta_distance(repertoire, distance, threshold = 0.8, **kwargs):
     #     self_score = dist_al_trcb[x][x]
     #     for y in range(0, len(dist_al_trcb)):
     #         dist_al_trcb[x][y] /= self_score
-    print("distnace matrix")
-    print(dist_al_trcb)
+    # print("distnace matrix")
+    # print(dist_al_trcb)
 
     dist_al_trcb = np.tril(dist_al_trcb, k=-1)
     for i in range(len(dist_al_trcb)):

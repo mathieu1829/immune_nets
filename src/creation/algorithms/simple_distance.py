@@ -29,8 +29,8 @@ def simple_distance(repertoire, distance, threshold = 0.2, **kwargs):
     else:
         # print("is group")
         dist_al_trcb = (distanceFun(tcr_npa[:,0]) + distanceFun(tcr_npa[:,1]))/2
-    print("distnace matrix")
-    print(dist_al_trcb)
+    # print("distnace matrix")
+    # print(dist_al_trcb)
     dist_al_trcb = np.tril(dist_al_trcb, k=-1)
     for i in range(len(dist_al_trcb)):
         for j in range(i,len(dist_al_trcb)):
