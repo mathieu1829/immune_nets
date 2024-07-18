@@ -2,11 +2,9 @@ import numpy as np
 import pandas as pd
 from src.creation.io_strategies.csv_strategy import csv_strategy
 from src.creation.distance.hamming import hammingDistance 
-from src.creation.distance.groupHamming import groupHammingDistance 
-from src.creation.distance.groupLevenshtein import groupLevenshteinDistance 
+from src.creation.distance.levenshtein import levenshteinDistance 
 from src.creation.algorithms.simple_beta_distance import simple_beta_distance
 from src.creation.io_strategies.df_strategy import df_strategy
-from src.creation.distance.negativeHamming import negativeHammingDistance
 from src.creation.immuneRepertoire import immuneRepertoire
 from src.creation.algorithms.common_methods import *
 import igraph as ig
@@ -42,7 +40,7 @@ class repertoireAnalysis:
 
         ### if no graph as been provided create one
         ### public cluster creation
-        immuneNet = simple_beta_distance(repertoire = repertoire,distance = groupLevenshteinDistance(),threshold = 2)
+        immuneNet = simple_beta_distance(repertoire = repertoire,distance = levenshteinDistance(group=True),threshold = 2)
         df_net = immuneNet.network
         print(df_net)
         vertices = np.unique(df_net.to_numpy().flatten())
