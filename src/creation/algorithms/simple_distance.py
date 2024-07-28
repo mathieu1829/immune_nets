@@ -5,34 +5,38 @@ import logging
 import pandas as pd
 from src.creation.algorithms.common_methods import *
 from src.creation.algorithms.algorithm import *
+from src.creation.immuneNetwork import immuneNetwork
 
-class simple_distance(algorithm):
-    aligner = PairwiseAligner()
-    def creationAlgorithm(self,clonotypes, matrix, **kwargs):
-        self.aligner.substitution_matrix = substitution_matrices.load(matrix)
-        tcr_npa = clonotypes[["tcra_aa", "tcrb_aa"]].dropna().to_numpy()
-        dist_al_trcb = np.zeros(np.shape(tcr_npa)[0] * np.shape(tcr_npa)[0]).reshape(np.shape(tcr_npa)[0],
-                                                                                     np.shape(tcr_npa)[0])
-        dist_al_trcb += -1
+
+@algorithm
+def simple_distance(repertoire, distance, threshold = 0.2, **kwargs):
+    clonotypes = repertoire.clones
+    distanceFun = distance.tcr_dist
+    tcr_npa = clonotypes[["tcra_aa", "tcrb_aa"]].dropna().to_numpy()
+    dist_al_trcb = np.zeros(np.shape(tcr_npa)[0] * np.shape(tcr_npa)[0]).reshape(np.shape(tcr_npa)[0],
+                                                                                 np.shape(tcr_npa)[0])
+    dist_al_trcb += -1
+    if distance.group == False:
         matrix_len = len(dist_al_trcb)
         for x in range(0, matrix_len):
             logging.info(str(x) + " out of str " + str(matrix_len) + "rows process in triangular similarity matrix")
             for y in range(0 + x, matrix_len):
-                dist_al_trcb[x][y] = tcr_alig(tcr_npa[x][0], tcr_npa[y][0],self.aligner) + tcr_alig(tcr_npa[x][1], tcr_npa[y][1],self.aligner)
+                dist_al_trcb[x][y] = (distanceFun(tcr_npa[x][0], tcr_npa[y][0]) + distanceFun(tcr_npa[x][1], tcr_npa[y][1]))/2
                 dist_al_trcb[y][x] = dist_al_trcb[x][y]
+    else:
+        dist_al_trcb = (distanceFun(tcr_npa[:,0]) + distanceFun(tcr_npa[:,1]))/2
+    # print("distnace matrix")
+    # print(dist_al_trcb)
+    dist_al_trcb = np.tril(dist_al_trcb, k=-1)
+    for i in range(len(dist_al_trcb)):
+        for j in range(i,len(dist_al_trcb)):
+            dist_al_trcb[i,j] = float('INF')
+    matrix_cutoff = np.where(dist_al_trcb < threshold)
 
+    d = {'r1': matrix_cutoff[0], 'r2': matrix_cutoff[1]}
+    df_net = pd.DataFrame(data=d)
+    df_net.name = clonotypes.name
+    immuneNet = immuneNetwork(df_net, "simple_distance", repertoire.sampleIDs,str(distance) , threshold, len(clonotypes)  ) 
 
-        threshold = 0.8 # todo -> treat as parameter
-        for x in range(0, len(dist_al_trcb)):
-            self_score = dist_al_trcb[x][x]
-            for y in range(0, len(dist_al_trcb)):
-                dist_al_trcb[x][y] /= self_score
-
-        dist_al_trcb = np.tril(dist_al_trcb, k=-1)
-        matrix_cutoff = np.where(dist_al_trcb > threshold)
-
-        d = {'r1': matrix_cutoff[0], 'r2': matrix_cutoff[1]}
-        df_net = pd.DataFrame(data=d)
-        df_net.name = clonotypes.name
-        return df_net
+    return immuneNet
 

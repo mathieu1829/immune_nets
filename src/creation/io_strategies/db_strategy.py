@@ -26,15 +26,10 @@ class db_strategy():
         df['tcrb_aa'] = df['cdr3s_aa'].apply(lambda x: split_tcr_column(x, subunit="TRB"))
         df.name = "data"
         return df
-    @staticmethod
     def output(self, algo, **kwargs):
         load_dotenv(); 
-        username = os.environ["POSTGRES_USER"]
-        password = os.environ["POSTGRES_PASSWORD"]
-        database = os.environ["POSTGRES_DB"]
-        host = os.environ["POSTGRES_HOST"]
-        df = algo(self, **kwargs) 
-        conn = psycopg2.connect(user=username,password=password, port=password, host=host, database=database)
+        df = algo( **kwargs) 
+        conn = psycopg2.connect(user=self.username,password=self.password, port=self.port, host=self.host, database=self.database)
         cur = conn.cursor()
         cur.execute(f'''CREATE TABLE IF NOT EXISTS runs 
         (ID uuid PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -54,12 +49,12 @@ class db_strategy():
         if "matrix" in kwargs:
             matrix = kwargs["matrix"]
         
-        cur.execute(f'''INSERT INTO runs (name, method, distance) VALUES (\'{df.name}\', \'{self.__class__.__name__}\', \'{matrix}\') RETURNING id''')
+        cur.execute(f'''INSERT INTO runs (name, method, distance) VALUES (\'{df.network.name}\', \'{self.__class__.__name__}\', \'{matrix}\') RETURNING id''')
         # In case we decided to name runs with 
         # cur.execute(f'''INSERT INTO runs (name, matrix) VALUES (\'{self.__class__.__name__}\', \'{matrix}\') RETURNING id''')
         uuid = cur.fetchone()[0]
-        for idx in df.index:
-            cur.execute(f'''INSERT INTO results(r1,r2,run_id) VALUES ({df["r1"][idx]},{df["r2"][idx]},\'{uuid}')''')
+        for idx in df.network.index:
+            cur.execute(f'''INSERT INTO results(r1,r2,run_id) VALUES ({df.network["r1"][idx]},{df.network["r2"][idx]},\'{uuid}')''')
             conn.commit()
 
         conn.close()
