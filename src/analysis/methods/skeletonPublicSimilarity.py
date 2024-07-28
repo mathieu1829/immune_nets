@@ -11,7 +11,7 @@ from src.creation.io_strategies.test_csv_strategy import *
 path = pathManager().testDataPath / "bigTest.csv"
 
 
-def skeleton_similarity(repertoire, minNodeCount=1, minCloneCount=1, absoulute_public=False, minimum_coverage = 2):
+def skeleton_public_similarity(repertoire, minNodeCount=1, minCloneCount=1, absoulute_public=False, minimum_coverage = 2):
     immuneNet = simple_beta_distance(repertoire = repertoire,distance = levenshteinDistance(group = True),threshold = 2)
     df_net = immuneNet.network
     # print(df_net)

@@ -6,6 +6,8 @@ from src.creation.distance.levenshtein import levenshteinDistance
 from src.creation.algorithms.simple_beta_distance import simple_beta_distance
 from src.creation.io_strategies.df_strategy import df_strategy
 from src.creation.immuneRepertoire import immuneRepertoire
+from src.analysis.methods.skeletonPublicSimilarity import skeleton_public_similarity
+from src.analysis.methods.skeletonPrivateSimilarity import skeleton_private_similarity
 from src.creation.algorithms.common_methods import *
 import igraph as ig
 import uuid
@@ -40,26 +42,17 @@ class repertoireAnalysis:
 
         ### if no graph as been provided create one
         ### public cluster creation
-        immuneNet = simple_beta_distance(repertoire = repertoire,distance = levenshteinDistance(group=True),threshold = 2)
-        df_net = immuneNet.network
-        print(df_net)
-        vertices = np.unique(df_net.to_numpy().flatten())
-        net = ig.Graph(df_net.to_numpy())
-        net.add_vertices(immuneNet.sampleSize - net.vcount())
-        clusters = net.community_fastgreedy()
-        clusters = list(clusters.as_clustering(clusters.optimal_count))
-        clusters.sort(key = lambda x : len(x))
-        public_clusters = clusters[-20:]
-        for idx, cluster in enumerate(public_clusters):
-            public_clusters[idx] = np.delete(cluster, [ i for i,v in enumerate(cluster) if repertoire.clones.iloc[v]['frequency'] >= minCloneCount] )
-        public_clusters = [i for i in public_clusters if len(i) and len(i)>=minNodeCount ]
-        self.public_count = sum([len(i) for i in public_clusters])
-        self.public_cluster_count = len(public_clusters)
+        public_cluster = skeleton_public_similarity(repertoire=repertoire)
+        self.public_cluster_count = len(public_cluster)
+        self.public_count = sum([len(i) for i in public_cluster])
 
+        private_cluster = skeleton_private_similarity(repertoire=repertoire)
+        self.private_cluster_count = len(private_cluster)
+        self.private_count = sum([len(i) for i in private_cluster])
 
         
     def toList(self): 
-        return [self.num_of_tcra, self.num_of_tcrb, self.num_of_all_tcr, self.unique_tcra_distribution, self.unique_tcrb_distribution, self.unique_all_tcr_distribution, self.simpson_index_tcra, self.simpson_index_tcrb, self.simpson_index_all_tcr, self.shannon_index_tcra, self.shannon_index_tcrb, self.shannon_index_all_tcr, self.public_count, self.public_cluster_count]
+        return [self.num_of_tcra, self.num_of_tcrb, self.num_of_all_tcr, self.unique_tcra_distribution, self.unique_tcrb_distribution, self.unique_all_tcr_distribution, self.simpson_index_tcra, self.simpson_index_tcrb, self.simpson_index_all_tcr, self.shannon_index_tcra, self.shannon_index_tcrb, self.shannon_index_all_tcr, self.public_count, self.public_cluster_count, self.private_count, self.private_cluster_count]
 
 if __name__ == "__main__":
     print(repertoireAnalysis(test_csv_strategy().input(path)))
