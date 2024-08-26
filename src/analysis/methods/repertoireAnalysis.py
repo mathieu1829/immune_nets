@@ -57,15 +57,5 @@ class repertoireAnalysis:
 
 if __name__ == "__main__":
     repertoireStats =  repertoireAnalysis(test_csv_strategy().input(path))
-    repertoireStatsListStr = [str(i) for i in repertoireStats.toList()]
-    with open("expected_repertoire_stats", "wb") as f:
-        pickle.dump(repertoireStatsListStr,f)
-    with open("expected_repertoire_stats", "rb") as f:
-        repertoireStatsListStrImported = pickle.load(f)
-    print(repertoireStatsListStr)
-    print(repertoireStatsListStrImported)
-    print(repertoireStatsListStr == repertoireStatsListStrImported)
-    for i,j in zip(repertoireStatsListStr,repertoireStatsListStrImported):
-        print(i == j)
     print(repertoireStats)
     
