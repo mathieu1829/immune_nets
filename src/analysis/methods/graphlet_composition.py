@@ -15,6 +15,7 @@ from src.creation.enums.utils import *
 from src.creation.io_strategies.test_csv_strategy import *
 from src.creation.immuneRepertoire import immuneRepertoire
 from src.creation.utils.pathManager import pathManager
+import pickle 
 
 path = pathManager().testDataPath / "test_clonotypes.csv"
 
@@ -44,7 +45,7 @@ class graphletComposition:
         self.percolation_threshold = immuneNet.threshold
         self.density = self.graph.density()
         self.eccentrity = self.graph.eccentricity()
-        self.eigenvector_centrality = self.graph.eigenvector_centrality()
+        self.eigenvector_centrality = [round(i,6) for i in self.graph.eigenvector_centrality()]
         self.harmonic_centrality = self.graph.harmonic_centrality()
         self.giant_component = self.graph.components().giant().vcount()
         self.betweenness = self.graph.betweenness()
@@ -73,4 +74,12 @@ class graphletComposition:
 
 if __name__ == "__main__":
     df_net = simple_distance(repertoire=test_csv_strategy().input(path), distance=sequenceAligner("BLOSUM62"))
-    print(graphletComposition(df_net).toList())
+    graphletList = graphletComposition(df_net).toList()
+    graphletList = [ str(i) for i in graphletList]
+    file = open("expected_graphlet_composition", "wb")
+    pickle.dump(graphletList, file)
+    file.close()
+    file = open("expected_graphlet_composition", "rb")
+    graphletListImported = pickle.load(file)
+    file.close()
+    print(graphletList)
