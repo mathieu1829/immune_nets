@@ -75,11 +75,4 @@ class graphletComposition:
 if __name__ == "__main__":
     df_net = simple_distance(repertoire=test_csv_strategy().input(path), distance=sequenceAligner("BLOSUM62"))
     graphletList = graphletComposition(df_net).toList()
-    graphletList = [ str(i) for i in graphletList]
-    file = open("expected_graphlet_composition", "wb")
-    pickle.dump(graphletList, file)
-    file.close()
-    file = open("expected_graphlet_composition", "rb")
-    graphletListImported = pickle.load(file)
-    file.close()
     print(graphletList)

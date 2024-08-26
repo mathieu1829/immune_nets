@@ -31,7 +31,7 @@ class TestGraphletComposition(unittest.TestCase):
         return [str(i) for i in l]
 
 
-    def test_graphlet_coposition(self):
+    def test_graphlet_composition(self):
         graphStats = graphletComposition(self.df_net)
         graphStatsList = self.listToStr(graphStats.toList())
         # with open("expected_graphlet_composition","wb") as f:

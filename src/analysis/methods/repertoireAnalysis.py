@@ -13,6 +13,7 @@ import igraph as ig
 import uuid
 from src.creation.utils.pathManager import pathManager
 from src.creation.io_strategies.test_csv_strategy import *
+import pickle
 
 path = pathManager().testDataPath / "bigTest.csv"
 
@@ -55,4 +56,16 @@ class repertoireAnalysis:
         return [self.num_of_tcra, self.num_of_tcrb, self.num_of_all_tcr, self.unique_tcra_distribution, self.unique_tcrb_distribution, self.unique_all_tcr_distribution, self.simpson_index_tcra, self.simpson_index_tcrb, self.simpson_index_all_tcr, self.shannon_index_tcra, self.shannon_index_tcrb, self.shannon_index_all_tcr, self.public_count, self.public_cluster_count, self.private_count, self.private_cluster_count]
 
 if __name__ == "__main__":
-    print(repertoireAnalysis(test_csv_strategy().input(path)))
+    repertoireStats =  repertoireAnalysis(test_csv_strategy().input(path))
+    repertoireStatsListStr = [str(i) for i in repertoireStats.toList()]
+    with open("expected_repertoire_stats", "wb") as f:
+        pickle.dump(repertoireStatsListStr,f)
+    with open("expected_repertoire_stats", "rb") as f:
+        repertoireStatsListStrImported = pickle.load(f)
+    print(repertoireStatsListStr)
+    print(repertoireStatsListStrImported)
+    print(repertoireStatsListStr == repertoireStatsListStrImported)
+    for i,j in zip(repertoireStatsListStr,repertoireStatsListStrImported):
+        print(i == j)
+    print(repertoireStats)
+    
