@@ -19,7 +19,7 @@ from src.creation.utils.pathManager import pathManager
 from src.creation.distance.hamming import hammingDistance
 
 
-class TestRe[ertoireAnalysis](unittest.TestCase):
+class TestRepertoireAnalysis(unittest.TestCase):
 
     
     @classmethod
