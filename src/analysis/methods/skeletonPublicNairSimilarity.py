@@ -15,10 +15,14 @@ def skeleton_similarity(repertoire, minNodeCount=1, minCloneCount=1, absoulute_p
     prepared_clones = repertoire.clones.dropna(subset = ["tcra_aa", "tcrb_aa"]) 
     df_list = []
     dictIdx = {}
+
+    # Creating network and cluster analysis for each sample
     for sampleID in np.unique(prepared_clones["sampleID"]):
+
+        #creating network for selected sample
         sampleClones = prepared_clones.iloc[ prepared_clones["sampleID"].to_numpy() == sampleID]
         sampleClones.name = repertoire.clones.name
-        sampleRepertoire = immuneRepertoire(clones=sampleClones,sampleIDs={ i:(sampleClones["sampleID"].to_numpy() == i).sum() for i in np.unique(sampleClones["sampleID"].to_numpy())})
+        sampleRepertoire = immuneRepertoire(clones=sampleClones)
         immuneNet = simple_beta_distance(repertoire = sampleRepertoire,distance = levenshteinDistance(group = True),threshold = 2)
         df_net = immuneNet.network
         vertices = np.unique(df_net.to_numpy().flatten())
@@ -43,7 +47,7 @@ def skeleton_similarity(repertoire, minNodeCount=1, minCloneCount=1, absoulute_p
     new_clonotypes = pd.concat(df_list)
     # print(new_clonotypes)
     new_clonotypes.name = repertoire.clones.name
-    new_repertoire = immuneRepertoire(clones=new_clonotypes,sampleIDs={ i:(new_clonotypes["sampleID"].to_numpy() == i).sum() for i in np.unique(new_clonotypes["sampleID"].to_numpy())}) 
+    new_repertoire = immuneRepertoire(clones=new_clonotypes) 
     immuneNet = simple_beta_distance(repertoire = new_repertoire,distance = levenshteinDistance(group = True),threshold = 2)
     df_net = immuneNet.network
     # print(df_net)
