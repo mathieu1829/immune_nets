@@ -15,6 +15,7 @@ def skeleton_similarity(repertoire, minNodeCount=1, minCloneCount=1, absoulute_p
     prepared_clones = repertoire.clones.dropna(subset = ["tcra_aa", "tcrb_aa"]) 
     df_list = []
     dictIdx = {}
+    skeleton_clones = pd.DataFrame()
 
     # Creating network and cluster analysis for each sample
     for sampleID in np.unique(prepared_clones["sampleID"]):
@@ -25,51 +26,58 @@ def skeleton_similarity(repertoire, minNodeCount=1, minCloneCount=1, absoulute_p
         sampleRepertoire = immuneRepertoire(clones=sampleClones)
         immuneNet = simple_beta_distance(repertoire = sampleRepertoire,distance = levenshteinDistance(group = True),threshold = 2)
         df_net = immuneNet.network
+
+        #performing clustering
         vertices = np.unique(df_net.to_numpy().flatten())
         net = ig.Graph(df_net.to_numpy())
         net.add_vertices(immuneNet.sampleSize - net.vcount())
         clusters = net.community_fastgreedy()
         clusters = list(clusters.as_clustering(clusters.optimal_count))
+
+        #filtering out k=20 largerst clusters
         clusters.sort(key = lambda x : len(x))
         public_clusters = clusters[-20:]
         # print(public_clusters)
-        for idx, cluster in enumerate(public_clusters):
-            public_clusters[idx] = np.delete(cluster, [ i for i,v in enumerate(cluster) if repertoire.clones.iloc[v]['frequency'] < minCloneCount] )
-        public_clusters = [i for i in public_clusters if len(i) and len(i)>=minNodeCount ]
-        cluster_candidates = [e for i in public_clusters for e in i]
-        filteredClonotypes = prepared_clones.iloc[cluster_candidates] 
-        df_list.append(filteredClonotypes)
-        dictLen = len(dictIdx)
-        for i,j in enumerate(cluster_candidates):
-            dictIdx[i+dictLen] = j
-    
-    # print(cluster_candidates)
-    new_clonotypes = pd.concat(df_list)
-    # print(new_clonotypes)
-    new_clonotypes.name = repertoire.clones.name
-    new_repertoire = immuneRepertoire(clones=new_clonotypes) 
-    immuneNet = simple_beta_distance(repertoire = new_repertoire,distance = levenshteinDistance(group = True),threshold = 2)
-    df_net = immuneNet.network
-    # print(df_net)
-    vertices = np.unique(df_net.to_numpy().flatten())
-    net = ig.Graph(df_net.to_numpy())
-    net.add_vertices(immuneNet.sampleSize - net.vcount())
-    clusters = net.community_fastgreedy()
-    clusters = list(clusters.as_clustering(clusters.optimal_count))
-    clusters.sort(key = lambda x : len(x))
-    public_clusters = clusters[-20:]
-    for idx, cluster in enumerate(public_clusters):
-        public_clusters[idx] = np.delete(cluster, [ i for i,v in enumerate(cluster) if new_clonotypes.iloc[v]['frequency'] < minCloneCount] )
-    public_clusters = [i for i in public_clusters if len(i) and len(i)>=minNodeCount ]
-    if absoulute_public == True :
-        num_of_samples = np.unique(new_clonotypes["sampleID"].to_numpy()).shape[0]
-        public_clusters = [i for i in public_clusters if np.unique(new_clonotypes.iloc[i]["sampleID"].to_numpy()).shape[0] == num_of_samples]
-    else:
-        public_clusters = [i for i in public_clusters if np.unique(new_clonotypes.iloc[i]["sampleID"].to_numpy()).shape[0] >= minimum_coverage]
-    for idx,cluster in enumerate(public_clusters):
-            public_clusters[idx] = np.array([dictIdx[i] for i in cluster])
 
-    return public_clusters
+        skeleton_clones = prepared_clones.iloc[[ cluster[prepared_clones.iloc[cluster]['frequency'].to_numpy().argmax()] for cluster in public_clusters]]
+        
+        # for idx, cluster in enumerate(public_clusters):
+        #     public_clusters[idx] = np.delete(cluster, [ i for i,v in enumerate(cluster) if repertoire.clones.iloc[v]['frequency'] < minCloneCount] )
+        # public_clusters = [i for i in public_clusters if len(i) and len(i)>=minNodeCount ]
+        # cluster_candidates = [e for i in public_clusters for e in i]
+        # filteredClonotypes = prepared_clones.iloc[cluster_candidates] 
+        # df_list.append(filteredClonotypes)
+        # dictLen = len(dictIdx)
+        # for i,j in enumerate(cluster_candidates):
+        #     dictIdx[i+dictLen] = j
+    
+    # # print(cluster_candidates)
+    # new_clonotypes = pd.concat(df_list)
+    # # print(new_clonotypes)
+    # new_clonotypes.name = repertoire.clones.name
+    # new_repertoire = immuneRepertoire(clones=new_clonotypes) 
+    # immuneNet = simple_beta_distance(repertoire = new_repertoire,distance = levenshteinDistance(group = True),threshold = 2)
+    # df_net = immuneNet.network
+    # # print(df_net)
+    # vertices = np.unique(df_net.to_numpy().flatten())
+    # net = ig.Graph(df_net.to_numpy())
+    # net.add_vertices(immuneNet.sampleSize - net.vcount())
+    # clusters = net.community_fastgreedy()
+    # clusters = list(clusters.as_clustering(clusters.optimal_count))
+    # clusters.sort(key = lambda x : len(x))
+    # public_clusters = clusters[-20:]
+    # for idx, cluster in enumerate(public_clusters):
+    #     public_clusters[idx] = np.delete(cluster, [ i for i,v in enumerate(cluster) if new_clonotypes.iloc[v]['frequency'] < minCloneCount] )
+    # public_clusters = [i for i in public_clusters if len(i) and len(i)>=minNodeCount ]
+    # if absoulute_public == True :
+    #     num_of_samples = np.unique(new_clonotypes["sampleID"].to_numpy()).shape[0]
+    #     public_clusters = [i for i in public_clusters if np.unique(new_clonotypes.iloc[i]["sampleID"].to_numpy()).shape[0] == num_of_samples]
+    # else:
+    #     public_clusters = [i for i in public_clusters if np.unique(new_clonotypes.iloc[i]["sampleID"].to_numpy()).shape[0] >= minimum_coverage]
+    # for idx,cluster in enumerate(public_clusters):
+    #         public_clusters[idx] = np.array([dictIdx[i] for i in cluster])
+    #
+    # return public_clusters
 
 if __name__ == "__main__":
    print(skeleton_similarity(test_csv_strategy().input(path),absoulute_public=True))
