@@ -1,0 +1,12 @@
+# vim: set fenc=utf-8 ft=taskini:
+# see: https://github.com/skywind3000/asynctasks.vim/wiki/Task-Config
+
+# define a new task named "file-build"
+# save file before execute
+
+[test_public_clusters]
+command=python -m unittest tests/test_skeletonPublicNairSimilarity.py 
+cwd=$(VIM_ROOT)
+output=terminal
+pos=my_toggleterm
+save=1

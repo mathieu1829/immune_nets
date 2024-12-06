@@ -3,7 +3,7 @@ import pandas as pd
 from pathlib import Path
 import unittest
 from src.creation.io_strategies.test_csv_strategy import test_csv_strategy
-from analysis.methods.skeletonPublicNairSimilarity import skeleton_similarity
+from src.analysis.methods.skeletonPublicNairSimilarity import skeleton_similarity
 
 
 class testSkeletonPublicNairSimilarity(unittest.TestCase):
@@ -13,7 +13,9 @@ class testSkeletonPublicNairSimilarity(unittest.TestCase):
         self.path = Path(__file__).parent / "test_data/bigTest.csv"
         self.path2 = Path(__file__).parent / "test_data/bigTest.csv"
         self.repertoires = test_csv_strategy().input(self.path)
-        self.repertoires.clones = self.repertoires.clones.append(test_csv_strategy().input(self.path2))
+        self.repertoires.clones = pd.concat([self.repertoires.clones,test_csv_strategy().input(self.path2).clones],ignore_index=True)
+        self.repertoires.clones.name = "testName"
+        
 
     def test_skeletonPublicNairSimilarity(self):
         skeleton_similarity(self.repertoires)

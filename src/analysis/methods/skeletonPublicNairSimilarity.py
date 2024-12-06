@@ -40,6 +40,7 @@ def skeleton_similarity(repertoire, minNodeCount=1, minCloneCount=1, absoulute_p
         # print(public_clusters)
 
         skeleton_clones = prepared_clones.iloc[[ cluster[prepared_clones.iloc[cluster]['frequency'].to_numpy().argmax()] for cluster in public_clusters]]
+        print(skeleton_clones)
         
         # for idx, cluster in enumerate(public_clusters):
         #     public_clusters[idx] = np.delete(cluster, [ i for i,v in enumerate(cluster) if repertoire.clones.iloc[v]['frequency'] < minCloneCount] )
