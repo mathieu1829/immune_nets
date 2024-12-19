@@ -18,6 +18,25 @@ class testSkeletonPublicNairSimilarity(unittest.TestCase):
         
 
     def test_skeletonPublicNairSimilarity(self):
+
+        tcrb_lenghts = test_csv_strategy().input(self.path).clones["tcrb_aa"].dropna().apply(lambda x : len(x))
+        tcra_lenghts = test_csv_strategy().input(self.path).clones["tcra_aa"].dropna().apply(lambda x : len(x))
+        print(f"""
+        tcrb:
+            mean lenght: {np.mean(tcrb_lenghts)}
+            std: {np.std(tcrb_lenghts)}
+            max: {np.max(tcrb_lenghts)}
+            min: {np.min(tcrb_lenghts)}
+        """
+        )
+        print(f"""
+        tcra:
+            mean lenght: {np.mean(tcra_lenghts)}
+            std: {np.std(tcra_lenghts)}
+            max: {np.max(tcra_lenghts)}
+            min: {np.min(tcra_lenghts)}
+        """
+        )
         skeleton_similarity(self.repertoires)
 
 
