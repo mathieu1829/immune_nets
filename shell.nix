@@ -20,7 +20,7 @@ let
         logging_collector = on
         log_min_error_statement = error
       '';
-  fhs = pkgs.buildFHSUserEnv {
+  fhs = pkgs.buildFHSEnv {
     name = "my-fhs-environment";
 
     targetPkgs = _: [

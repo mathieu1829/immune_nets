@@ -1,5 +1,6 @@
 from Bio.Align import PairwiseAligner
 from Bio.Align import substitution_matrices
+from Bio.Seq import Seq
 import numpy as np
 from scipy.spatial.distance import pdist
 from scipy.spatial.distance import squareform
@@ -45,6 +46,8 @@ class sequenceAligner:
         if ref is not None:
             if self.group == True:
                 raise ValueError('\"group\" must not be True, when using method in single comparison mode')
+            x = Seq(x)
+            ref = Seq(ref)
             self_score_x = self.__aligner.align(x,x)
             self_score_ref = self.__aligner.align(ref,ref)
 

@@ -1,8 +1,9 @@
 import pandas as pd
 import numpy as np
 import random
+from src.creation.distance.alignment import sequenceAligner
 
-class testGenerator:
+class cdr3SeqGeneratorUtil:
     def generate_random_cdr3(self,min_length = 11,max_length=16):
         amino_acids = "ACDEFGHIKLMNPQRSTVWY"
         random_length = random.randint(min_length, max_length)
@@ -16,10 +17,30 @@ class testGenerator:
         return "".join(seq)
 
 
+
+
+
+def createRepertoireDataFrame(self, tcrA=None, tcrB=None, frequencies=None, n=None):
+    if tcrA is None:
+        if tcrB is None and n is None :
+            raise ValueError("Length must be specified to generate repertoire")
+        if tcrB is not None and n is not None :
+            raise ValueError("n must not be set if tcrB repertoire set")
+
+        if tcrB is not None :
+            tcra = self.generateRelatedSubset
+
+
+
+
+
+
+
 if __name__ == "__main__":
-    testGen = testGenerator()
+    testGen = cdr3SeqGeneratorUtil()
     randomCDR3 = testGen.generate_random_cdr3()
     print(f"random cdr3: {randomCDR3}")
+    print("Mutated random cdr3:")
     for _ in range(10):
-        print(f"mutated random cdr3: {testGen.mutateCDR3(randomCDR3)}")
+        print(testGen.mutateCDR3(randomCDR3))
     

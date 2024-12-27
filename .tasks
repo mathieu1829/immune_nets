@@ -10,3 +10,10 @@ cwd=$(VIM_ROOT)
 output=terminal
 pos=my_toggleterm
 save=1
+
+[test_tcrGenerationPipeline]
+command=python -m unittest tests/test_tcrGenerationPipeline.py 
+cwd=$(VIM_ROOT)
+output=terminal
+pos=my_toggleterm
+save=1
