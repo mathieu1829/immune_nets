@@ -3,6 +3,9 @@ from tests.utils.cdr3SetGenerator import *
 import numpy as np
 import inspect
 from tests.utils.repertoireDataFrameTransformer import repertoireDataFrameTransformer
+from functools import wraps
+from inspect import signature
+
 
 
 class tcrGenerationPipeline:
@@ -70,7 +73,110 @@ class tcrGenerationPipeline:
         transform = repertoireDataFrameTransformer().transform
         return [ transform(repertoire) for repertoire in self.repertoires]
 
+    def _assingWorkingRange(self, idx = None, rangeStart=None, rangeEnd=None):
+        if idx is not None:
+            return self.repertoires[idx:idx+1]
+        elif rangeStart is not None and rangeEnd is not None:
+            return self.repertoires[rangeStart:rangeEnd+1]
+        else:
+            return self.repertoires
 
+    def _appendToTcr(self, repertoire, defaultGenerator, n, repIdx, repertoireWorkingRange, receptorInput, cloneStatus, repertoireEntryName):
+        repertoireEntry = getattr(repertoire,repertoireEntryName)
+        # Clone first entry if cloning is enable for given tcr
+        if cloneStatus == True and repIdx != 0 :
+            setattr(repertoire, repertoireEntryName, np.concatenate((repertoireEntry,getattr(repertoireWorkingRange[0],repertoireEntryName)[-n:])))
+            return
+
+        # Checking for alternate version of cdr3 sequences, they can be passed either as a set of sequences (np.array) or function used the generate a set 
+
+        # if an alternate version is a method use it to generate cdr3
+        if inspect.ismethod(receptorInput) :
+            setattr(repertoire, repertoireEntryName, np.concatenate((repertoireEntry,receptorInput(n))))
+            return
+
+        # if an alternate version is a list or array then just concatenate it
+        if receptorInput is not None:
+            setattr(repertoire, repertoireEntryName, np.concatenate((repertoireEntry,receptorInput)))
+            return
+
+        # if no alternate was provide it generate with default function
+        if isinstance(defaultGenerator,np.ndarray):
+            setattr(repertoire, repertoireEntryName, np.concatenate((repertoireEntry,defaultGenerator)))
+            return
+
+        setattr(repertoire, repertoireEntryName, np.concatenate((repertoireEntry,defaultGenerator(n))))
+
+    def _makeInclusiveClone(self, n, repertoire, cloneTcrInclusive):
+            if cloneTcrInclusive == True:
+                repertoire.tcrB[-n:] = repertoire.tcrA[-n:].copy()
+            elif cloneTcrInclusive == False:
+                repertoire.tcrA[-n:] = repertoire.tcrB[-n:].copy()
+
+    def _generateRightFrequencies(self, n, repIdx, frequencies):
+            if inspect.ismethod(frequencies) :
+                return frequencies(n)
+            elif isinstance(frequencies,np.ndarray) :
+                return frequencies
+            elif isinstance(frequencies, list) and isinstance(frequencies[0],np.ndarray):
+                return frequencies[repIdx]
+            elif isinstance(frequencies, list) and inspect.ismethod(frequencies[0]):
+                return frequencies[repIdx](n)
+            return np.array([])
+
+
+    def generateRepertoire(
+            self,
+            n,
+            frequencies,
+            defaultGenerator,
+            idx=None, 
+            rangeStart=None, 
+            rangeEnd=None,
+            tcrA=None,
+            tcrB=None,
+            cloneTcrA=False,
+            cloneTcrB=False,
+            cloneTcrInclusive=None,
+            split=False):
+
+        self._validateGeneratorRepertoireRange(n, idx, rangeStart, rangeEnd)
+        
+        # Assign correct working range
+        repertoireWorkingRange = self._assingWorkingRange(idx,rangeStart,rangeEnd)
+
+        self._validateGeneratorParameters(n,frequencies,tcrA,tcrB, repertoireWorkingRange)
+
+        defaultData = np.array([])
+        if split:
+            defaultData = defaultGenerator(n*len(repertoireWorkingRange))
+            defaultData = [ defaultData[i*n:i*n+n] for i in range(len(repertoireWorkingRange))]
+
+
+        # Iterate through repertoires in range
+        for repIdx, repertoire in enumerate(repertoireWorkingRange):
+            # consider the entry alternative tcr entry, cloning status and entry in repertoire for given receptor type
+            for receptorInput,cloneStatus, repertoireEntryName  in zip([tcrA,tcrB], [cloneTcrA,cloneTcrB], ["tcrA", "tcrB"]):
+                self._appendToTcr(repertoire=repertoire,
+                                  defaultGenerator=defaultGenerator if not split else defaultData[repIdx],
+                                  n=n,
+                                  repIdx=repIdx,
+                                  repertoireWorkingRange=repertoireWorkingRange,
+                                  receptorInput=receptorInput,
+                                  cloneStatus=cloneStatus,
+                                  repertoireEntryName=repertoireEntryName)
+                
+            
+            # handling incluse tcr cloning
+            self._makeInclusiveClone(n, repertoire,cloneTcrInclusive) 
+            
+            # handling frequency generation
+            addedFrequencies = self._generateRightFrequencies(n,repIdx,frequencies)
+            repertoire.frequency = np.concatenate((repertoire.frequency, addedFrequencies))
+
+        return self
+    
+    
     def generateRandomRepertoire(
             self,
             n,
@@ -83,67 +189,49 @@ class tcrGenerationPipeline:
             cloneTcrA=False,
             cloneTcrB=False,
             cloneTcrInclusive=None):
+        return self.generateRepertoire(
+                n=n,
+                frequencies=frequencies,
+                defaultGenerator=cdr3SetGenerator().generateRandomSubset,
+                idx=idx, 
+                rangeStart=rangeStart, 
+                rangeEnd=rangeEnd,
+                tcrA=tcrA,
+                tcrB=tcrB,
+                cloneTcrA=cloneTcrA,
+                cloneTcrB=cloneTcrB,
+                cloneTcrInclusive=cloneTcrInclusive)
 
-        self._validateGeneratorRepertoireRange(n, idx, rangeStart, rangeEnd)
-        
-        # Assign correct working range
-        if idx is not None:
-            repertoireWorkingRange = self.repertoires[idx:idx+1]
-        elif rangeStart is not None and rangeEnd is not None:
-            repertoireWorkingRange = self.repertoires[rangeStart,rangeEnd+1]
-        else:
-            repertoireWorkingRange = self.repertoires
+    def generateRelatedRepertoire(
+            self,
+            n,
+            frequencies,
+            distance,
+            distanceFun,
+            idx=None, 
+            rangeStart=None, 
+            rangeEnd=None,
+            tcrA=None,
+            tcrB=None,
+            cloneTcrA=False,
+            cloneTcrB=False,
+            cloneTcrInclusive=None,
+            split=False):
+        def wrappedRelatedSubsetGenerator(n: int) -> np.ndarray:
+            return cdr3SetGenerator().generateRelatedSubset(n=n,distance=distance,distanceFun=distanceFun)
 
-        self._validateGeneratorParameters(n,frequencies,tcrA,tcrB, repertoireWorkingRange)
+        return self.generateRepertoire(
+                n=n,
+                frequencies=frequencies,
+                defaultGenerator=wrappedRelatedSubsetGenerator,
+                idx=idx, 
+                rangeStart=rangeStart, 
+                rangeEnd=rangeEnd,
+                tcrA=tcrA,
+                tcrB=tcrB,
+                cloneTcrA=cloneTcrA,
+                cloneTcrB=cloneTcrB,
+                cloneTcrInclusive=cloneTcrInclusive,
+                split=split)
 
-        # Iterate through repertoires in range
-        for repIdx, repertoire in enumerate(repertoireWorkingRange):
-            # consider the entry alternative tcr entry, cloning status and entry in repertoire for given receptor type
-            for receptorInput,cloneStatus, repertoireEntryName  in zip([tcrA,tcrB], [cloneTcrA,cloneTcrB], ["tcrA", "tcrB"]):
-                repertoireEntry = getattr(repertoire,repertoireEntryName)
-                # Clone first entry if cloning is enable for given tcr
-                if cloneStatus == True and repIdx != 0 :
-                    setattr(repertoire, repertoireEntryName, np.concatenate((repertoireEntry,getattr(repertoireWorkingRange[0],repertoireEntryName)[-n])))
-                    continue
-
-                # Checking for alternate version of cdr3 sequences, they can be passed either as a set of sequences (np.array) or function used the generate a set 
-
-                # if an alternate version is a method use it to generate cdr3
-                if inspect.ismethod(receptorInput) :
-                    setattr(repertoire, repertoireEntryName, np.concatenate((repertoireEntry,receptorInput(n))))
-                    continue
-
-                # if an alternate version is a list or array then just concatenate it
-                if receptorInput is not None:
-                    setattr(repertoire, repertoireEntryName, np.concatenate((repertoireEntry,receptorInput)))
-                    continue
-
-                # if no alternate was provide it generate with default function
-                setattr(repertoire, repertoireEntryName, np.concatenate((repertoireEntry,cdr3SetGenerator().generateRandomSubset(n))))
-
-            
-            if cloneTcrA and cloneTcrB and repIdx != 0 :
-                continue
-            
-            # handling incluse tcr cloning
-            if cloneTcrInclusive == True:
-                repertoire.tcrB[-n:] = repertoire.tcrA[-n:].copy()
-            elif cloneTcrInclusive == False:
-                repertoire.tcrA[-n:] = repertoire.tcrB[-n:].copy()
-            
-            # handling frequency generation
-            addedFrequencies = np.array([])
-            if inspect.ismethod(frequencies) :
-                addedFrequencies = frequencies(n)
-            elif isinstance(frequencies,np.ndarray) :
-                addedFrequencies = frequencies
-            elif isinstance(frequencies, list) and isinstance(frequencies[0],np.ndarray):
-                addedFrequencies = frequencies[repIdx]
-            elif isinstance(frequencies, list) and inspect.ismethod(frequencies[0]):
-                addedFrequencies = frequencies[repIdx](n)
-            repertoire.frequency = np.concatenate((repertoire.frequency, addedFrequencies))
-
-
-
-        return self
 

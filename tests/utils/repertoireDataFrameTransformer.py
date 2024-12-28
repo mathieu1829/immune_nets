@@ -28,9 +28,5 @@ class repertoireDataFrameTransformer:
                 "inkt_evidence": [ 1 for i in range(len(repertoire.tcrA))], 
                 "mait_evidence": [ 1 for i in range(len(repertoire.tcrA))] 
                 } 
-        print(repertoire.tcrA) 
-        print(repertoire.tcrB) 
-        print(repertoire.frequency) 
-        print([len(i) for i in data])
         df = pd.DataFrame(data=data)
         return df

@@ -2,6 +2,7 @@ import unittest
 from tests.utils.tcrGenerationPipeline import *
 from tests.utils.frequencyGenerator import *
 from unittest.mock import MagicMock
+from src.creation.distance.alignment import sequenceAligner
 
 class TestTcrGenerationPipeline(unittest.TestCase):
 
@@ -150,7 +151,29 @@ class TestTcrGenerationPipeline(unittest.TestCase):
         tcrPipeline = tcrGenerationPipeline(1)
         freqGen = frequencyGenerator()
         rogueTcr = np.array(["AAAAAAAAAAA"])
-        print(tcrPipeline.generateRandomRepertoire(n=5,frequencies=freqGen.generateLowFrequencies).generateRandomRepertoire(n=3,frequencies=freqGen.generateVeryHighFrequencies).generateRandomRepertoire(n=1,frequencies=freqGen.generateSimulatedNaturalFrequencies,tcrA=rogueTcr).generateRandomRepertoire(n=1,frequencies=freqGen.generateSimulatedNaturalFrequencies,tcrB=rogueTcr).generateRandomRepertoire(n=1,frequencies=freqGen.generateSimulatedNaturalFrequencies,tcrA=rogueTcr,cloneTcrInclusive=True).toDataFrame()[0])
+        # print(tcrPipeline.generateRandomRepertoire(n=5,frequencies=freqGen.generateLowFrequencies)
+        #       .generateRandomRepertoire(n=3,frequencies=freqGen.generateVeryHighFrequencies)
+        #       .generateRandomRepertoire(n=1,frequencies=freqGen.generateSimulatedNaturalFrequencies,tcrA=rogueTcr)
+        #       .generateRandomRepertoire(n=1,frequencies=freqGen.generateSimulatedNaturalFrequencies,tcrB=rogueTcr)
+        #       .generateRandomRepertoire(n=1,frequencies=freqGen.generateSimulatedNaturalFrequencies,tcrA=rogueTcr,cloneTcrInclusive=True)
+        #       .toDataFrame()[0])
+
+        manyTcrPipeline = tcrGenerationPipeline(3)
+        # dfs = manyTcrPipeline.generateRandomRepertoire(n=5,frequencies=freqGen.generateLowFrequencies) \
+        #         .generateRandomRepertoire(n=2,frequencies=freqGen.generateLowFrequencies,idx=0) \
+        #         .generateRandomRepertoire(n=2,frequencies=freqGen.generateVeryHighFrequencies,rangeStart=1,rangeEnd=2) \
+        #         .generateRandomRepertoire(n=1,frequencies=freqGen.generateMediumFrequnencies, cloneTcrA=True) \
+        #         .generateRandomRepertoire(n=1,frequencies=freqGen.generateMediumFrequnencies, cloneTcrB=True) \
+        #         .generateRandomRepertoire(n=1,frequencies=freqGen.generateMediumFrequnencies, cloneTcrB=True, cloneTcrInclusive=False) \
+        #         .generateRandomRepertoire(n=1,frequencies=freqGen.generateMediumFrequnencies, cloneTcrB=True, cloneTcrA=True) \
+        #         .toDataFrame()
+
+        dfs = manyTcrPipeline.generateRelatedRepertoire(n=3,frequencies=freqGen.generateSimulatedNaturalFrequencies,distance=0.2, distanceFun=sequenceAligner("BLOSUM62").tcr_dist) \
+                .generateRelatedRepertoire(n=3,frequencies=freqGen.generateSimulatedNaturalFrequencies,distance=0.2, distanceFun=sequenceAligner("BLOSUM62").tcr_dist, split=True) \
+                .toDataFrame()
+
+        for df in dfs:
+            print(df)
 
         
 
