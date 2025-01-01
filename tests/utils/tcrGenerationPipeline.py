@@ -147,16 +147,19 @@ class tcrGenerationPipeline:
 
         self._validateGeneratorParameters(n,frequencies,tcrA,tcrB, repertoireWorkingRange)
 
-        defaultData = np.array([])
+        defaultDataAlpha = np.array([])
+        defaultDataBeta = np.array([])
         if split:
-            defaultData = defaultGenerator(n*len(repertoireWorkingRange))
-            defaultData = [ defaultData[i*n:i*n+n] for i in range(len(repertoireWorkingRange))]
+            defaultDataAlpha = defaultGenerator(n*len(repertoireWorkingRange))
+            defaultDataAlpha = [ defaultDataAlpha[i*n:i*n+n] for i in range(len(repertoireWorkingRange))]
+            defaultDataBeta = defaultGenerator(n*len(repertoireWorkingRange))
+            defaultDataBeta = [ defaultDataBeta[i*n:i*n+n] for i in range(len(repertoireWorkingRange))]
 
 
         # Iterate through repertoires in range
         for repIdx, repertoire in enumerate(repertoireWorkingRange):
             # consider the entry alternative tcr entry, cloning status and entry in repertoire for given receptor type
-            for receptorInput,cloneStatus, repertoireEntryName  in zip([tcrA,tcrB], [cloneTcrA,cloneTcrB], ["tcrA", "tcrB"]):
+            for receptorInput,cloneStatus, repertoireEntryName,defaultData  in zip([tcrA,tcrB], [cloneTcrA,cloneTcrB], ["tcrA", "tcrB"],[defaultDataAlpha,defaultDataBeta]):
                 self._appendToTcr(repertoire=repertoire,
                                   defaultGenerator=defaultGenerator if not split else defaultData[repIdx],
                                   n=n,

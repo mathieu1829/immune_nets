@@ -168,12 +168,29 @@ class TestTcrGenerationPipeline(unittest.TestCase):
         #         .generateRandomRepertoire(n=1,frequencies=freqGen.generateMediumFrequnencies, cloneTcrB=True, cloneTcrA=True) \
         #         .toDataFrame()
 
-        dfs = manyTcrPipeline.generateRelatedRepertoire(n=3,frequencies=freqGen.generateSimulatedNaturalFrequencies,distance=0.2, distanceFun=sequenceAligner("BLOSUM62").tcr_dist) \
-                .generateRelatedRepertoire(n=3,frequencies=freqGen.generateSimulatedNaturalFrequencies,distance=0.2, distanceFun=sequenceAligner("BLOSUM62").tcr_dist, split=True) \
-                .toDataFrame()
+        manyTcrPipeline.generateRelatedRepertoire(n=20,frequencies=freqGen.generateHighFrequencies,distance=0.15, distanceFun=sequenceAligner("BLOSUM62").tcr_dist, split=True) \
+                .generateRelatedRepertoire(n=5,frequencies=freqGen.generateSimulatedNaturalFrequencies,distance=0.15, distanceFun=sequenceAligner("BLOSUM62").tcr_dist) \
+                .generateRandomRepertoire(n=50,frequencies=freqGen.generateSimulatedNaturalFrequencies) \
+                .generateRandomRepertoire(n=2,frequencies=freqGen.generateHighFrequencies,idx=0) \
+                .generateRandomRepertoire(n=2,frequencies=freqGen.generateHighFrequencies,idx=2) \
+                .generateRandomRepertoire(n=2,frequencies=freqGen.generateVeryHighFrequencies,idx=1) 
+
+        for _ in range(5):
+            manyTcrPipeline.generateRelatedRepertoire(n=15,frequencies=freqGen.generateSimulatedNaturalFrequencies,distance=0.15, distanceFun=sequenceAligner("BLOSUM62").tcr_dist,split=True) 
+        for _ in range(10):
+            manyTcrPipeline.generateRelatedRepertoire(n=10,frequencies=freqGen.generateSimulatedNaturalFrequencies,distance=0.15, distanceFun=sequenceAligner("BLOSUM62").tcr_dist,split=True) 
+        for _ in range(5):
+            manyTcrPipeline.generateRelatedRepertoire(n=5,frequencies=freqGen.generateSimulatedNaturalFrequencies,distance=0.15, distanceFun=sequenceAligner("BLOSUM62").tcr_dist,split=True) 
+        for _ in range(10):
+            manyTcrPipeline.generateRelatedRepertoire(n=3,frequencies=freqGen.generateSimulatedNaturalFrequencies,distance=0.15, distanceFun=sequenceAligner("BLOSUM62").tcr_dist,split=True) 
+
+        dfs = manyTcrPipeline.toDataFrame()
+
 
         for df in dfs:
             print(df)
+        for i,df in enumerate(dfs):
+            df.to_csv(f"publicTest{i}.csv")
 
         
 

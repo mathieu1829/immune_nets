@@ -15,7 +15,7 @@ class cdr3SetGenerator:
         distances = np.array([distanceFun(centralSequence, seq) for seq in subset])
         iterCount = 0
         while((distances > distance).sum() != 0):
-            correctedSubset = np.array([cdr3SeqGeneratorUtil().mutateCDR3(centralSequence) for _ in range((distances > distance).sum()) ])
+            correctedSubset = np.array([cdr3SeqGeneratorUtil().mutateCDR3(centralSequence, numMutations=random.randint(1, 3)) for _ in range((distances > distance).sum()) ])
             subset[distances > distance] = correctedSubset
             distances = np.array([distanceFun(centralSequence, seq) for seq in subset])
             iterCount += 1

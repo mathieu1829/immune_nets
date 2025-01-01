@@ -10,10 +10,11 @@ class testSkeletonPublicNairSimilarity(unittest.TestCase):
 
     @classmethod
     def setUpClass(self):
-        self.path = Path(__file__).parent / "test_data/bigTest.csv"
-        self.path2 = Path(__file__).parent / "test_data/bigTest.csv"
+        self.path = Path(__file__).parent / "test_data/publicTest0.csv"
+        self.path1 = Path(__file__).parent / "test_data/publicTest1.csv"
+        self.path2 = Path(__file__).parent / "test_data/publicTest2.csv"
         self.repertoires = test_csv_strategy().input(self.path)
-        self.repertoires.clones = pd.concat([self.repertoires.clones,test_csv_strategy().input(self.path2).clones],ignore_index=True)
+        self.repertoires.clones = pd.concat([self.repertoires.clones,test_csv_strategy().input(self.path1).clones, test_csv_strategy().input(self.path2).clones],ignore_index=True)
         self.repertoires.clones.name = "testName"
         
 
@@ -38,5 +39,6 @@ class testSkeletonPublicNairSimilarity(unittest.TestCase):
         """
         )
         skeleton_similarity(self.repertoires)
+
 
 
