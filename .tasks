@@ -4,12 +4,34 @@
 # define a new task named "file-build"
 # save file before execute
 
-[test_public_clusters]
+[test_skeleton_public_clusters]
 command=python -m unittest tests/test_skeletonPublicNairSimilarity.py 
 cwd=$(VIM_ROOT)
 output=terminal
 pos=my_toggleterm
 save=1
+
+[test_skeleton_private_clusters]
+command=python -m unittest tests/test_skeletonPrivateNairSimilarity.py 
+cwd=$(VIM_ROOT)
+output=terminal
+pos=my_toggleterm
+save=1
+
+[test_public_clusters]
+command=python -m unittest tests/test_publicSimilarity.py 
+cwd=$(VIM_ROOT)
+output=terminal
+pos=my_toggleterm
+save=1
+
+[test_private_clusters]
+command=python -m unittest tests/test_privateSimilarity.py 
+cwd=$(VIM_ROOT)
+output=terminal
+pos=my_toggleterm
+save=1
+
 
 [test_tcrGenerationPipeline]
 command=python -m unittest tests/test_tcrGenerationPipeline.py 

@@ -11,10 +11,10 @@ from src.creation.io_strategies.test_csv_strategy import *
 path = pathManager().testDataPath / "bigTest.csv"
 
 
-def skeleton_similarity(repertoire, minNodeCount=1, minCloneCount=1, absoulute_public=False, minimum_coverage = 2):
+def skeletonPublicNairSimilarity(repertoire, top_k = 20, absoulutePublic=False, minCoverage = 2, minClusterSize=2):
     prepared_clones = repertoire.clones.dropna(subset = ["tcra_aa", "tcrb_aa"]) 
     # print(prepared_clones)
-    df_list = []
+
     dictIdx = {}
     skeleton_clones = pd.DataFrame()
     # Creating network and cluster analysis for each sample
@@ -40,7 +40,7 @@ def skeleton_similarity(repertoire, minNodeCount=1, minCloneCount=1, absoulute_p
         # clusters.sort(key = lambda x : len(x))
         # for i in clusters:
         #     print(i)
-        public_clusters = clusters[-20:]
+        public_clusters = clusters[-top_k:]
         # print(public_clusters)
 
         #picking representatives aka skeleton clones
@@ -77,13 +77,14 @@ def skeleton_similarity(repertoire, minNodeCount=1, minCloneCount=1, absoulute_p
     clusters = [ skeleton_clones.iloc[cluster].index.tolist() for cluster in clusters]
 
     # discarding clusters with records from only one sample
-    clusters = [ cluster for cluster in clusters if (len(cluster) > 1 and len(np.unique(skeleton_clones.loc[cluster]["sampleID"])) > 1) ]
+    clusters = [ cluster for cluster in clusters if (len(cluster) >= minClusterSize and len(np.unique(skeleton_clones.loc[cluster]["sampleID"])) >= (minCoverage if not absoulutePublic else len(np.unique(prepared_clones["sampleID"]))) ) ]
     
     # for i,cluster in enumerate(clusters):
     #     print(f"cluster no. {i}:") 
     #     for dfIdx in cluster:
     #         print(f"{dfIdx}: {skeleton_clones.loc[dfIdx]["sampleID"]}")
 
+    # expanding the skeleton
     for cluster in clusters:
         for idx in range(len(cluster)):
             dfIdx = cluster[idx]
@@ -95,10 +96,11 @@ def skeleton_similarity(repertoire, minNodeCount=1, minCloneCount=1, absoulute_p
             cluster.extend(initialCluster)
 
     #public clusters ready
+    return clusters
     # for i,cluster in enumerate(clusters):
     #     print(f"cluster no. {i}:") 
     #     for dfIdx2 in cluster:
     #         print(f"{dfIdx2}: {prepared_clones.loc[dfIdx2]["sampleID"]}")
 
 if __name__ == "__main__":
-   print(skeleton_similarity(test_csv_strategy().input(path),absoulute_public=True))
+   print(skeletonPublicNairSimilarity(test_csv_strategy().input(path),absoulutePublic=True))

@@ -187,11 +187,11 @@ class TestTcrGenerationPipeline(unittest.TestCase):
         dfs = manyTcrPipeline.toDataFrame()
 
 
-        for df in dfs:
-            print(df)
-        for i,df in enumerate(dfs):
-            df.to_csv(f"publicTest{i}.csv")
-
+        # for df in dfs:
+        #     print(df)
+        # for i,df in enumerate(dfs):
+        #     df.to_csv(f"publicTest{i}.csv")
+        #
         
 
     
