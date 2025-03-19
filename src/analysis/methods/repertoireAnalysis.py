@@ -6,18 +6,19 @@ from src.creation.distance.levenshtein import levenshteinDistance
 from src.creation.algorithms.simple_beta_distance import simple_beta_distance
 from src.creation.io_strategies.df_strategy import df_strategy
 from src.creation.immuneRepertoire import immuneRepertoire
-from src.analysis.methods.skeletonPublicSimilarity import skeleton_public_similarity
-from src.analysis.methods.skeletonPrivateSimilarity import skeleton_private_similarity
+from src.analysis.methods.skeletonPublicNairSimilarity import skeletonPublicNairSimilarity
+from src.analysis.methods.skeletonPrivateNairSimilarity import skeletonPrivateNairSimilarity
 from src.creation.algorithms.common_methods import *
 import igraph as ig
 import uuid
 from src.creation.utils.pathManager import pathManager
 from src.creation.io_strategies.test_csv_strategy import *
+import pickle
 
 path = pathManager().testDataPath / "bigTest.csv"
 
 class repertoireAnalysis:
-    def __init__(self,repertoire, minNodeCount=10, minCloneCount=100):
+    def __init__(self,repertoire):
         repertoire.clones['tcra_aa'] = repertoire.clones['cdr3s_aa'].apply(lambda x: split_tcr_column(x, subunit="TRA"))
         repertoire.clones['tcrb_aa'] = repertoire.clones['cdr3s_aa'].apply(lambda x: split_tcr_column(x, subunit="TRB"))
         tcra = np.unique(repertoire.clones['tcra_aa'].dropna().to_numpy())
@@ -40,19 +41,10 @@ class repertoireAnalysis:
         self.shannon_index_tcrb = transform(self.unique_tcrb_distribution).sum()
         self.shannon_index_all_tcr = transform(self.unique_all_tcr_distribution).sum()
 
-        ### if no graph as been provided create one
-        ### public cluster creation
-        public_cluster = skeleton_public_similarity(repertoire=repertoire)
-        self.public_cluster_count = len(public_cluster)
-        self.public_count = sum([len(i) for i in public_cluster])
-
-        private_cluster = skeleton_private_similarity(repertoire=repertoire)
-        self.private_cluster_count = len(private_cluster)
-        self.private_count = sum([len(i) for i in private_cluster])
-
-        
     def toList(self): 
-        return [self.num_of_tcra, self.num_of_tcrb, self.num_of_all_tcr, self.unique_tcra_distribution, self.unique_tcrb_distribution, self.unique_all_tcr_distribution, self.simpson_index_tcra, self.simpson_index_tcrb, self.simpson_index_all_tcr, self.shannon_index_tcra, self.shannon_index_tcrb, self.shannon_index_all_tcr, self.public_count, self.public_cluster_count, self.private_count, self.private_cluster_count]
+        return [self.num_of_tcra, self.num_of_tcrb, self.num_of_all_tcr, self.unique_tcra_distribution, self.unique_tcrb_distribution, self.unique_all_tcr_distribution, self.simpson_index_tcra, self.simpson_index_tcrb, self.simpson_index_all_tcr, self.shannon_index_tcra, self.shannon_index_tcrb, self.shannon_index_all_tcr]
 
 if __name__ == "__main__":
-    print(repertoireAnalysis(test_csv_strategy().input(path)))
+    repertoireStats =  repertoireAnalysis(test_csv_strategy().input(path))
+    print(repertoireStats)
+    

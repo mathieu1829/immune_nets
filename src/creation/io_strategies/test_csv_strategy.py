@@ -19,7 +19,7 @@ class test_csv_strategy():
         df.name = str(path).split('/')[-1][:-4]
         
         
-        return immuneRepertoire(clones = df, sampleIDs = newUUID)
+        return immuneRepertoire(clones = df)
     def output(self, algo, **kwargs):
         immune_net = algo(**kwargs)
         immune_net.network.to_csv(immune_net.network.name+"_net.csv")

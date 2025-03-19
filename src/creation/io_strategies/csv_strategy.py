@@ -35,7 +35,7 @@ class csv_strategy():
         df.name = "_".join(names)
         df['tcra_aa'] = df['cdr3s_aa'].apply(lambda x: split_tcr_column(x, subunit="TRA"))
         df['tcrb_aa'] = df['cdr3s_aa'].apply(lambda x: split_tcr_column(x, subunit="TRB"))
-        return immuneRepertoire(clones = df, sampleIDs = sampleIDs)
+        return immuneRepertoire(clones = df)
     def output(self, algo, **kwargs):
         immune_net = algo(**kwargs)
         immune_net.network.to_csv(immune_net.network.name+"_net.csv")
