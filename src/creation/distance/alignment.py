@@ -53,8 +53,12 @@ class sequenceAligner:
 
             self_score = max(self_score_x.score, self_score_ref.score)
             alignments = self.__aligner.align(x, ref)
+            # alignment_min_score = -10 + (min(len(x),len(ref))-1) * -1  
+            alignment_min_score = min(0,alignments.score)
 
-            res = 1 - (float(alignments.score) / float(self_score)) 
+            
+
+            res = 1 - ((float(alignments.score)-float(alignment_min_score))/(float(self_score)-float(alignment_min_score))) 
         else:
             if self.group == False:
                 raise ValueError('\"group\" must be set to true when using method in group mode')
