@@ -2,6 +2,7 @@
 import igraph as ig
 import numpy as np
 import pandas as pd
+import math
 
 import uuid
 import src.creation.io_strategies.df_strategy 
@@ -13,9 +14,8 @@ from src.creation.algorithms.simple_distance import *
 from src.creation.enums.matrices import *
 from src.creation.enums.utils import * 
 from src.creation.io_strategies.test_csv_strategy import *
-from src.creation.immuneRepertoire import immuneRepertoire
 from src.creation.utils.pathManager import pathManager
-import pickle 
+
 
 path = pathManager().testDataPath / "test_clonotypes.csv"
 
@@ -27,6 +27,7 @@ class graphletComposition:
         vertices = np.unique(immuneNet.network.to_numpy().flatten())
         self.vertice_num = vertices.shape[0]
         self.isolated_vertices = [ i for i in np.arange(immuneNet.sampleSize) if not i in vertices ]
+        self.isolated_vertices_num = len(self.isolated_vertices)
 
         #transform
         # active = isolated_vertices
@@ -44,13 +45,14 @@ class graphletComposition:
         self.edge_density = float(self.graph.ecount()) / float( 0.5 * self.vertice_num * (self.vertice_num-1) )
         self.percolation_threshold = immuneNet.threshold
         self.density = self.graph.density()
-        self.eccentrity = self.graph.eccentricity()
-        self.eigenvector_centrality = [round(i,6) for i in self.graph.eigenvector_centrality()]
-        self.harmonic_centrality = self.graph.harmonic_centrality()
+        self.eccentrity = np.array(self.graph.eccentricity())
+        self.eigenvector_centrality = np.array([round(i,6) for i in self.graph.eigenvector_centrality()])
+        self.harmonic_centrality = np.array(self.graph.harmonic_centrality())
         self.giant_component = self.graph.components().giant().vcount()
-        self.betweenness = self.graph.betweenness()
+        self.betweenness = np.array(self.graph.betweenness())
         self.diameter = self.graph.diameter()
         self.closeness = self.graph.closeness()
+        self.mean_closeness = np.array([x if not math.isnan(x) else 0 for x in self.closeness]).mean()
         # assortativity = graph.assortativity()
         # assortativity_degree = graph.assortativity_degree()
         
@@ -59,18 +61,39 @@ class graphletComposition:
         self.paths = np.array(self.graph.distances(vertices))
         self.mean_shortest_path = self.paths[self.paths != float('inf')].mean()
 
-        self.pagerank_distribution = np.array(self.graph.pagerank()) 
+        self.pagerank_distribution = self.graph.pagerank() 
+        self.expected_pagerank = np.array(self.pagerank_distribution).mean()
 
 
-        self.degree_distribution = np.array(self.graph.degree_distribution()) 
+        self.degree_distribution = self.graph.degree_distribution()
+        self.expected_degree = self.degree_distribution.mean
 
         self.components = self.graph.components()
         self.componentList = np.array([ len(i) for i in self.components])
         self.component_count = self.componentList.shape[0]
         self.component_size_distribution = { component_size:(float((self.componentList == component_size).sum())/float(self.component_count)) for component_size in np.unique(self.componentList)}
+        self.expected_component_size = sum([ key*self.component_size_distribution[key] for key in self.component_size_distribution])
     # return [ vertice_num,isolated_vertices,edge_density,percolation_threshold,density,eccentrity,eigenvector_centrality,harmonic_centrality,giant_component,betweenness,diameter,closeness, assortativity, assortativity_degree, mean_shortest_path, pagerank_distribution, degree_distribution, component_count,component_size_distribution]
     def toList(self):
-        return [ self.vertice_num,self.isolated_vertices,self.edge_density,self.percolation_threshold,self.density,self.eccentrity,self.eigenvector_centrality,self.harmonic_centrality,self.giant_component,self.betweenness,self.diameter,self.closeness, self.mean_shortest_path, self.pagerank_distribution, self.degree_distribution, self.component_count,self.component_size_distribution]
+        return [ 
+                self.vertice_num,
+                self.isolated_vertices_num,
+                self.edge_density,
+                self.percolation_threshold,
+                self.density,
+                self.eccentrity.mean(),
+                self.eigenvector_centrality.mean(),
+                self.harmonic_centrality.mean(),
+                self.giant_component,
+                self.betweenness.mean(),
+                self.diameter,
+                self.mean_closeness,
+                self.mean_shortest_path,
+                self.expected_pagerank,
+                self.expected_degree,
+                self.component_count,
+                self.expected_component_size
+                ]
 
 if __name__ == "__main__":
     df_net = simple_distance(repertoire=test_csv_strategy().input(path), distance=sequenceAligner("BLOSUM62"))
