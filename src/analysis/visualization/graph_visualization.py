@@ -13,10 +13,10 @@ from src.creation.immuneRepertoire import immuneRepertoire
 
 
 # Example: Create a sample graph
-path = "/home/myc0plasmus/Downloads/T_PLL_sorted_5pv2_nextgem_vdj_t_clonotypes.csv" # leukemia
+# path = "/home/myc0plasmus/Downloads/T_PLL_sorted_5pv2_nextgem_vdj_t_clonotypes.csv" # leukemia
 # path = "/home/myc0plasmus/Downloads/T_PLL_sorted_5pv2_HT_nextgem_vdj_t_clonotypes.csv" 
 # path = "/home/myc0plasmus/Downloads/10k_BMMNC_5pv2_nextgem_intron_10k_BMMNC_5pv2_nextgem_intron_vdj_t_clonotypes.csv" #healthy
-# path = "/home/myc0plasmus/Documents/python/immune_nets/tests/test_data/bigTest.csv"
+path = "/home/myc0plasmus/Documents/python/immune_nets/tests/test_data/bigTest.csv"
 repertoire = test_csv_strategy().input(path)
 immuneNet = simple_beta_distance(repertoire=repertoire, distance=sequenceAligner("BLOSUM62"), threshold=0.2)
 

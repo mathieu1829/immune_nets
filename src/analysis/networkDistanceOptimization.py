@@ -7,15 +7,21 @@ from src.creation.algorithms.simple_distance import simple_distance
 from src.creation.distance.alignment import sequenceAligner
 from src.creation.distance.levenshtein import levenshteinDistance 
 from scipy.spatial.distance import euclidean
+from src.creation.io_strategies.test_csv_strategy import *
 
 # TO DO - get groups from db
 groups = ["leukemia", "covid", "healthy"]
 
+
+leukemia_path = "/home/myc0plasmus/Downloads/T_PLL_sorted_5pv2_nextgem_vdj_t_clonotypes.csv" # leukemia
+covid_path = "/home/myc0plasmus/Documents/studia/immune-nets-datasets/clonotypes.csv" # covid
+healthy_path = "/home/myc0plasmus/Downloads/10k_BMMNC_5pv2_nextgem_intron_10k_BMMNC_5pv2_nextgem_intron_vdj_t_clonotypes.csv" #healthy
+
 # TO DO - get repertoires for each group from database
 repertoire_list = [
-        1,
-        2,
-        3,
+        test_csv_strategy().input(leukemia_path),
+        test_csv_strategy().input(covid_path),
+        test_csv_strategy().input(healthy_path),
         ]
 repertoires = { group:[repertoire_list[i]]  for i,group in enumerate(groups)}
 
@@ -48,7 +54,10 @@ def objective(trial):
                         distance=distance_fun,
                         threshold=threshold
                     )
-            stats = graphletComposition(network)
+            try:
+                stats = graphletComposition(network)
+            except ZeroDivisionError: 
+                return 0.0
             group_results[group].append(stats.toList())
                 
     inter_group_distances = []
