@@ -20,19 +20,25 @@ let
         logging_collector = on
         log_min_error_statement = error
       '';
-   fhs =  pkgs.buildFHSEnv rec{
-     name = "immune-nets";
+
+  enter-env-pg-command = pkgs.writeShellScriptBin "enter-env-pg" ''
+    psql -p $PGPORT -U postgres
+  '';
+
+  fhs =  pkgs.buildFHSEnv rec{
+    name = "immune-nets";
 
     targetPkgs = _: [
       pkgs.micromamba
 	    pkgs.postgresql_15
+      enter-env-pg-command
     ];
 
     profile = ''
       set -e
       export MAMBA_ROOT_PREFIX=${builtins.getEnv "PWD"}/.mamba
       # Check if the environment already exists
-      if micromamba env list | grep -q "^${name}"; then
+      if ! micromamba env list | grep -q "$MAMBA_ROOT_PREFIX/envs/${name}"; then
         echo "Creating environment '${name}'..."
         micromamba create -q -y -n ${name}
       else
@@ -68,10 +74,13 @@ let
       export PGDATA="${PGDATA}"
       [ ! -d ${PGDATA} ] && pg_ctl initdb -o "-U postgres --no-locale" && cat "${postgresConf}" >> ${PGDATA}/postgresql.conf
       pg_ctl -o "-p $PGPORT -k ${PGDATA}" start
-      micromamba run scripts/envrc
-      echo all done
+      echo initiating subshell
+      echo all done - exit subshell to shutdown postgress
 
+      bash
 
+      pg_ctl stop 
+      echo postgresql shutdown correctly - you may exit the shell now
       set +e
     '';
   };
