@@ -5,7 +5,7 @@ sra=""
 name=""
 dir="default/path/to/copy/clonotypes/to"
 cores=8
-mem=30
+mem=8
 startPath=$(pwd)
 
 while getopts "s:n:hd:" args; do
@@ -17,7 +17,7 @@ while getopts "s:n:hd:" args; do
 			name=${OPTARG}
 			;;
 		d)
-			dir=${OPTARG}
+			dir=${OPTARG%/}
 			;;
 		c)
 			cores=${OPTARG}
@@ -52,18 +52,61 @@ mkdir cellranger-working-dir
 cd cellranger-working-dir
 mkdir dataset-vdj
 cd dataset-vdj
-fastq-dump --split-files -v -L info $sra
+echo Downloading the SRA run ...
+prefetch $sra --progress
+echo Splitting the SRA run files ...
+fastq-dump --split-files $sra
+rm -r $sra
+echo Compressing the SRA run files ...
 for file in $(ls)
 do
 	gzip $file
 	mv ${file}.gz ${sra}_S1_L001_R${file:12:1}_001.fastq.gz
+	echo "${file} compressed."
 done
 cd ..
 curl -O https://cf.10xgenomics.com/supp/cell-vdj/refdata-cellranger-vdj-GRCh38-alts-ensembl-5.0.0.tar.gz
 tar -xf refdata-cellranger-vdj-GRCh38-alts-ensembl-5.0.0.tar.gz
-cellranger vdj --id=$name --reference=refdata-cellranger-vdj-GRCh38-alts-ensembl-5.0.0 --fastqs=dataset-vdj --sample=$sra --localcores=8 --localmem=30
-cd ${name}/outs
-mv clonotypes.csv ${name}_clonotypes.csv
-cp ${name}_clonotypes.csv ${dir}
-cd $startPath
-rm -r cellranger-working-dir
+echo Commencing cellranger vdj pipeline ...
+
+basic-cellranger() {
+	echo trying basic cell ranger pipeline
+	../cellranger-9.0.1/cellranger vdj --id=$name --reference=refdata-cellranger-vdj-GRCh38-alts-ensembl-5.0.0 --fastqs=dataset-vdj --sample=$sra --localcores=$cores --localmem=$mem || {
+		rm -r $name
+		return 1  # Explicitly return failure
+	}
+}
+
+tcr-only-cellranger() {
+	echo trying tcr-only cell ranger pipeline
+	../cellranger-9.0.1/cellranger vdj --id=$name --reference=refdata-cellranger-vdj-GRCh38-alts-ensembl-5.0.0 --fastqs=dataset-vdj --sample=$sra --chain="TR" --localcores=$cores --localmem=$mem || {
+		rm -r $name
+		return 1  # Explicitly return failure
+	}
+}
+
+cleanup() {
+	cd $startPath
+	rm -r cellranger-working-dir
+	echo "processing completed successfully"
+}
+
+cleanup-exit-fail() {
+	echo cell-ranger pipeline failed - incomplete dataset
+	cleanup
+	exit 1
+}
+
+extract-results() {
+	echo "extracting results to ${dir}"
+	cd $startPath
+	cp cellranger-working-dir/${name}/outs/clonotypes.csv ${dir}/${name}_${sra}_clonotypes.csv
+
+}
+
+basic-cellranger || tcr-only-cellranger || cleanup-exit-fail
+
+extract-results
+cleanup
+
+
