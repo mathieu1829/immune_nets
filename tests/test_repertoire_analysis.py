@@ -24,7 +24,7 @@ class TestRepertoireAnalysis(unittest.TestCase):
     
     @classmethod
     def setUpClass(self):
-        path = Path(__file__).parent / "test_data/bigTest.csv"
+        path = Path(__file__).parent / "test_data/healthy_test_clonotypes_0.csv"
         self.repertoire = test_csv_strategy().input(path)
 
     def listToStr(self, l):

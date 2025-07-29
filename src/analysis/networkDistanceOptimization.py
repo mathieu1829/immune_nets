@@ -1,6 +1,7 @@
 import optuna
 import numpy as np
 from itertools import combinations
+from pathlib import Path
 
 from src.analysis.methods.graphlet_composition import graphletComposition
 from src.creation.algorithms.simple_distance import simple_distance
@@ -14,9 +15,9 @@ from src.creation.io_strategies.test_csv_strategy import *
 groups = ["leukemia", "covid", "healthy"]
 
 
-leukemia_path = "/home/myc0plasmus/Downloads/T_PLL_sorted_5pv2_nextgem_vdj_t_clonotypes.csv" # leukemia
-covid_path = "/home/myc0plasmus/Documents/studia/immune-nets-datasets/clonotypes.csv" # covid
-healthy_path = "/home/myc0plasmus/Downloads/10k_BMMNC_5pv2_nextgem_intron_10k_BMMNC_5pv2_nextgem_intron_vdj_t_clonotypes.csv" #healthy
+leukemia_path = Path(__file__).parent.parent.parent / "tests/test_data/leukemia_test_clonotypes.csv" # leukemia
+covid_path = Path(__file__).parent.parent.parent / "tests/test_data/covid_test_clonotypes.csv" # covid
+healthy_path = Path(__file__).parent.parent.parent / "tests/test_data/healthy_test_clonotypes_1.csv" #healthy
 
 # TO DO - get repertoires for each group from database
 repertoire_list = [
