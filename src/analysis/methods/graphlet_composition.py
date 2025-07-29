@@ -42,7 +42,7 @@ class graphletComposition:
         self.graph = ig.Graph(immuneNet.network.to_numpy())
         self.graph.add_vertices(immuneNet.sampleSize - self.graph.vcount())
 
-        self.edge_density = float(self.graph.ecount()) / float( 0.5 * self.vertice_num * (self.vertice_num-1) )
+        self.edge_density = float(self.graph.ecount()) / float( 0.5 * self.vertice_num * (self.vertice_num-1) ) if edges > 0 else 0.0
         self.percolation_threshold = immuneNet.threshold
         self.density = self.graph.density()
         self.eccentrity = np.array(self.graph.eccentricity())
@@ -59,7 +59,7 @@ class graphletComposition:
         
 
         self.paths = np.array(self.graph.distances(vertices))
-        self.mean_shortest_path = self.paths[self.paths != float('inf')].mean()
+        self.mean_shortest_path = self.paths[self.paths != float('inf')].mean() if edges > 0 else -1
 
         self.pagerank_distribution = self.graph.pagerank() 
         self.expected_pagerank = np.array(self.pagerank_distribution).mean()

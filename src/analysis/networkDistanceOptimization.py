@@ -4,6 +4,7 @@ from itertools import combinations
 
 from src.analysis.methods.graphlet_composition import graphletComposition
 from src.creation.algorithms.simple_distance import simple_distance
+from src.creation.algorithms.simple_beta_distance import simple_beta_distance
 from src.creation.distance.alignment import sequenceAligner
 from src.creation.distance.levenshtein import levenshteinDistance 
 from scipy.spatial.distance import euclidean
@@ -28,7 +29,7 @@ repertoires = { group:[repertoire_list[i]]  for i,group in enumerate(groups)}
 
 def objective(trial):
     group_results = { group:[] for group in groups}
-    threshold = trial.suggest_float("threshold",low=0.01,high=0.5)
+    threshold = trial.suggest_float("threshold",low=0.2,high=0.4)
     distance = trial.suggest_categorical("distance", ["alignment", "levenshtein"])
     distance_fun = None
     match distance:
@@ -49,16 +50,14 @@ def objective(trial):
 
     for group in groups:
         for repertoire in repertoires[group]:
-            network = simple_distance(
+            network = simple_beta_distance(
                         repertoire=repertoire,
                         distance=distance_fun,
                         threshold=threshold
                     )
-            try:
-                stats = graphletComposition(network)
-            except ZeroDivisionError: 
-                return 0.0
+            stats = graphletComposition(network)
             group_results[group].append(stats.toList())
+            # print(f"{group} stats: {str(stats.toList())}")
                 
     inter_group_distances = []
     for combo in combinations(groups,2):
@@ -66,9 +65,13 @@ def objective(trial):
         group_b = group_results[combo[1]]
         inter_group_distance = np.array([euclidean(a,b) for a in group_a for b in group_b ])
         inter_group_distances.append(inter_group_distance.mean())
+        # print(f"distance between group {combo[0]} and {combo[1]} is {inter_group_distance.mean()}")
     
     inter_group_distances = np.array(inter_group_distances)
-    return inter_group_distances.mean() - np.var(inter_group_distances)
+    # print(f"mean: {inter_group_distances.mean()}")
+    # print(f"std: {np.std(inter_group_distances)}")
+    # print(f"var: {np.var(inter_group_distances)}")
+    return inter_group_distances.mean() - np.std(inter_group_distances) 
 
 if __name__ == '__main__':
     study = optuna.create_study(direction="maximize")
