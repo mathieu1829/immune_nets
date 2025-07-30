@@ -1,0 +1,72 @@
+import matplotlib.pyplot as plt
+from pathlib import Path
+from sklearn.decomposition import PCA
+import umap
+
+from src.analysis.visualization.graphVisualization import graphVisualization
+from src.creation.io_strategies.test_csv_strategy import *
+from src.creation.algorithms.simple_beta_distance import simple_beta_distance
+from src.creation.distance.alignment import sequenceAligner
+from src.analysis.methods.graphletComposition import graphletComposition
+
+def graphSimilarityChart(grouped_immuneNets):
+    group_results = []
+    group_sizes = [len(grouped_immuneNets[group]) for group in grouped_immuneNets]
+    total_samples = sum(group_sizes)
+    for i in range(1,len(group_sizes)):
+        group_sizes[i] = group_sizes[i] + group_sizes[i-1]
+
+    for group in grouped_immuneNets: 
+        group_immuneNets = grouped_immuneNets[group]
+
+        for immuneNet in group_immuneNets:
+            stats = graphletComposition(immuneNet)
+            group_results.append(stats.toList())
+    if total_samples > 3:
+        n_neighbors = max(2, min(15, total_samples - 1))  # safe, auto-adjust
+        reducer = umap.UMAP(n_neighbors=n_neighbors, min_dist=0.1, metric='cosine')
+        reduced = reducer.fit_transform(np.array(group_results))
+        title = "UMAP"
+    else:
+        reduced = PCA(n_components=2).fit_transform(np.array(group_results))
+        title = "PCA"
+
+
+
+    for i,group in enumerate(grouped_immuneNets):
+        start = group_sizes[i-1] if i > 0 else 0
+        end = group_sizes[i]
+        plt.scatter(reduced[start:end, 0], reduced[start:end, 1], alpha=0.6, label=group)
+    
+    plt.title(f"2D Graph Embedding Visualization ({title})")
+    plt.legend(title="Group")
+    plt.xlabel(f"{title}-1")
+    plt.ylabel(f"{title}-2")
+    plt.show()
+            
+if __name__ == "__main__":
+    groups = ["leukemia", "covid", "healthy"]
+
+    root_dir = Path(__file__).parent.parent.parent.parent
+
+    leukemia_path = root_dir  / "tests/test_data/leukemia_test_clonotypes.csv" # leukemia
+    covid_path = root_dir / "tests/test_data/covid_test_clonotypes.csv" # covid
+    healthy_path = root_dir / "tests/test_data/healthy_test_clonotypes_1.csv" #healthy
+
+    # TO DO - get repertoires for each group from database
+    repertoire_list = [
+            test_csv_strategy().input(leukemia_path),
+            test_csv_strategy().input(covid_path),
+            test_csv_strategy().input(healthy_path),
+            ]
+    distance_fun = sequenceAligner("BLOSUM62")
+    grouped_immuneNets = { 
+                   group:[
+                           simple_beta_distance(repertoire=repertoire_list[i],
+                                                distance=distance_fun,
+                                                threshold=0.2)
+                       ]  
+                   for i,group in enumerate(groups)
+                   }
+    graphSimilarityChart(grouped_immuneNets)
+

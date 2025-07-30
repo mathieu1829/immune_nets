@@ -3,7 +3,7 @@ import numpy as np
 from itertools import combinations
 from pathlib import Path
 
-from src.analysis.methods.graphlet_composition import graphletComposition
+from src.analysis.methods.graphletComposition import graphletComposition
 from src.creation.algorithms.simple_distance import simple_distance
 from src.creation.algorithms.simple_beta_distance import simple_beta_distance
 from src.creation.distance.alignment import sequenceAligner
@@ -14,10 +14,11 @@ from src.creation.io_strategies.test_csv_strategy import *
 # TO DO - get groups from db
 groups = ["leukemia", "covid", "healthy"]
 
+root_dir = Path(__file__).parent.parent.parent
 
-leukemia_path = Path(__file__).parent.parent.parent / "tests/test_data/leukemia_test_clonotypes.csv" # leukemia
-covid_path = Path(__file__).parent.parent.parent / "tests/test_data/covid_test_clonotypes.csv" # covid
-healthy_path = Path(__file__).parent.parent.parent / "tests/test_data/healthy_test_clonotypes_1.csv" #healthy
+leukemia_path = root_dir  / "tests/test_data/leukemia_test_clonotypes.csv" # leukemia
+covid_path = root_dir / "tests/test_data/covid_test_clonotypes.csv" # covid
+healthy_path = root_dir / "tests/test_data/healthy_test_clonotypes_1.csv" #healthy
 
 # TO DO - get repertoires for each group from database
 repertoire_list = [

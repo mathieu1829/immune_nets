@@ -11,7 +11,7 @@ from src.creation.enums.utils import *
 from src.creation.io_strategies.test_csv_strategy import *
 from src.creation.immuneRepertoire import immuneRepertoire
 
-def graph_visualization(repertoire, immuneNet, ax):
+def graphVisualization(repertoire, immuneNet, ax):
 
     ### DEBUG
     # print("Network:")
@@ -53,3 +53,20 @@ def graph_visualization(repertoire, immuneNet, ax):
         vertex_size=graph.vs["size"],
         edge_width=graph.es["width"],
     )
+
+
+
+
+
+
+
+
+               
+
+
+
+
+
+
+
+

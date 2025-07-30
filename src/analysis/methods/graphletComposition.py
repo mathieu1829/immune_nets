@@ -59,7 +59,7 @@ class graphletComposition:
         
 
         self.paths = np.array(self.graph.distances(vertices))
-        self.mean_shortest_path = self.paths[self.paths != float('inf')].mean() if edges > 0 else -1
+        self.mean_shortest_path = self.paths[self.paths != float('inf')].mean() if edges > 0 else -1.0
 
         self.pagerank_distribution = self.graph.pagerank() 
         self.expected_pagerank = np.array(self.pagerank_distribution).mean()
@@ -76,23 +76,23 @@ class graphletComposition:
     # return [ vertice_num,isolated_vertices,edge_density,percolation_threshold,density,eccentrity,eigenvector_centrality,harmonic_centrality,giant_component,betweenness,diameter,closeness, assortativity, assortativity_degree, mean_shortest_path, pagerank_distribution, degree_distribution, component_count,component_size_distribution]
     def toList(self):
         return [ 
-                self.vertice_num,
-                self.isolated_vertices_num,
-                self.edge_density,
-                self.percolation_threshold,
-                self.density,
-                self.eccentrity.mean(),
-                self.eigenvector_centrality.mean(),
-                self.harmonic_centrality.mean(),
-                self.giant_component,
-                self.betweenness.mean(),
-                self.diameter,
-                self.mean_closeness,
-                self.mean_shortest_path,
-                self.expected_pagerank,
-                self.expected_degree,
-                self.component_count,
-                self.expected_component_size
+                float(self.vertice_num),
+                float(self.isolated_vertices_num),
+                float(self.edge_density),
+                float(self.percolation_threshold),
+                float(self.density),
+                float(self.eccentrity.mean()),
+                float(self.eigenvector_centrality.mean()),
+                float(self.harmonic_centrality.mean()),
+                float(self.giant_component),
+                float(self.betweenness.mean()),
+                float(self.diameter),
+                float(self.mean_closeness),
+                float(self.mean_shortest_path),
+                float(self.expected_pagerank),
+                float(self.expected_degree),
+                float(self.component_count),
+                float(self.expected_component_size)
                 ]
 
 if __name__ == "__main__":
