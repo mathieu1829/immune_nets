@@ -6,11 +6,11 @@ import math
 
 import uuid
 import src.creation.io_strategies.df_strategy 
-import src.creation.algorithms.simple_distance 
+import src.creation.algorithms.simpleDistance 
 import src.creation.distance.alignment
 from src.creation.algorithms.common_methods import *
 from src.creation.distance.alignment import sequenceAligner
-from src.creation.algorithms.simple_distance import *
+from src.creation.algorithms.simpleDistance import *
 from src.creation.enums.matrices import *
 from src.creation.enums.utils import * 
 from src.creation.io_strategies.test_csv_strategy import *
@@ -96,6 +96,6 @@ class graphletComposition:
                 ]
 
 if __name__ == "__main__":
-    df_net = simple_distance(repertoire=test_csv_strategy().input(path), distance=sequenceAligner("BLOSUM62"))
+    df_net = simpleDistance(repertoire=test_csv_strategy().input(path), distance=sequenceAligner("BLOSUM62"))
     graphletList = graphletComposition(df_net).toList()
     print(graphletList)

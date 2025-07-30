@@ -5,7 +5,7 @@ import umap
 
 from src.analysis.visualization.graphVisualization import graphVisualization
 from src.creation.io_strategies.test_csv_strategy import *
-from src.creation.algorithms.simple_beta_distance import simple_beta_distance
+from src.creation.algorithms.simpleBetaDistance import simpleBetaDistance
 from src.creation.distance.alignment import sequenceAligner
 from src.analysis.methods.graphletComposition import graphletComposition
 
@@ -62,7 +62,7 @@ if __name__ == "__main__":
     distance_fun = sequenceAligner("BLOSUM62")
     grouped_immuneNets = { 
                    group:[
-                           simple_beta_distance(repertoire=repertoire_list[i],
+                           simpleBetaDistance(repertoire=repertoire_list[i],
                                                 distance=distance_fun,
                                                 threshold=0.2)
                        ]  

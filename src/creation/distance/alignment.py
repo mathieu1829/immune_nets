@@ -9,7 +9,7 @@ from src.creation.algorithms.common_methods import numerizeTCRSeq
 
 import pandas as pd
 import numpy as np
-from src.creation.algorithms.simple_distance import simple_distance
+from src.creation.algorithms.simpleDistance import simpleDistance
 from src.creation.algorithms.common_methods import split_tcr_column
 import uuid
 import logging
@@ -79,5 +79,5 @@ if __name__ == "__main__":
     a = sequenceAligner(matrix = "BLOSUM62", group = True)
     b = np.array(["GLYYGQ","GLAAAQ"])
     print(a.tcr_dist(b))
-    df_net = simple_distance(repertoire=test_csv_strategy().input(path), distance=sequenceAligner(matrix= "BLOSUM62",group = True))
+    df_net = simpleDistance(repertoire=test_csv_strategy().input(path), distance=sequenceAligner(matrix= "BLOSUM62",group = True))
     print(df_net)

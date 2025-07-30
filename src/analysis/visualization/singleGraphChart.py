@@ -3,7 +3,7 @@ from pathlib import Path
 
 from src.analysis.visualization.graphVisualization import graphVisualization
 from src.creation.io_strategies.test_csv_strategy import *
-from src.creation.algorithms.simple_beta_distance import simple_beta_distance
+from src.creation.algorithms.simpleBetaDistance import simpleBetaDistance
 from src.creation.distance.alignment import sequenceAligner
 
 
@@ -22,7 +22,7 @@ if __name__ == "__main__":
     healthy_path = root_dir / "tests/test_data/healthy_test_clonotypes_1.csv" #healthy
     repertoire = test_csv_strategy().input(healthy_path)
     distance_fun = sequenceAligner("BLOSUM62")
-    immuneNet = simple_beta_distance(repertoire=repertoire,
+    immuneNet = simpleBetaDistance(repertoire=repertoire,
                                      distance=distance_fun,
                                      threshold=0.2)
 

@@ -1,10 +1,10 @@
 # generate all types networks and save it in specified directory
 import argparse
 from src.creation.algorithms.common_methods import *
-from src.creation.algorithms.simple_distance import *
+from src.creation.algorithms.simpleDistance import *
 from src.creation.distance.alignment import sequenceAligner
-from src.creation.algorithms.simple_vector_distance_v2 import *
-from src.creation.algorithms.simple_vector_distance import *
+from src.creation.algorithms.simpleVectorDistanceV2 import *
+from src.creation.algorithms.simpleVectorDistance import *
 from pathlib import Path
 import importlib
 import os
@@ -61,10 +61,10 @@ def main():
 
     # SimpleDistance(db_strategy().output).createGraph(clonotypes=df,matrix=Matrices.BLOSUM62)
     # SimpleDistance(db_strategy().output).createGraph(clonotypes=df,matrix=Matrices.PAM250)
-    # simple_vector_distance(db_strategy().output).createGraph(clonotypes=df,matrix=Matrices.BLOSUM62)
-    # simple_vector_distance(db_strategy().output).createGraph(clonotypes=df,matrix=Matrices.PAM250)
-    # simple_vector_distance_v2(db_strategy().output).createGraph(clonotypes=df,matrix=Matrices.BLOSUM62)
-    # simple_vector_distance_v2(db_strategy().output).createGraph(clonotypes=df,matrix=Matrices.PAM250)
+    # simpleVectorDistance(db_strategy().output).createGraph(clonotypes=df,matrix=Matrices.BLOSUM62)
+    # simpleVectorDistance(db_strategy().output).createGraph(clonotypes=df,matrix=Matrices.PAM250)
+    # simpleVectorDistanceV2(db_strategy().output).createGraph(clonotypes=df,matrix=Matrices.BLOSUM62)
+    # simpleVectorDistanceV2(db_strategy().output).createGraph(clonotypes=df,matrix=Matrices.PAM250)
 
 if __name__ == "__main__":
     main()

@@ -6,11 +6,11 @@ import uuid
 from src.analysis.methods.graphletComposition import graphletComposition
 import pickle 
 
-import src.creation.algorithms.simple_distance 
+import src.creation.algorithms.simpleDistance 
 import src.creation.distance.alignment
 from src.creation.algorithms.common_methods import *
 from src.creation.distance.alignment import sequenceAligner
-from src.creation.algorithms.simple_distance import *
+from src.creation.algorithms.simpleDistance import *
 from src.creation.enums.matrices import *
 from src.creation.enums.utils import * 
 from src.creation.io_strategies.test_csv_strategy import *
@@ -25,7 +25,7 @@ class TestGraphletComposition(unittest.TestCase):
     @classmethod
     def setUpClass(self):
         self.path = Path(__file__).parent / "test_data/healthy_test_clonotypes_0.csv"
-        self.df_net = simple_distance(repertoire=test_csv_strategy().input(self.path), distance = hammingDistance(group=True))
+        self.df_net = simpleDistance(repertoire=test_csv_strategy().input(self.path), distance = hammingDistance(group=True))
 
     def listToStr(self, l):
         return [str(i) for i in l]

@@ -5,7 +5,7 @@ import numpy as np
 import uuid
 from src.creation.algorithms.common_methods import *
 from src.creation.distance.alignment import sequenceAligner
-from src.creation.algorithms.simple_distance import *
+from src.creation.algorithms.simpleDistance import *
 from src.creation.enums.matrices import *
 from src.creation.enums.utils import * 
 from src.creation.io_strategies.test_csv_strategy import *
@@ -34,10 +34,10 @@ class TestSimpleDistance(unittest.TestCase):
             print(f"model value was {modelValue} but the actual result was {result}")
         self.assertEqual(modelValue, result)
 
-    def test_simple_distance_networks(self):
+    def test_simpleDistance_networks(self):
         for dist in makeEnumDict(Matrices):
             print(f"testing distance: {dist}")
-            df_net = simple_distance(repertoire=test_csv_strategy().input(self.path), distance=sequenceAligner(dist))
+            df_net = simpleDistance(repertoire=test_csv_strategy().input(self.path), distance=sequenceAligner(dist))
 
             match dist:
                 case "PAM250":

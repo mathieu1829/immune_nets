@@ -4,7 +4,7 @@ import pandas as pd
 from pathlib import Path
 import numpy as np
 from src.creation.algorithms.common_methods import *
-from src.creation.algorithms.simple_vector_distance import *
+from src.creation.algorithms.simpleVectorDistance import *
 from src.creation.enums.matrices import *
 from src.creation.distance.alignment import sequenceAligner
 from src.creation.enums.utils import * 
@@ -18,7 +18,7 @@ class TestSimpleVectorDistance(unittest.TestCase):
 
     def test_simple_vector_network(self):
         for dist in makeEnumDict(Matrices):
-            df_net = simple_vector_distance(repertoire=test_csv_strategy().input(self.path), distance=sequenceAligner(dist))
+            df_net = simpleVectorDistance(repertoire=test_csv_strategy().input(self.path), distance=sequenceAligner(dist))
             expected_df = pd.DataFrame(data={'r1': [16,17], 'r2': [15,16]})
             match dist:
                 case "PAM250":

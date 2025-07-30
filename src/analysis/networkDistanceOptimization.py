@@ -4,8 +4,8 @@ from itertools import combinations
 from pathlib import Path
 
 from src.analysis.methods.graphletComposition import graphletComposition
-from src.creation.algorithms.simple_distance import simple_distance
-from src.creation.algorithms.simple_beta_distance import simple_beta_distance
+from src.creation.algorithms.simpleDistance import simpleDistance
+from src.creation.algorithms.simpleBetaDistance import simpleBetaDistance
 from src.creation.distance.alignment import sequenceAligner
 from src.creation.distance.levenshtein import levenshteinDistance 
 from scipy.spatial.distance import euclidean
@@ -52,7 +52,7 @@ def objective(trial):
 
     for group in groups:
         for repertoire in repertoires[group]:
-            network = simple_beta_distance(
+            network = simpleBetaDistance(
                         repertoire=repertoire,
                         distance=distance_fun,
                         threshold=threshold

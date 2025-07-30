@@ -6,11 +6,11 @@ import uuid
 from src.analysis.methods.repertoireAnalysis import repertoireAnalysis
 import pickle 
 
-import src.creation.algorithms.simple_distance 
+import src.creation.algorithms.simpleDistance 
 import src.creation.distance.alignment
 from src.creation.algorithms.common_methods import *
 from src.creation.distance.alignment import sequenceAligner
-from src.creation.algorithms.simple_distance import *
+from src.creation.algorithms.simpleDistance import *
 from src.creation.enums.matrices import *
 from src.creation.enums.utils import * 
 from src.creation.io_strategies.test_csv_strategy import *

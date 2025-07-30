@@ -4,8 +4,8 @@ from pathlib import Path
 from src.creation.algorithms.common_methods import *
 from src.creation.distance.alignment import sequenceAligner
 from src.creation.distance.hamming import hammingDistance
-from src.creation.algorithms.simple_beta_distance import *
-from src.creation.algorithms.simple_distance import *
+from src.creation.algorithms.simpleBetaDistance import *
+from src.creation.algorithms.simpleDistance import *
 from src.creation.enums.matrices import *
 from src.creation.enums.utils import * 
 from src.creation.io_strategies.test_csv_strategy import *
