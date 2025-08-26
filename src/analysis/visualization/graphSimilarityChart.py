@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 from sklearn.decomposition import PCA
 import umap
+from sklearn.preprocessing import MinMaxScaler
 
 from src.analysis.visualization.graphVisualization import graphVisualization
 from src.creation.io_strategies.test_csv_strategy import *
@@ -22,13 +23,15 @@ def graphSimilarityChart(grouped_immuneNets):
         for immuneNet in group_immuneNets:
             stats = graphletComposition(immuneNet)
             group_results.append(stats.toList())
+    scaler = MinMaxScaler()
+    normalizedResults = scaler.fit_transform(group_results)
     if total_samples > 3:
         n_neighbors = max(2, min(15, total_samples - 1))  # safe, auto-adjust
         reducer = umap.UMAP(n_neighbors=n_neighbors, min_dist=0.1, metric='cosine')
-        reduced = reducer.fit_transform(np.array(group_results))
+        reduced = reducer.fit_transform(np.array(normalizedResults))
         title = "UMAP"
     else:
-        reduced = PCA(n_components=2).fit_transform(np.array(group_results))
+        reduced = PCA(n_components=2).fit_transform(np.array(normalizedResults))
         title = "PCA"
 
 
