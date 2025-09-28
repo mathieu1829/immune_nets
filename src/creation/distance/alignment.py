@@ -9,14 +9,14 @@ from src.creation.algorithms.common_methods import numerizeTCRSeq
 
 import pandas as pd
 import numpy as np
-from src.creation.algorithms.simple_distance import simple_distance
+from src.creation.algorithms.simpleDistance import simpleDistance
 from src.creation.algorithms.common_methods import split_tcr_column
 import uuid
 import logging
 from src.creation.utils.pathManager import pathManager
 from src.creation.io_strategies.test_csv_strategy import *
 
-path = pathManager().testDataPath / "bigTest.csv"
+path = pathManager().testDataPath / "healthy_test_clonotypes_0.csv"
 
 
 class sequenceAligner:
@@ -53,8 +53,12 @@ class sequenceAligner:
 
             self_score = max(self_score_x.score, self_score_ref.score)
             alignments = self.__aligner.align(x, ref)
+            # alignment_min_score = -10 + (min(len(x),len(ref))-1) * -1  
+            alignment_min_score = min(0,alignments.score)
 
-            res = 1 - (float(alignments.score) / float(self_score)) 
+            
+
+            res = 1 - ((float(alignments.score)-float(alignment_min_score))/(float(self_score)-float(alignment_min_score))) 
         else:
             if self.group == False:
                 raise ValueError('\"group\" must be set to true when using method in group mode')
@@ -75,5 +79,5 @@ if __name__ == "__main__":
     a = sequenceAligner(matrix = "BLOSUM62", group = True)
     b = np.array(["GLYYGQ","GLAAAQ"])
     print(a.tcr_dist(b))
-    df_net = simple_distance(repertoire=test_csv_strategy().input(path), distance=sequenceAligner(matrix= "BLOSUM62",group = True))
+    df_net = simpleDistance(repertoire=test_csv_strategy().input(path), distance=sequenceAligner(matrix= "BLOSUM62",group = True))
     print(df_net)

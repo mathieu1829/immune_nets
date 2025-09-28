@@ -3,7 +3,7 @@ import pandas as pd
 from src.creation.io_strategies.csv_strategy import csv_strategy
 from src.creation.distance.hamming import hammingDistance 
 from src.creation.distance.levenshtein import levenshteinDistance 
-from src.creation.algorithms.simple_beta_distance import simple_beta_distance
+from src.creation.algorithms.simpleBetaDistance import simpleBetaDistance
 from src.creation.io_strategies.df_strategy import df_strategy
 from src.creation.immuneRepertoire import immuneRepertoire
 from src.analysis.methods.skeletonPublicNairSimilarity import skeletonPublicNairSimilarity
@@ -15,7 +15,7 @@ from src.creation.utils.pathManager import pathManager
 from src.creation.io_strategies.test_csv_strategy import *
 import pickle
 
-path = pathManager().testDataPath / "bigTest.csv"
+path = pathManager().testDataPath / "healthy_test_clonotypes_0.csv"
 
 class repertoireAnalysis:
     def __init__(self,repertoire):

@@ -1,28 +1,31 @@
 # return graph (dataframe) based on another df with clonotypes
+
 import numpy as np
+from src.creation.algorithms.common_methods import *
+from src.creation.algorithms.algorithm import *
 import pandas as pd
 from scipy.spatial.distance import pdist
 from scipy.spatial.distance import squareform
-from src.creation.algorithms.common_methods import *
-from src.creation.algorithms.algorithm import *
+from src.creation.immuneRepertoire import immuneRepertoire
 from src.creation.immuneNetwork import immuneNetwork
 
 @algorithm
-def simple_vector_distance_v2(repertoire, distance, threshold_alfa = None, threshold_beta = None, **kwargs):
+def simpleVectorDistance( repertoire, distance, threshold = None, **kwargs):
     clonotypes = repertoire.clones
     distanceFun = distance.tcr_dist
 
     if distance.group == True:
         raise ValueError("Vector distance algorithm can't handle \"group\" distance functions")
 
-    ab_tcr = clonotypes[["tcra_aa", "tcrb_aa"]].dropna()
+
+    ab_tcr = clonotypes[["tcra_aa", "tcrb_aa"]].dropna();
     tcr_npa = clonotypes[["tcra_aa", "tcrb_aa"]].dropna().to_numpy()
     dist_al_trcb = np.zeros(np.shape(tcr_npa)[0] * np.shape(tcr_npa)[0]).reshape(np.shape(tcr_npa)[0],
                                                                                  np.shape(tcr_npa)[0])
     dist_al_trcb += -1
 
     unique_amino_acids = np.array(['A','R','N','D','C','Q','E','G','H','I','L','K','M','F','P','S','T','W','Y','V',''])
-    
+
     alpha_profile = []
     beta_profile = []
 
@@ -70,39 +73,27 @@ def simple_vector_distance_v2(repertoire, distance, threshold_alfa = None, thres
     for idx,amino in enumerate(closest_beta):
         ab_tcr[f'b{idx}'] = ab_tcr['tcrb_aa'].apply(lambda x : distanceFun(x,amino))
 
-    dist_mat_alpha = pd.DataFrame(
-    squareform(pdist(ab_tcr[["a0", "a1", "a2", "a3", "a4", "a5"]])),
+    dist_mat = pd.DataFrame(
+    squareform(pdist(ab_tcr[["a0","b0", "a1", "b1", "a2", "b2", "a3", "b3", "a4", "b4", "a5", "b5"]])),
     columns = ab_tcr.index,
     index = ab_tcr.index
     ) 
     
-    dist_mat_beta = pd.DataFrame(
-    squareform(pdist(ab_tcr[["b0", "b1", "b2", "b3", "b4", "b5"]])),
-    columns = ab_tcr.index,
-    index = ab_tcr.index
-    ) 
-
-    treshold_alpha = np.nanmean(dist_mat_alpha.to_numpy()) / 3 if threshold_alfa is None else threshold_alfa# todo -> treat as parameter, and in this case we could make different tresholds for alpha and beta
-    treshold_beta = np.nanmean(dist_mat_beta.to_numpy())  / 3 if threshold_beta is None else threshold_beta# todo -> treat as parameter, and in this case we could make different tresholds for alpha and beta
-    dist_mat_alpha = np.tril(dist_mat_alpha, k=-1)
-    for i in range(len(dist_mat_alpha)):
-        for j in range(i,len(dist_mat_alpha)):
-            dist_mat_alpha[i,j] = float('INF')
-    dist_mat_beta = np.tril(dist_mat_beta, k=-1)
-    for i in range(len(dist_mat_beta)):
-        for j in range(i,len(dist_mat_beta)):
-            dist_mat_beta[i,j] = float('INF')
-    matrix_cutoff = np.where((dist_mat_alpha < treshold_alpha) & (dist_mat_beta < treshold_beta))
+    threshold = np.nanmean(dist_mat.to_numpy()) / 4 if threshold is None else threshold
+    # threshold = np.mean(dist_mat.fillna(0).to_numpy()) / 4 if threshold is None else threshold #produces smaller threshold
+    dist_mat = np.tril(dist_mat, k=-1)
+    # threshold = np.nanmean(dist_mat) / 4 if threshold is None else threshold #produces even smaller threshold
+    for i in range(len(dist_mat)):
+        for j in range(i,len(dist_mat)):
+            dist_mat[i,j] = float('INF')
+    # print(dist_mat)
+    # print(f"threshold: {threshold}")
+    matrix_cutoff = np.where(dist_mat < threshold)
 
     d = {'r1': matrix_cutoff[0], 'r2': matrix_cutoff[1]}
     df_net = pd.DataFrame(data=d)
     df_net.name = clonotypes.name
-    immuneNet = immuneNetwork(network=df_net,
-                              method="simple_vector_distance_v2", 
-                              sampleIDs=np.unique(repertoire.clones["sampleID"].to_numpy()),
-                              distanceFun=str(distance),
-                              threshold={"threshold_alfa":threshold_alfa, "threshold_beta":threshold_beta},
-                              sampleSize=len(ab_tcr)) 
+    immuneNet = immuneNetwork(df_net, "simpleVectorDistance", np.unique(repertoire.clones["sampleID"].to_numpy()),str(distance) , threshold , len(ab_tcr) ) 
 
     return immuneNet
 

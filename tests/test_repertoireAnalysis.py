@@ -6,11 +6,11 @@ import uuid
 from src.analysis.methods.repertoireAnalysis import repertoireAnalysis
 import pickle 
 
-import src.creation.algorithms.simple_distance 
+import src.creation.algorithms.simpleDistance 
 import src.creation.distance.alignment
 from src.creation.algorithms.common_methods import *
 from src.creation.distance.alignment import sequenceAligner
-from src.creation.algorithms.simple_distance import *
+from src.creation.algorithms.simpleDistance import *
 from src.creation.enums.matrices import *
 from src.creation.enums.utils import * 
 from src.creation.io_strategies.test_csv_strategy import *
@@ -24,7 +24,7 @@ class TestRepertoireAnalysis(unittest.TestCase):
     
     @classmethod
     def setUpClass(self):
-        path = Path(__file__).parent / "test_data/bigTest.csv"
+        path = Path(__file__).parent / "test_data/healthy_test_clonotypes_0.csv"
         self.repertoire = test_csv_strategy().input(path)
 
     def listToStr(self, l):

@@ -1,14 +1,14 @@
 import numpy as np
 import pandas as pd
 from src.creation.immuneRepertoire import immuneRepertoire
-from src.creation.algorithms.simple_beta_distance import simple_beta_distance
+from src.creation.algorithms.simpleBetaDistance import simpleBetaDistance
 from src.creation.distance.levenshtein import levenshteinDistance
 import igraph as ig
 
 from src.creation.utils.pathManager import pathManager
 from src.creation.io_strategies.test_csv_strategy import *
 
-path = pathManager().testDataPath / "bigTest.csv"
+path = pathManager().testDataPath / "healthy_test_clonotypes_0.csv"
 
 
 def skeletonPublicNairSimilarity(repertoire, top_k = 20, absoulutePublic=False, minCoverage = 2, minClusterSize=2):
@@ -24,7 +24,7 @@ def skeletonPublicNairSimilarity(repertoire, top_k = 20, absoulutePublic=False, 
         sampleClones = prepared_clones.iloc[ prepared_clones["sampleID"].to_numpy() == sampleID]
         sampleClones.name = repertoire.clones.name
         sampleRepertoire = immuneRepertoire(clones=sampleClones)
-        immuneNet = simple_beta_distance(repertoire = sampleRepertoire,distance = levenshteinDistance(group = True),threshold = 2)
+        immuneNet = simpleBetaDistance(repertoire = sampleRepertoire,distance = levenshteinDistance(group = True),threshold = 2)
         df_net = immuneNet.network
 
         #performing clustering
@@ -60,7 +60,7 @@ def skeletonPublicNairSimilarity(repertoire, top_k = 20, absoulutePublic=False, 
     # print(skeleton_clones)
     skeleton_clones.name = repertoire.clones.name
     skeleton_repertoire = immuneRepertoire(clones=skeleton_clones)
-    immuneNet = simple_beta_distance(repertoire = skeleton_repertoire,distance = levenshteinDistance(group = True),threshold = 2)
+    immuneNet = simpleBetaDistance(repertoire = skeleton_repertoire,distance = levenshteinDistance(group = True),threshold = 2)
     df_net = immuneNet.network
 
     #performing clustering on skeleton clones

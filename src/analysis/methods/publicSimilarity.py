@@ -1,14 +1,14 @@
 import numpy as np
 import pandas as pd
 from src.creation.immuneRepertoire import immuneRepertoire
-from src.creation.algorithms.simple_beta_distance import simple_beta_distance
+from src.creation.algorithms.simpleBetaDistance import simpleBetaDistance
 from src.creation.distance.levenshtein import levenshteinDistance
 import igraph as ig
 
 from src.creation.utils.pathManager import pathManager
 from src.creation.io_strategies.test_csv_strategy import *
 
-path = pathManager().testDataPath / "bigTest.csv"
+path = pathManager().testDataPath / "healthy_test_clonotypes_0.csv"
 
 
 def publicSimilarity(repertoire, frequencyCutoff = None, top_k = 20, absoulutePublic=False, minCoverage = 2, minClusterSize=2):
@@ -23,7 +23,7 @@ def publicSimilarity(repertoire, frequencyCutoff = None, top_k = 20, absoulutePu
     # print(prepared_clones)
 
     
-    immuneNet = simple_beta_distance(repertoire = preparedRepertoire,distance = levenshteinDistance(group = True),threshold = 2)
+    immuneNet = simpleBetaDistance(repertoire = preparedRepertoire,distance = levenshteinDistance(group = True),threshold = 2)
     df_net = immuneNet.network
 
     #performing clustering
