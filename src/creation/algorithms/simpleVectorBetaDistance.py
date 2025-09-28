@@ -26,7 +26,6 @@ def simpleVectorBetaDistance( repertoire, distance, threshold = None, **kwargs):
 
     unique_amino_acids = np.array(['A','R','N','D','C','Q','E','G','H','I','L','K','M','F','P','S','T','W','Y','V',''])
 
-    alpha_profile = []
     beta_profile = []
 
     for seq in range(tcr_npa.shape[0]):
@@ -46,13 +45,11 @@ def simpleVectorBetaDistance( repertoire, distance, threshold = None, **kwargs):
     consensus_beta_seq = ""
     for i in range(len(beta_profile)):
         consensus_beta_seq+=consensus_beta_arr[i]
-    print(b_tcr) 
     b_tcr['beta_closest_to_consensus'] = b_tcr['tcrb_aa'].apply(lambda x: distanceFun(x,consensus_beta_seq))
 
 
     closest_beta = b_tcr[['tcrb_aa','beta_closest_to_consensus']].sort_values('beta_closest_to_consensus').dropna().to_numpy()[:6,0]
 
-    #finished here
     for idx,amino in enumerate(closest_beta):
         b_tcr[f'b{idx}'] = b_tcr['tcrb_aa'].apply(lambda x : distanceFun(x,amino))
 
