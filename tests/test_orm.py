@@ -4,6 +4,8 @@ from src.orm.models import *
 from sqlalchemy import insert,select,delete
 from datetime import date,time,datetime
 from sqlalchemy.orm import Session
+from pathlib import Path
+import pandas as pd
 
 class testORM(unittest.TestCase):
     def test_ORMConnetion(self):
@@ -27,4 +29,7 @@ class testORM(unittest.TestCase):
             stmt = select(Dataset).where(Dataset.name == "a")
             print("After deleting:")
             print(list(connection.execute(stmt)))
+
+if __name__ == '__main__':
+    unittest.main()
 
