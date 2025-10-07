@@ -27,7 +27,6 @@ class Dataset(Base):
     modificationDate: Mapped[date] =  mapped_column(Date, nullable = False)
     creationDate: Mapped[date] =  mapped_column(Date, nullable = False)
 
-    clonotypes: Mapped[List["ClonotypeData"]] = relationship(back_populates="source_dataset")
     dataset_metadata_list: Mapped[List["DatasetMetadata"]] = relationship(back_populates="source_dataset")
     repertoires: Mapped[List["Repertoire"]] = relationship(
         secondary="repertoire_datasets",   # table name as string
@@ -44,14 +43,13 @@ class ClonotypeData(Base):
                                                             primary_key=True,
                                                             default=uuid.uuid4)
     dataset_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("dataset.dataset_id"))
-    proportion: Mapped[float] = mapped_column(Float)
     cdr3s_aa: Mapped[str] = mapped_column(String(100))
     cdr3s_nt: Mapped[str] = mapped_column(String(300))
+    proportion: Mapped[float] = mapped_column(Float)
     inkt_evidence: Mapped[str] = mapped_column(String(30))
     mait_evidence: Mapped[str] = mapped_column(String(30))
 
-    source_dataset: Mapped["Dataset"] = relationship(back_populates="clonotypes")
-    repertoires: Mapped[List["Repertoire"]] = relationship(
+    source_repertoires: Mapped[List["Repertoire"]] = relationship(
         secondary="repertoire_composition",   # table name as string
         back_populates="clonotypes",
     )
@@ -79,6 +77,7 @@ class RepertoireComposition(Base):
                                           default=uuid.uuid4)
     repertoire_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("repertoire.repertoire_id"))
     clone_record_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("clonotype_data.clone_record_id"))
+
 
 class RepertoireDatasets(Base):
     __tablename__ = "repertoire_datasets"
@@ -108,7 +107,7 @@ class Repertoire(Base):
     )
     clonotypes: Mapped[List["ClonotypeData"]] = relationship(
         secondary="repertoire_composition",   # table name as string
-        back_populates="repertoires",
+        back_populates="source_repertoires",
     )
     repertoire_stats: Mapped[List["RepertoireStat"]] = relationship(back_populates="source_repertoire")
     repertoire_networks: Mapped[List["Network"]] = relationship(back_populates="source_repertoire")
