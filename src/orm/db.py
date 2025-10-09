@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker
 from pathlib import Path
 from dotenv import load_dotenv
 import os 
-
+from src.orm.models import *
 
 
 
@@ -20,3 +20,7 @@ pgSocketPath = rootDir / pgSocket
 
 engine = create_engine(f"postgresql+psycopg2://{pg_user}{pg_passwd}@/{pg_db}?host={pgSocketPath}")
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
+
+
+
+Base.metadata.create_all(engine)
