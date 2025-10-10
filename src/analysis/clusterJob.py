@@ -1,9 +1,10 @@
 import optuna
-from src.creation.io_strategies.test_csv_strategy import *
 from pathlib import Path
 from itertools import combinations
 
 from src.analysis.networkDistanceOptimization import objectiveBuilder
+
+from src.orm.models import Repertoire
 
 # TO DO - get groups from db
 groups = ["leukemia", "covid", "healthy"]
@@ -16,9 +17,9 @@ healthy_path = root_dir / "tests/test_data/healthy_test_clonotypes_1.csv" #healt
 
 # TO DO - get repertoires for each group from database
 repertoire_list = [
-        test_csv_strategy().input(leukemia_path),
-        test_csv_strategy().input(covid_path),
-        test_csv_strategy().input(healthy_path),
+        Repertoire.from_csv(name="leukemia",desc=" ",path=leukemia_path),
+        Repertoire.from_csv(name="covid",desc=" ",path=covid_path),
+        Repertoire.from_csv(name="healthy",desc=" ",path=healthy_path),
         ]
 universal_repertoires = { group:[repertoire_list[i]]  for i,group in enumerate(groups)}
 
@@ -29,10 +30,12 @@ all_repertoires["universal"] = universal_repertoires
 
 if __name__ == '__main__':
     for repertoire_group in all_repertoires:
+        if repertoire_group != "healthy vs leukemia":
+            continue
         print(f"Running study for {repertoire_group} repertoires")
         analyzed_repertoires = all_repertoires[repertoire_group]
         study = optuna.create_study(direction="maximize")
-        study.optimize(objectiveBuilder(analyzed_repertoires), n_trials=20)
+        study.optimize(objectiveBuilder(analyzed_repertoires), n_trials=3)
 
         # Best result
         print("Best score:", study.best_value)

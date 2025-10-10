@@ -19,9 +19,9 @@ class NetworkData(Base):
     network_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("network.network_id"), nullable = False)
     r1: Mapped[int] = mapped_column(Integer, nullable = False)
     r2: Mapped[int] = mapped_column(Integer, nullable = False)
-    weights: Mapped[str] = mapped_column(String(50), nullable = False)
-    r1_weights: Mapped[str] = mapped_column(String(50), nullable = False)
-    r2_weights: Mapped[str] = mapped_column(String(50), nullable = False)
+    weights: Mapped[str] = mapped_column(String(50), nullable = True, default = None)
+    r1_weights: Mapped[str] = mapped_column(String(50), nullable = True, default = None)
+    r2_weights: Mapped[str] = mapped_column(String(50), nullable = True, default = None)
 
 
     source_network: Mapped["Network"] = relationship(back_populates="network_edges") # type: ignore

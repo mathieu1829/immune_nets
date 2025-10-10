@@ -14,4 +14,6 @@ class globalSettings(object):
     defaultDBHost = "localhost"
     defaultDB = ""
     defaultOutputStrategy = df_strategy().output
-    version="0.7"
+    version = "0.7"
+    defaultUsername = "Admin"
+

@@ -10,7 +10,6 @@ from src.creation.algorithms.simpleDistance import simpleDistance
 from src.creation.algorithms.common_methods import split_tcr_column
 import uuid
 from src.creation.utils.pathManager import pathManager
-from src.creation.io_strategies.test_csv_strategy import *
 
 path = pathManager().testDataPath / "healthy_test_clonotypes_0.csv"
 
@@ -58,7 +57,7 @@ class levenshteinDistance:
 #     ref = "aaa"
 #     print(a.tcr_dist(x,ref))
 
-if __name__ == "__main__":
-    df_net = simpleDistance(repertoire=test_csv_strategy().input(path), distance=levenshteinDistance(group = True))
-    print(df_net)
-
+# if __name__ == "__main__":
+#     df_net = simpleDistance(repertoire=test_csv_strategy().input(path), distance=levenshteinDistance(group = True))
+#     print(df_net)
+#

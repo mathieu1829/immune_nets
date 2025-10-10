@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from src.creation.immuneRepertoire import immuneRepertoire
+from src.orm.models import Repertoire
 from src.creation.algorithms.simpleBetaDistance import simpleBetaDistance
 from src.creation.distance.levenshtein import levenshteinDistance
 import igraph as ig

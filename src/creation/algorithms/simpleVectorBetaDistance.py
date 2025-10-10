@@ -6,8 +6,9 @@ from src.creation.algorithms.algorithm import *
 import pandas as pd
 from scipy.spatial.distance import pdist
 from scipy.spatial.distance import squareform
-from src.creation.immuneRepertoire import immuneRepertoire
 from src.creation.immuneNetwork import immuneNetwork
+
+from src.orm.models import Network
 
 @algorithm
 def simpleVectorBetaDistance( repertoire, distance, threshold = None, **kwargs):
@@ -70,8 +71,13 @@ def simpleVectorBetaDistance( repertoire, distance, threshold = None, **kwargs):
 
     d = {'r1': matrix_cutoff[0], 'r2': matrix_cutoff[1]}
     df_net = pd.DataFrame(data=d)
-    df_net.name = clonotypes.name
-    immuneNet = immuneNetwork(df_net, "simpleVectorBetaDistance", np.unique(repertoire.clones["sampleID"].to_numpy()),str(distance) , threshold , len(b_tcr) ) 
+    immuneNet = Network.createFullNetwork(repertoire_id=repertoire.repertoire_id,
+                                          graph=df_net,
+                                          method="simpleVectorBetaDistance",
+                                          distanceFun=str(distance),
+                                          threshold=threshold,
+                                          sampleSize=len(b_tcr)
+                                          )
 
     return immuneNet
 
