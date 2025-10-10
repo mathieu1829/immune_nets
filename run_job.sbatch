@@ -5,9 +5,7 @@
 #SBATCH --time=02:00:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=4
-#SBATCH --mem=8G
 
-cd /home/teuthid/Documents/python/immune-nets
+cd /home/teuthid/Documents/python/immune_nets
 
-nix-shell --run "python -m src.analysis.clusterJob"
+NIX_SHELL_COMMAND="python -m src.analysis.clusterJob" nix-shell
