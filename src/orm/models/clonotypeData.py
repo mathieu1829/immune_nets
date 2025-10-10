@@ -20,7 +20,7 @@ class ClonotypeData(Base):
     proportion: Mapped[float] = mapped_column(Float, nullable = False)
     tcra_aa: Mapped[str] = mapped_column(String(30), nullable = True)
     tcrb_aa: Mapped[str] = mapped_column(String(30), nullable = True)
-    cdr3s_nt: Mapped[str] = mapped_column(String(200), nullable = True)
+    cdr3s_nt: Mapped[str] = mapped_column(String(300), nullable = True)
     inkt_evidence: Mapped[str] = mapped_column(String(30), nullable = False)
     mait_evidence: Mapped[str] = mapped_column(String(30), nullable = False)
 
