@@ -38,7 +38,6 @@ class graphletComposition:
 
 
         # graph = ig.Graph(minGraph)
-        print(immuneNet.graph)
         self.graph = ig.Graph(immuneNet.graph.to_numpy())
         self.graph.add_vertices(immuneNet.sample_size - self.graph.vcount())
 

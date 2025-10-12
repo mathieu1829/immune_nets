@@ -11,7 +11,7 @@ from src.creation.immuneNetwork import immuneNetwork
 from src.orm.models import Network
 
 @algorithm
-def simpleVectorBetaDistance( repertoire, distance, threshold = None, **kwargs):
+def simpleVectorBetaDistance( repertoire, distance, threshold = None, alt_rep = False, **kwargs):
     clonotypes = repertoire.clones
     distanceFun = distance.tcr_dist
 
@@ -71,13 +71,16 @@ def simpleVectorBetaDistance( repertoire, distance, threshold = None, **kwargs):
 
     d = {'r1': matrix_cutoff[0], 'r2': matrix_cutoff[1]}
     df_net = pd.DataFrame(data=d)
-    immuneNet = Network.createFullNetwork(repertoire_id=repertoire.repertoire_id,
-                                          graph=df_net,
-                                          method="simpleVectorBetaDistance",
-                                          distanceFun=str(distance),
-                                          threshold=threshold,
-                                          sampleSize=len(b_tcr)
-                                          )
+    if alt_rep:
+        immuneNet = immuneNetwork(df_net, "simpleVectorBetaDistance", np.unique(np.zeros(1)),str(distance) , threshold, len(clonotypes)  )
+    else:
+        immuneNet = Network.createFullNetwork(repertoire_id=repertoire.repertoire_id,
+                                              graph=df_net,
+                                              method="simpleVectorBetaDistance",
+                                              distanceFun=str(distance),
+                                              threshold=threshold,
+                                              sampleSize=len(b_tcr)
+                                              )
 
     return immuneNet
 

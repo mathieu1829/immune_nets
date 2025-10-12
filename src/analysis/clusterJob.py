@@ -9,6 +9,8 @@ from src.orm.db import engine
 from sqlalchemy.orm import Session, selectinload
 from sqlalchemy import insert,select,delete
 
+import time
+
 # TO DO - get groups from db
 # groups = ["leukemia", "covid", "healthy"]
 #
@@ -48,6 +50,9 @@ with Session(engine) as session:
     all_repertoires = {"healthy vs leukemia": {"healthy":healthy_dataset.repertoires , "leukemia":leukemia_dataset.repertoires}}
 
 if __name__ == '__main__':
+
+    start = time.time()
+
     for repertoire_group in all_repertoires:
         if repertoire_group != "healthy vs leukemia":
             continue
@@ -59,5 +64,8 @@ if __name__ == '__main__':
         # Best result
         print("Best score:", study.best_value)
         print("Best params:", study.best_params)
+    end = time.time()
+
+    print(f"execution time: {end - start:.4f} seconds")
 
 
