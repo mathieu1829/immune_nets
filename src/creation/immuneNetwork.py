@@ -10,6 +10,7 @@ class ImmuneNetwork:
                  threshold=0.0,
                  threshold_alpha=0.0,
                  threshold_beta=0.0,
+                 name=None,
                  sampleId=uuid.uuid4
                  ):
         assert type(graph) == type(pd.DataFrame()), f"Net, should be a DataFrame, and not {type(graph)}" 
@@ -22,5 +23,6 @@ class ImmuneNetwork:
         self.sampleSize = sampleSize
         self.threshold_alpha = threshold_alpha
         self.threshold_beta = threshold_beta
+        self.name = name
     
 

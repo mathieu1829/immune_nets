@@ -24,6 +24,7 @@ class Network(Base):
     repertoire_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("repertoire.repertoire_id"))
     sample_size: Mapped[int] = mapped_column(Integer, nullable=False)
 
+    name: Mapped[str] =  mapped_column(String(30), nullable = True, default=None)
     algorithm: Mapped[str] =  mapped_column(String(30), nullable = False)
     distance_function: Mapped[str] =  mapped_column(String(30), nullable = False)
     network_algorithm_parameters: Mapped[str] =  mapped_column(String(30), nullable = False)
@@ -59,7 +60,8 @@ class Network(Base):
                              sampleId=self.repertoire_id,
                              distanceFun=self.distance_function,
                              threshold=eval(self.network_algorithm_parameters)["threshold"],
-                             sampleSize=len(self.source_repertoire.clonotypes)
+                             sampleSize=len(self.source_repertoire.clonotypes),
+                             name=self.name
                             )
 
     @classmethod
@@ -70,7 +72,8 @@ class Network(Base):
                           algorithm=network.method,
                           distance_function=network.distanceFun,
                           network_algorithm_parameters=parameters,
-                          sample_size=network.sampleSize
+                          sample_size=network.sampleSize,
+                          name = network.name
                           )
         new_network.setGraph(network.graph)
         return new_network
