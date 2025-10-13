@@ -8,8 +8,7 @@ from src.creation.algorithms.simpleBetaDistance import *
 from src.creation.algorithms.simpleDistance import *
 from src.creation.enums.matrices import *
 from src.creation.enums.utils import * 
-from src.creation.io_strategies.test_csv_strategy import *
-from src.creation.immuneRepertoire import immuneRepertoire
+from src.creation.immuneRepertoire import ImmuneRepertoire
 
 def graphVisualization(repertoire, immuneNet, ax):
 
