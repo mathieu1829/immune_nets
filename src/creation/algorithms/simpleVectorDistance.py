@@ -7,7 +7,7 @@ import pandas as pd
 from scipy.spatial.distance import pdist
 from scipy.spatial.distance import squareform
 from src.orm.models import Repertoire
-from src.creation.immuneNetwork import immuneNetwork
+from src.creation.immuneNetwork import ImmuneNetwork
 
 @algorithm
 def simpleVectorDistance( repertoire, distance, threshold = None, **kwargs):
@@ -92,8 +92,7 @@ def simpleVectorDistance( repertoire, distance, threshold = None, **kwargs):
 
     d = {'r1': matrix_cutoff[0], 'r2': matrix_cutoff[1]}
     df_net = pd.DataFrame(data=d)
-    df_net.name = clonotypes.name
-    immuneNet = immuneNetwork(graph=df_net,
+    immuneNet = ImmuneNetwork(graph=df_net,
                               method="simpleVectorDistance",
                               sampleId=repertoire.repertoire_id,
                               distanceFun=str(distance),

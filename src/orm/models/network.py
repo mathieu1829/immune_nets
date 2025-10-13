@@ -13,7 +13,7 @@ from .base import Base
 from .networkData import NetworkData
 
 from src.creation.globalSettings import globalSettings
-from src.creation.immuneNetwork import immuneNetwork
+from src.creation.immuneNetwork import ImmuneNetwork
 
 class Network(Base):
     __tablename__ = "network"
@@ -54,7 +54,7 @@ class Network(Base):
             "r2": n.r2
         } for n in self.network_edges])
 
-        return immuneNetwork(graph=new_graph,
+        return ImmuneNetwork(graph=new_graph,
                              method=self.algorithm,
                              sampleId=self.repertoire_id,
                              distanceFun=self.distance_function,
@@ -63,7 +63,7 @@ class Network(Base):
                             )
 
     @classmethod
-    def fromImmuneNetwork(cls, network: immuneNetwork):
+    def fromImmuneNetwork(cls, network: ImmuneNetwork):
         parameters =  {"threshold":network.threshold}
         parameters = str(parameters)
         new_network = cls(repertoire_id=network.sampleId,

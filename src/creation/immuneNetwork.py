@@ -1,7 +1,7 @@
 import pandas as pd
 import uuid
 
-class immuneNetwork:
+class ImmuneNetwork:
     def __init__(self,
                  graph,
                  method,

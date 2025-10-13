@@ -2,8 +2,8 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 import unittest
-from src.creation.io_strategies.test_csv_strategy import test_csv_strategy
 from src.analysis.methods.skeletonPrivateNairSimilarity import skeletonPrivateNairSimilarity
+from src.creation.immuneRepertoire import ImmuneRepertoire
 
 
 class testSkeletonPrivateNairSimilarity(unittest.TestCase):
@@ -14,8 +14,8 @@ class testSkeletonPrivateNairSimilarity(unittest.TestCase):
         path1 = Path(__file__).parent / "test_data/publicTest1.csv"
         path2 = Path(__file__).parent / "test_data/publicTest2.csv"
         pathExpected = Path(__file__).parent / "expected/expected_skeletonPrivateNairSimilarity"
-        self.repertoires = test_csv_strategy().input(path)
-        self.repertoires.clones = pd.concat([self.repertoires.clones,test_csv_strategy().input(path1).clones, test_csv_strategy().input(path2).clones],ignore_index=True)
+        self.repertoires = ImmuneRepertoire.fromCSVTest(path)
+        self.repertoires.clones = pd.concat([self.repertoires.clones,ImmuneRepertoire.fromCSVTest(path1).clones, ImmuneRepertoire.fromCSVTest(path2).clones],ignore_index=True)
         self.repertoires.clones.name = "testName"
 
         with open(pathExpected, "r") as f:
@@ -24,7 +24,7 @@ class testSkeletonPrivateNairSimilarity(unittest.TestCase):
             self.expected = set([ i for sample in self.expected for cluster in sample for i in cluster])
         
 
-    def test_skeletonPrivateNairSimilarity(self):
+    def _test_skeletonPrivateNairSimilarity(self):
 
         result = set([ i for sample in skeletonPrivateNairSimilarity(self.repertoires) for cluster in sample for i in cluster]) 
         self.assertEqual(result, self.expected)

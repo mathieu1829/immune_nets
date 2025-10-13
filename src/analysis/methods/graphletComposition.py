@@ -5,7 +5,6 @@ import pandas as pd
 import math
 
 import uuid
-import src.creation.io_strategies.df_strategy 
 import src.creation.algorithms.simpleDistance 
 import src.creation.distance.alignment
 from src.creation.algorithms.common_methods import *
@@ -14,6 +13,7 @@ from src.creation.algorithms.simpleDistance import *
 from src.creation.enums.matrices import *
 from src.creation.enums.utils import * 
 from src.creation.utils.pathManager import pathManager
+from src.creation.immuneRepertoire import ImmuneRepertoire
 
 
 path = pathManager().testDataPath / "test_clonotypes.csv"
@@ -92,9 +92,9 @@ class graphletComposition:
                 float(self.expected_degree),
                 float(self.component_count),
                 float(self.expected_component_size)
-                ]
+               ]
 
-# if __name__ == "__main__":
-#     df_net = simpleDistance(repertoire=test_csv_strategy().input(path), distance=sequenceAligner("BLOSUM62"))
-#     graphletList = graphletComposition(df_net).toList()
-#     print(graphletList)
+if __name__ == "__main__":
+    df_net = simpleDistance(repertoire=ImmuneRepertoire.fromCSV(path=path, name="test repertoire"), distance=sequenceAligner("BLOSUM62"))
+    graphletList = graphletComposition(df_net).toList()
+    print(graphletList)

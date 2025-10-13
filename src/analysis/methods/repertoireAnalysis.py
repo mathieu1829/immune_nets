@@ -1,18 +1,15 @@
 import numpy as np
 import pandas as pd
-from src.creation.io_strategies.csv_strategy import csv_strategy
 from src.creation.distance.hamming import hammingDistance 
 from src.creation.distance.levenshtein import levenshteinDistance 
 from src.creation.algorithms.simpleBetaDistance import simpleBetaDistance
-from src.creation.io_strategies.df_strategy import df_strategy
-from src.creation.immuneRepertoire import immuneRepertoire
+from src.creation.immuneRepertoire import ImmuneRepertoire
 from src.analysis.methods.skeletonPublicNairSimilarity import skeletonPublicNairSimilarity
 from src.analysis.methods.skeletonPrivateNairSimilarity import skeletonPrivateNairSimilarity
 from src.creation.algorithms.common_methods import *
 import igraph as ig
 import uuid
 from src.creation.utils.pathManager import pathManager
-from src.creation.io_strategies.test_csv_strategy import *
 import pickle
 
 path = pathManager().testDataPath / "healthy_test_clonotypes_0.csv"
@@ -45,6 +42,6 @@ class repertoireAnalysis:
         return [self.num_of_tcra, self.num_of_tcrb, self.num_of_all_tcr, self.unique_tcra_distribution, self.unique_tcrb_distribution, self.unique_all_tcr_distribution, self.simpson_index_tcra, self.simpson_index_tcrb, self.simpson_index_all_tcr, self.shannon_index_tcra, self.shannon_index_tcrb, self.shannon_index_all_tcr]
 
 if __name__ == "__main__":
-    repertoireStats =  repertoireAnalysis(test_csv_strategy().input(path))
+    repertoireStats =  repertoireAnalysis(ImmuneRepertoire.fromCSVTest(path))
     print(repertoireStats)
     

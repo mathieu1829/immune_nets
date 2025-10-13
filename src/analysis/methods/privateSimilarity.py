@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from src.creation.immuneRepertoire import immuneRepertoire
+from src.creation.immuneRepertoire import ImmuneRepertoire
 from src.creation.algorithms.simpleBetaDistance import simpleBetaDistance
 from src.creation.distance.levenshtein import levenshteinDistance
 from src.analysis.methods.publicSimilarity import publicSimilarity
@@ -8,7 +8,6 @@ import igraph as ig
 import itertools
 
 from src.creation.utils.pathManager import pathManager
-from src.creation.io_strategies.test_csv_strategy import *
 
 path = pathManager().testDataPath / "healthy_test_clonotypes_0.csv"
 
@@ -27,12 +26,12 @@ def privateSimilarity(repertoire, frequencyCutoff = None, top_k = 20, absouluteP
     if frequencyCutoff is not None:
         prepared_clones[prepared_clones["frequency"] > frequencyCutoff]
 
-    preparedRepertoire = immuneRepertoire(clones=prepared_clones)
+    preparedRepertoire = ImmuneRepertoire(name="test repertoire",clones=prepared_clones)
     # print(prepared_clones)
 
     
     immuneNet = simpleBetaDistance(repertoire = preparedRepertoire,distance = levenshteinDistance(group = True),threshold = 2)
-    df_net = immuneNet.network
+    df_net = immuneNet.graph
 
     #performing clustering
     vertices = np.unique(df_net.to_numpy().flatten())
@@ -67,4 +66,4 @@ def privateSimilarity(repertoire, frequencyCutoff = None, top_k = 20, absouluteP
 
 
 if __name__ == "__main__":
-   print(privateSimilarity(test_csv_strategy().input(path)))
+   print(privateSimilarity(ImmuneRepertoire.fromCSVTest(path)))

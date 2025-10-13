@@ -6,7 +6,7 @@ from src.creation.algorithms.algorithm import *
 import pandas as pd
 from scipy.spatial.distance import pdist
 from scipy.spatial.distance import squareform
-from src.creation.immuneNetwork import immuneNetwork
+from src.creation.immuneNetwork import ImmuneNetwork
 
 from src.orm.models import Network
 
@@ -71,7 +71,7 @@ def simpleVectorBetaDistance( repertoire, distance, threshold = None, **kwargs):
 
     d = {'r1': matrix_cutoff[0], 'r2': matrix_cutoff[1]}
     df_net = pd.DataFrame(data=d)
-    immuneNet = immuneNetwork(graph=df_net,
+    immuneNet = ImmuneNetwork(graph=df_net,
                               method="simpleVectorBetaDistance",
                               sampleId=repertoire.repertoire_id,
                               distanceFun=str(distance),

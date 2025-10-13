@@ -6,7 +6,7 @@ from src.creation.distance.levenshtein import levenshteinDistance
 import igraph as ig
 
 from src.creation.utils.pathManager import pathManager
-from src.creation.io_strategies.test_csv_strategy import *
+from src.creation.immuneRepertoire import ImmuneRepertoire
 
 path = pathManager().testDataPath / "healthy_test_clonotypes_0.csv"
 
@@ -23,9 +23,9 @@ def skeletonPublicNairSimilarity(repertoire, top_k = 20, absoulutePublic=False, 
         #creating network for selected sample
         sampleClones = prepared_clones.iloc[ prepared_clones["sampleID"].to_numpy() == sampleID]
         sampleClones.name = repertoire.clones.name
-        sampleRepertoire = immuneRepertoire(clones=sampleClones)
+        sampleRepertoire = ImmuneRepertoire(name="test repertoire", clones=sampleClones)
         immuneNet = simpleBetaDistance(repertoire = sampleRepertoire,distance = levenshteinDistance(group = True),threshold = 2)
-        df_net = immuneNet.network
+        df_net = immuneNet.graph
 
         #performing clustering
         vertices = np.unique(df_net.to_numpy().flatten())
@@ -59,9 +59,9 @@ def skeletonPublicNairSimilarity(repertoire, top_k = 20, absoulutePublic=False, 
     # Creating a network from skeleton clones
     # print(skeleton_clones)
     skeleton_clones.name = repertoire.clones.name
-    skeleton_repertoire = immuneRepertoire(clones=skeleton_clones)
+    skeleton_repertoire = ImmuneRepertoire(name="test repertoire", clones=skeleton_clones)
     immuneNet = simpleBetaDistance(repertoire = skeleton_repertoire,distance = levenshteinDistance(group = True),threshold = 2)
-    df_net = immuneNet.network
+    df_net = immuneNet.graph
 
     #performing clustering on skeleton clones
     vertices = np.unique(df_net.to_numpy().flatten())
@@ -103,4 +103,4 @@ def skeletonPublicNairSimilarity(repertoire, top_k = 20, absoulutePublic=False, 
     #         print(f"{dfIdx2}: {prepared_clones.loc[dfIdx2]["sampleID"]}")
 
 if __name__ == "__main__":
-   print(skeletonPublicNairSimilarity(test_csv_strategy().input(path),absoulutePublic=True))
+   print(skeletonPublicNairSimilarity(ImmuneRepertoire.fromCSVTest(path),absoulutePublic=True))

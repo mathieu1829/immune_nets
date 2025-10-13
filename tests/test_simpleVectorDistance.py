@@ -8,7 +8,8 @@ from src.creation.algorithms.simpleVectorDistance import *
 from src.creation.enums.matrices import *
 from src.creation.distance.alignment import sequenceAligner
 from src.creation.enums.utils import * 
-from src.creation.io_strategies.test_csv_strategy import *
+from src.creation.immuneRepertoire import ImmuneRepertoire
+
 class TestSimpleVectorDistance(unittest.TestCase):
 
     @classmethod
@@ -18,7 +19,7 @@ class TestSimpleVectorDistance(unittest.TestCase):
 
     def test_simple_vector_network(self):
         for dist in makeEnumDict(Matrices):
-            df_net = simpleVectorDistance(repertoire=test_csv_strategy().input(self.path), distance=sequenceAligner(dist))
+            df_net = simpleVectorDistance(repertoire=ImmuneRepertoire.fromCSVTest(self.path), distance=sequenceAligner(dist))
             expected_df = pd.DataFrame(data={'r1': [16,17], 'r2': [15,16]})
             match dist:
                 case "PAM250":
@@ -39,15 +40,15 @@ class TestSimpleVectorDistance(unittest.TestCase):
                     expected_df = pd.read_csv(Path(__file__).parent / "expected/expected_BLOSUM90_vector.csv")[["r1","r2"]]
                 case _:
                     expected_df = pd.DataFrame(data={'r1': [16,17], 'r2': [15,16]})
-            if not df_net.network.equals(expected_df):
+            if not df_net.graph.equals(expected_df):
                 print(f"Error occured while creating matrix: {dist}\n")
                 print("Corrupted net:")
-                print(df_net.network)
+                print(df_net.graph)
                 print("Good net:")
                 print(expected_df)
-                # df_net.network.to_csv(f"expected_{dist}_vector.csv")
+                # df_net.graph.to_csv(f"expected_{dist}_vector.csv")
                 print("")
-            pd.testing.assert_frame_equal(expected_df, df_net.network)
+            pd.testing.assert_frame_equal(expected_df, df_net.graph)
 
 if __name__ == '__main__':
     unittest.main()

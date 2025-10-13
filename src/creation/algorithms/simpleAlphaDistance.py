@@ -5,7 +5,7 @@ import logging
 import pandas as pd
 from src.creation.algorithms.common_methods import *
 from src.creation.algorithms.algorithm import *
-from src.creation.immuneNetwork import immuneNetwork
+from src.creation.immuneNetwork import ImmuneNetwork
 
 
 @algorithm
@@ -29,8 +29,7 @@ def simpleAlphaDistance(repertoire, distance, threshold = 0.8, **kwargs):
 
     d = {'r1': matrix_cutoff[0], 'r2': matrix_cutoff[1]}
     df_net = pd.DataFrame(data=d)
-    df_net.name = clonotypes.name
-    immuneNet = immuneNetwork(graph=df_net,
+    immuneNet = ImmuneNetwork(graph=df_net,
                               method="simpleAlphaDistance",
                               sampleId=repertoire.repertoire_id,
                               distanceFun=str(distance),

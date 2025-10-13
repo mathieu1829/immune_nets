@@ -1,15 +1,13 @@
 from src.creation.globalSettings import globalSettings
 
-from src.orm.models import Repertoire
+from src.creation.immuneRepertoire import ImmuneRepertoire
 
     #Checks whether creation algorithm is valid
 def algorithm(algo):
-    def algorithmValidator(strategy=globalSettings().defaultOutputStrategy,**kwargs):
-        # if type(kwargs['repertoire']) != Repertoire:
-        #     raise TypeError(f"Expected clonotype, got ${type(kwargs['repertoire'])}")
-        # if not hasattr(kwargs['repertoire'].clones,"name"):
-        #     raise ValueError(f"Clonotype table has no name")
-        return strategy(**kwargs, algo = algo)
+    def algorithmValidator(**kwargs):
+        if type(kwargs['repertoire']) != ImmuneRepertoire:
+            raise TypeError(f"Expected clonotype, got ${type(kwargs['repertoire'])}")
+        return algo(**kwargs)
     return algorithmValidator 
 
     

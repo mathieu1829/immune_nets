@@ -7,13 +7,14 @@ from sqlalchemy.dialects.postgresql import UUID
 import uuid
 from datetime import date, datetime
 from typing import List
-from src.creation.immuneRepertoire import immuneRepertoire
+from src.creation.immuneRepertoire import ImmuneRepertoire
 import pandas as pd
 
 from .base import Base
 from .clonotypeData import ClonotypeData
 
 from src.creation.globalSettings import globalSettings
+from src.creation.algorithms.common_methods import split_tcr_column
 
 class Repertoire(Base):
     __tablename__ = "repertoire"
@@ -48,6 +49,15 @@ class Repertoire(Base):
                                          mait_evidence = row['mait_evidence']
                                         ) 
                            for index,row in new_clones.iterrows()]
+
+    @classmethod
+    def fromCSV(cls, name, desc,  path):
+        df =  pd.read_csv(path)
+        df['tcra_aa'] = df['cdr3s_aa'].apply(lambda x: split_tcr_column(x, subunit="TRA"))
+        df['tcrb_aa'] = df['cdr3s_aa'].apply(lambda x: split_tcr_column(x, subunit="TRB"))
+        new_repertoire = cls(name=name, description=desc)
+        new_repertoire.setClones(df)
+        return new_repertoire
     
     @classmethod
     def fromImmuneRepertoire(cls, repertoire):
@@ -68,7 +78,7 @@ class Repertoire(Base):
             "mait_evidence": c.mait_evidence
         } for c in self.clonotypes])
 
-        return immuneRepertoire(repertoire_id=self.repertoire_id,
+        return ImmuneRepertoire(repertoire_id=self.repertoire_id,
                                 name=self.name,
                                 description=self.description,
                                 clones=clones

@@ -17,13 +17,13 @@ with Session(engine) as session:
     covid = Dataset(name="covid", description=" ")
 
     healthy.repertoires = [
-            Repertoire.from_csv(name="healthy",desc=" ",path=healthy_path)
+            Repertoire.fromCSV(name="healthy",desc=" ",path=healthy_path)
             ]
     covid.repertoires = [
-            Repertoire.from_csv(name="covid",desc=" ",path=covid_path)
+            Repertoire.fromCSV(name="covid",desc=" ",path=covid_path)
             ]
     leukemia.repertoires = [
-            Repertoire.from_csv(name="leukemia",desc=" ",path=leukemia_path)
+            Repertoire.fromCSV(name="leukemia",desc=" ",path=leukemia_path)
             ]
     session.add_all([healthy,leukemia,covid])
     session.commit()

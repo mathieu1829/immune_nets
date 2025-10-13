@@ -8,8 +8,7 @@ from src.creation.distance.alignment import sequenceAligner
 from src.creation.algorithms.simpleDistance import *
 from src.creation.enums.matrices import *
 from src.creation.enums.utils import * 
-from src.creation.io_strategies.test_csv_strategy import *
-from src.creation.immuneRepertoire import immuneRepertoire
+from src.creation.immuneRepertoire import ImmuneRepertoire
 class TestSimpleDistance(unittest.TestCase):
 
     @classmethod
@@ -37,7 +36,7 @@ class TestSimpleDistance(unittest.TestCase):
     def test_simpleDistance_networks(self):
         for dist in makeEnumDict(Matrices):
             print(f"testing distance: {dist}")
-            df_net = simpleDistance(repertoire=test_csv_strategy().input(self.path), distance=sequenceAligner(dist))
+            df_net = simpleDistance(repertoire=ImmuneRepertoire.fromCSVTest(self.path), distance=sequenceAligner(dist))
 
             match dist:
                 case "PAM250":
@@ -46,12 +45,12 @@ class TestSimpleDistance(unittest.TestCase):
                     expected_df = pd.DataFrame(data={'r1': [16], 'r2': [15]}) 
                 case _:
                     expected_df = pd.DataFrame(data={'r1': [16,17], 'r2': [15,16]})
-            if not df_net.network.equals(expected_df):
+            if not df_net.graph.equals(expected_df):
                 print(f"Error occured while creating matrix: {dist}\n")
                 print("Corrupted net:")
-                print(df_net.network)
+                print(df_net.graph)
                 print("")
-            pd.testing.assert_frame_equal(expected_df, df_net.network)
+            pd.testing.assert_frame_equal(expected_df, df_net.graph)
             print(f"test for {dist} completed succesfully")
 
 if __name__ == '__main__':
