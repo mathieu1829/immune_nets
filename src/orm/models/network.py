@@ -13,6 +13,7 @@ from .base import Base
 from .networkData import NetworkData
 
 from src.creation.globalSettings import globalSettings
+from src.creation.immuneNetwork import immuneNetwork
 
 class Network(Base):
     __tablename__ = "network"
@@ -39,39 +40,39 @@ class Network(Base):
     def algorithmParams(self):
         return eval(self.network_algorithm_parameters)
 
-    @property
-    def graph(self):
-        if not hasattr(self, "_clones_df"):
-            self._graph_df = pd.DataFrame([{
-                "r1": n.r1,
-                "r2": n.r2
-            } for n in self.network_edges])
-        if self._graph_df.empty:
-            self._graph_df = pd.DataFrame({"r1":[],"r2":[]})
-
-        return self._graph_df
-
-    @graph.setter
-    def graph(self, new_graph):
-        self._graph_df = new_graph
+    def setGraph(self, new_graph):
         self.network_edges = [ 
                            NetworkData(network_id=self.network_id,
                                          r1 = row['r1'],
                                          r2 = row['r2'],
                                         ) 
-                           for index,row in self._graph_df.iterrows()]
+                           for index,row in new_graph.iterrows()]
+
+    def toImmuneNetwork(self):
+        new_graph = pd.DataFrame([{
+            "r1": n.r1,
+            "r2": n.r2
+        } for n in self.network_edges])
+
+        return immuneNetwork(graph=new_graph,
+                             method=self.algorithm,
+                             sampleId=self.repertoire_id,
+                             distanceFun=self.distance_function,
+                             threshold=eval(self.network_algorithm_parameters)["threshold"],
+                             sampleSize=len(self.source_repertoire.clonotypes)
+                            )
 
     @classmethod
-    def createFullNetwork(cls, repertoire_id, graph, method, distanceFun, threshold, sampleSize):
-        parameters =  {"threshold":threshold}
+    def fromImmuneNetwork(cls, network: immuneNetwork):
+        parameters =  {"threshold":network.threshold}
         parameters = str(parameters)
-        network = Network(repertoire_id=repertoire_id,
-                          algorithm=method,
-                          distance_function=distanceFun,
+        new_network = cls(repertoire_id=network.sampleId,
+                          algorithm=network.method,
+                          distance_function=network.distanceFun,
                           network_algorithm_parameters=parameters,
-                          sample_size=sampleSize
+                          sample_size=network.sampleSize
                           )
-        network.graph = graph
-        return network
+        new_network.setGraph(network.graph)
+        return new_network
         
 

@@ -30,7 +30,13 @@ def simpleAlphaDistance(repertoire, distance, threshold = 0.8, **kwargs):
     d = {'r1': matrix_cutoff[0], 'r2': matrix_cutoff[1]}
     df_net = pd.DataFrame(data=d)
     df_net.name = clonotypes.name
-    immuneNet = immuneNetwork(df_net, "simpleAlphaDistance", np.unique(repertoire.clones["sampleID"].to_numpy()),str(distance) , threshold, len(clonotypes)  ) 
+    immuneNet = immuneNetwork(graph=df_net,
+                              method="simpleAlphaDistance",
+                              sampleId=repertoire.repertoire_id,
+                              distanceFun=str(distance),
+                              threshold=threshold, 
+                              sampleSize=len(clonotypes)
+                              )
 
     return immuneNet
 

@@ -93,7 +93,13 @@ def simpleVectorDistance( repertoire, distance, threshold = None, **kwargs):
     d = {'r1': matrix_cutoff[0], 'r2': matrix_cutoff[1]}
     df_net = pd.DataFrame(data=d)
     df_net.name = clonotypes.name
-    immuneNet = immuneNetwork(df_net, "simpleVectorDistance", np.unique(repertoire.clones["sampleID"].to_numpy()),str(distance) , threshold , len(ab_tcr) ) 
+    immuneNet = immuneNetwork(graph=df_net,
+                              method="simpleVectorDistance",
+                              sampleId=repertoire.repertoire_id,
+                              distanceFun=str(distance),
+                              threshold=threshold, 
+                              sampleSize=len(clonotypes)
+                              )
 
     return immuneNet
 

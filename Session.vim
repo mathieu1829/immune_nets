@@ -14,12 +14,15 @@ else
   set shortmess=aoO
 endif
 badd +1 src/orm/models/repertoire.py
-badd +1 src/orm/models/dataset.py
-badd +0 tests/test_orm.py
-badd +23 src/orm/models/clonotypeData.py
+badd +32 src/orm/models/dataset.py
+badd +12 tests/test_orm.py
+badd +12 src/orm/models/clonotypeData.py
+badd +0 src/creation/immuneNetwork.py
+badd +62 src/orm/models/network.py
+badd +18 src/creation/immuneRepertoire.py
 argglobal
 %argdel
-edit src/orm/models/dataset.py
+edit src/creation/immuneRepertoire.py
 let s:save_splitbelow = &splitbelow
 let s:save_splitright = &splitright
 set splitbelow splitright
@@ -68,12 +71,12 @@ setlocal foldnestmax=20
 setlocal foldenable
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 1 - ((0 * winheight(0) + 18) / 36)
+let s:l = 18 - ((17 * winheight(0) + 18) / 36)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 1
-normal! 0
+keepjumps 18
+normal! 029|
 wincmd w
 argglobal
 if bufexists(fnamemodify("tests/test_orm.py", ":p")) | buffer tests/test_orm.py | else | edit tests/test_orm.py | endif
@@ -91,19 +94,19 @@ setlocal foldnestmax=20
 setlocal foldenable
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 1 - ((0 * winheight(0) + 17) / 35)
+let s:l = 12 - ((10 * winheight(0) + 17) / 35)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 1
-normal! 0
+keepjumps 12
+normal! 044|
 wincmd w
 argglobal
 if bufexists(fnamemodify("src/orm/models/repertoire.py", ":p")) | buffer src/orm/models/repertoire.py | else | edit src/orm/models/repertoire.py | endif
 if &buftype ==# 'terminal'
   silent file src/orm/models/repertoire.py
 endif
-balt src/orm/models/repertoire.py
+balt src/orm/models/dataset.py
 setlocal foldmethod=manual
 setlocal foldexpr=0
 setlocal foldmarker={{{,}}}
@@ -114,17 +117,17 @@ setlocal foldnestmax=20
 setlocal foldenable
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 1 - ((0 * winheight(0) + 36) / 73)
+let s:l = 10 - ((0 * winheight(0) + 37) / 74)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 1
+keepjumps 10
 normal! 0
 wincmd w
 argglobal
-if bufexists(fnamemodify("src/orm/models/repertoire.py", ":p")) | buffer src/orm/models/repertoire.py | else | edit src/orm/models/repertoire.py | endif
+if bufexists(fnamemodify("src/creation/immuneNetwork.py", ":p")) | buffer src/creation/immuneNetwork.py | else | edit src/creation/immuneNetwork.py | endif
 if &buftype ==# 'terminal'
-  silent file src/orm/models/repertoire.py
+  silent file src/creation/immuneNetwork.py
 endif
 balt src/orm/models/repertoire.py
 setlocal foldmethod=manual
@@ -137,19 +140,19 @@ setlocal foldnestmax=20
 setlocal foldenable
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 1 - ((0 * winheight(0) + 18) / 36)
+let s:l = 7 - ((6 * winheight(0) + 18) / 36)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 1
+keepjumps 7
 normal! 0
 wincmd w
 argglobal
-if bufexists(fnamemodify("src/orm/models/clonotypeData.py", ":p")) | buffer src/orm/models/clonotypeData.py | else | edit src/orm/models/clonotypeData.py | endif
+if bufexists(fnamemodify("src/orm/models/network.py", ":p")) | buffer src/orm/models/network.py | else | edit src/orm/models/network.py | endif
 if &buftype ==# 'terminal'
-  silent file src/orm/models/clonotypeData.py
+  silent file src/orm/models/network.py
 endif
-balt src/orm/models/repertoire.py
+balt src/orm/models/clonotypeData.py
 setlocal foldmethod=manual
 setlocal foldexpr=0
 setlocal foldmarker={{{,}}}
@@ -160,14 +163,14 @@ setlocal foldnestmax=20
 setlocal foldenable
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 23 - ((22 * winheight(0) + 17) / 35)
+let s:l = 62 - ((10 * winheight(0) + 17) / 35)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 23
-normal! 050|
+keepjumps 62
+normal! 040|
 wincmd w
-5wincmd w
+2wincmd w
 exe '1resize ' . ((&lines * 37 + 38) / 76)
 exe 'vert 1resize ' . ((&columns * 126 + 190) / 381)
 exe '2resize ' . ((&lines * 36 + 38) / 76)

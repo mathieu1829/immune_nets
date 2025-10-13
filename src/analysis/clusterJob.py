@@ -39,15 +39,17 @@ with Session(engine) as session:
     result1 = session.execute(stmt1)
     # print(list(result1.all()))
     healthy_dataset: Dataset | None = result1.scalars().first()
+    healthy_repertoires = [ repertoire.toImmuneRepertoire() for repertoire in healthy_dataset.repertoires ]
 
     stmt2 = select(Dataset).options(selectinload(Dataset.repertoires).selectinload(Repertoire.clonotypes)).where(Dataset.name == "leukemia")
     result2 = session.execute(stmt2)
     # print(list(result2.all()))
     leukemia_dataset = result2.scalars().first()
+    leukemia_repertoires = [ repertoire.toImmuneRepertoire() for repertoire in leukemia_dataset.repertoires ]
 
     if leukemia_dataset is None or healthy_dataset is None:
         raise ValueError("One of the repertoires was not found")
-    all_repertoires = {"healthy vs leukemia": {"healthy":healthy_dataset.repertoires , "leukemia":leukemia_dataset.repertoires}}
+    all_repertoires = {"healthy vs leukemia": {"healthy":healthy_repertoires , "leukemia":leukemia_repertoires}}
 
 if __name__ == '__main__':
 
