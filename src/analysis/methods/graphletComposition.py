@@ -5,7 +5,6 @@ import pandas as pd
 import math
 
 import uuid
-import src.creation.io_strategies.df_strategy 
 import src.creation.algorithms.simpleDistance 
 import src.creation.distance.alignment
 from src.creation.algorithms.common_methods import *
@@ -13,8 +12,8 @@ from src.creation.distance.alignment import sequenceAligner
 from src.creation.algorithms.simpleDistance import *
 from src.creation.enums.matrices import *
 from src.creation.enums.utils import * 
-from src.creation.io_strategies.test_csv_strategy import *
 from src.creation.utils.pathManager import pathManager
+from src.creation.immuneRepertoire import ImmuneRepertoire
 
 
 path = pathManager().testDataPath / "test_clonotypes.csv"
@@ -23,8 +22,8 @@ path = pathManager().testDataPath / "test_clonotypes.csv"
 
 class graphletComposition:
     def __init__(self,immuneNet):
-        edges = immuneNet.network.shape[0]
-        vertices = np.unique(immuneNet.network.to_numpy().flatten())
+        edges = immuneNet.graph.shape[0]
+        vertices = np.unique(immuneNet.graph.to_numpy().flatten())
         self.vertice_num = vertices.shape[0]
         self.isolated_vertices = [ i for i in np.arange(immuneNet.sampleSize) if not i in vertices ]
         self.isolated_vertices_num = len(self.isolated_vertices)
@@ -39,7 +38,7 @@ class graphletComposition:
 
 
         # graph = ig.Graph(minGraph)
-        self.graph = ig.Graph(immuneNet.network.to_numpy())
+        self.graph = ig.Graph(immuneNet.graph.to_numpy())
         self.graph.add_vertices(immuneNet.sampleSize - self.graph.vcount())
 
         self.edge_density = float(self.graph.ecount()) / float( 0.5 * self.vertice_num * (self.vertice_num-1) ) if edges > 0 else 0.0
@@ -93,9 +92,9 @@ class graphletComposition:
                 float(self.expected_degree),
                 float(self.component_count),
                 float(self.expected_component_size)
-                ]
+               ]
 
 if __name__ == "__main__":
-    df_net = simpleDistance(repertoire=test_csv_strategy().input(path), distance=sequenceAligner("BLOSUM62"))
+    df_net = simpleDistance(repertoire=ImmuneRepertoireFactory.fromCSV(path=path, name="test repertoire"), distance=sequenceAligner("BLOSUM62"))
     graphletList = graphletComposition(df_net).toList()
     print(graphletList)

@@ -5,10 +5,10 @@ from scipy.spatial.distance import pdist
 from scipy.spatial.distance import squareform
 from src.creation.algorithms.common_methods import *
 from src.creation.algorithms.algorithm import *
-from src.creation.immuneNetwork import immuneNetwork
+from src.creation.immuneNetwork import ImmuneNetwork
 
 @algorithm
-def simpleVectorDistanceV2(repertoire, distance, threshold_alfa = None, threshold_beta = None, **kwargs):
+def simpleVectorDistanceV2(repertoire, distance, threshold_alpha = None, threshold_beta = None, **kwargs):
     clonotypes = repertoire.clones
     distanceFun = distance.tcr_dist
 
@@ -82,7 +82,7 @@ def simpleVectorDistanceV2(repertoire, distance, threshold_alfa = None, threshol
     index = ab_tcr.index
     ) 
 
-    treshold_alpha = np.nanmean(dist_mat_alpha.to_numpy()) / 3 if threshold_alfa is None else threshold_alfa# todo -> treat as parameter, and in this case we could make different tresholds for alpha and beta
+    treshold_alpha = np.nanmean(dist_mat_alpha.to_numpy()) / 3 if threshold_alpha is None else threshold_alpha# todo -> treat as parameter, and in this case we could make different tresholds for alpha and beta
     treshold_beta = np.nanmean(dist_mat_beta.to_numpy())  / 3 if threshold_beta is None else threshold_beta# todo -> treat as parameter, and in this case we could make different tresholds for alpha and beta
     dist_mat_alpha = np.tril(dist_mat_alpha, k=-1)
     for i in range(len(dist_mat_alpha)):
@@ -96,13 +96,14 @@ def simpleVectorDistanceV2(repertoire, distance, threshold_alfa = None, threshol
 
     d = {'r1': matrix_cutoff[0], 'r2': matrix_cutoff[1]}
     df_net = pd.DataFrame(data=d)
-    df_net.name = clonotypes.name
-    immuneNet = immuneNetwork(network=df_net,
-                              method="simpleVectorDistanceV2", 
-                              sampleIDs=np.unique(repertoire.clones["sampleID"].to_numpy()),
+    immuneNet = ImmuneNetwork(graph=df_net,
+                              method="simpleVectorDistanceV2",
+                              sampleId=repertoire.repertoire_id,
                               distanceFun=str(distance),
-                              threshold={"threshold_alfa":threshold_alfa, "threshold_beta":threshold_beta},
-                              sampleSize=len(ab_tcr)) 
+                              threshold_alpha=threshold_alpha,
+                              threshold_beta=threshold_beta,
+                              sampleSize=len(clonotypes)
+                              )
 
     return immuneNet
 

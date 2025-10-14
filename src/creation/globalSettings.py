@@ -1,6 +1,5 @@
 import pandas as pd 
 from pathlib import Path
-from src.creation.io_strategies.df_strategy import df_strategy
 
 class globalSettings(object):
     def __new__(cls):
@@ -13,4 +12,6 @@ class globalSettings(object):
     defaultDBPassword = ""
     defaultDBHost = "localhost"
     defaultDB = ""
-    defaultOutputStrategy = df_strategy().output
+    version = "0.7"
+    defaultUsername = "Admin"
+

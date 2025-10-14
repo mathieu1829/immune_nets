@@ -14,7 +14,6 @@ from src.creation.algorithms.common_methods import split_tcr_column
 import uuid
 import logging
 from src.creation.utils.pathManager import pathManager
-from src.creation.io_strategies.test_csv_strategy import *
 
 path = pathManager().testDataPath / "healthy_test_clonotypes_0.csv"
 
@@ -75,9 +74,9 @@ class sequenceAligner:
     def __str__(self):
         return self.__matrix
 
-if __name__ == "__main__":
-    a = sequenceAligner(matrix = "BLOSUM62", group = True)
-    b = np.array(["GLYYGQ","GLAAAQ"])
-    print(a.tcr_dist(b))
-    df_net = simpleDistance(repertoire=test_csv_strategy().input(path), distance=sequenceAligner(matrix= "BLOSUM62",group = True))
-    print(df_net)
+# if __name__ == "__main__":
+#     a = sequenceAligner(matrix = "BLOSUM62", group = True)
+#     b = np.array(["GLYYGQ","GLAAAQ"])
+#     print(a.tcr_dist(b))
+#     df_net = simpleDistance(repertoire=test_csv_strategy().input(path), distance=sequenceAligner(matrix= "BLOSUM62",group = True))
+#     print(df_net)

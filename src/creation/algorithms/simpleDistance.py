@@ -5,7 +5,7 @@ import logging
 import pandas as pd
 from src.creation.algorithms.common_methods import *
 from src.creation.algorithms.algorithm import *
-from src.creation.immuneNetwork import immuneNetwork
+from src.creation.immuneNetwork import ImmuneNetwork
 
 
 @algorithm
@@ -31,8 +31,13 @@ def simpleDistance(repertoire, distance, threshold = 0.2, **kwargs):
 
     d = {'r1': matrix_cutoff[0], 'r2': matrix_cutoff[1]}
     df_net = pd.DataFrame(data=d)
-    df_net.name = clonotypes.name
-    immuneNet = immuneNetwork(df_net, "simpleDistance", np.unique(repertoire.clones["sampleID"].to_numpy()),str(distance) , threshold, len(clonotypes)  ) 
+    immuneNet = ImmuneNetwork(graph=df_net,
+                              method="simpleDistance",
+                              sampleId=repertoire.repertoire_id,
+                              distanceFun=str(distance),
+                              threshold=threshold, 
+                              sampleSize=len(clonotypes)
+                              )
 
     return immuneNet
 

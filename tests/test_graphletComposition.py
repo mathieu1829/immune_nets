@@ -13,8 +13,7 @@ from src.creation.distance.alignment import sequenceAligner
 from src.creation.algorithms.simpleDistance import *
 from src.creation.enums.matrices import *
 from src.creation.enums.utils import * 
-from src.creation.io_strategies.test_csv_strategy import *
-from src.creation.immuneRepertoire import immuneRepertoire
+from src.factories import ImmuneRepertoireFactory
 from src.creation.utils.pathManager import pathManager
 from src.creation.distance.hamming import hammingDistance
 
@@ -25,7 +24,7 @@ class TestGraphletComposition(unittest.TestCase):
     @classmethod
     def setUpClass(self):
         self.path = Path(__file__).parent / "test_data/healthy_test_clonotypes_0.csv"
-        self.df_net = simpleDistance(repertoire=test_csv_strategy().input(self.path), distance = hammingDistance(group=True))
+        self.df_net = simpleDistance(repertoire=ImmuneRepertoireFactory.fromCSVTest(self.path), distance = hammingDistance(group=True))
 
     def listToStr(self, l):
         return [str(i) for i in l]

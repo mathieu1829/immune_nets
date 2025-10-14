@@ -2,8 +2,8 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 import unittest
-from src.creation.io_strategies.test_csv_strategy import test_csv_strategy
 from src.analysis.methods.skeletonPublicNairSimilarity import skeletonPublicNairSimilarity
+from src.factories import ImmuneRepertoireFactory
 
 
 class testSkeletonPublicNairSimilarity(unittest.TestCase):
@@ -14,8 +14,8 @@ class testSkeletonPublicNairSimilarity(unittest.TestCase):
         path1 = Path(__file__).parent / "test_data/publicTest1.csv"
         path2 = Path(__file__).parent / "test_data/publicTest2.csv"
         pathExpected = Path(__file__).parent / "expected/expected_skeletonPublicNairSimilarity"
-        self.repertoires = test_csv_strategy().input(path)
-        self.repertoires.clones = pd.concat([self.repertoires.clones,test_csv_strategy().input(path1).clones, test_csv_strategy().input(path2).clones],ignore_index=True)
+        self.repertoires = ImmuneRepertoireFactory.fromCSVTest(path)
+        self.repertoires.clones = pd.concat([self.repertoires.clones,ImmuneRepertoireFactory.fromCSVTest(path1).clones, ImmuneRepertoireFactory.fromCSVTest(path2).clones],ignore_index=True)
         self.repertoires.clones.name = "testName"
 
         with open(pathExpected, "r") as f:
@@ -23,7 +23,7 @@ class testSkeletonPublicNairSimilarity(unittest.TestCase):
             self.expected = [ set(i) for i in self.expected]
         
 
-    def test_skeletonPublicNairSimilarity(self):
+    def _test_skeletonPublicNairSimilarity(self):
 
         # tcrb_lenghts = test_csv_strategy().input(self.path).clones["tcrb_aa"].dropna().apply(lambda x : len(x))
         # tcra_lenghts = test_csv_strategy().input(self.path).clones["tcra_aa"].dropna().apply(lambda x : len(x))

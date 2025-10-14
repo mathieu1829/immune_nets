@@ -19,6 +19,8 @@ let
         log_filename = 'postgresql-%Y-%m-%d_%H%M%S.log'
         logging_collector = on
         log_min_error_statement = error
+        listen_addresses = '''
+        unix_socket_directories = '${PGDATA}'
       '';
 
   enter-env-pg-command = pkgs.writeShellScriptBin "enter-env-pg" ''
@@ -72,12 +74,37 @@ let
       export PGPORT="${PORT}"
       export PGHOST="${PGDATA}"
       export PGDATA="${PGDATA}"
-      [ ! -d ${PGDATA} ] && pg_ctl initdb -o "-U postgres --no-locale" && cat "${postgresConf}" >> ${PGDATA}/postgresql.conf
-      pg_ctl -o "-p $PGPORT -k ${PGDATA}" start
+      if [ ! -d ${PGDATA} ]; then
+        pg_ctl initdb -D ${PGDATA} -o "-U postgres --no-locale"
+        cat "${postgresConf}" >> ${PGDATA}/postgresql.conf
+      fi
+
+      pg_ctl -D ${PGDATA} start
+
+      # Wait for DB to come online
+      until pg_isready -p $PGPORT -h "$PGHOST" -U postgres >/dev/null 2>&1; do
+        echo "Waiting for PostgreSQL to start..."
+        sleep 1
+      done
+
+      # Create immune_nets DB if missing
+      if ! psql -U postgres -tAc "SELECT 1 FROM pg_database WHERE datname='immune_nets'" | grep -q 1; then
+        echo "Creating database 'immune_nets'..."
+        createdb -U postgres immune_nets
+      else
+        echo "Database 'immune_nets' already exists."
+      fi
+
+      echo "Database ready."
+
       echo initiating subshell
       echo all done - exit subshell to shutdown postgress
 
-      bash
+      if [ -n "$NIX_SHELL_COMMAND" ]; then
+        $NIX_SHELL_COMMAND
+      else
+        bash
+      fi
 
       pg_ctl stop 
       echo postgresql shutdown correctly - you may exit the shell now
