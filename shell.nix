@@ -33,6 +33,7 @@ let
     targetPkgs = _: [
       pkgs.micromamba
 	    pkgs.postgresql_15
+      pkgs.alembic
       enter-env-pg-command
     ];
 
