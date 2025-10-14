@@ -95,6 +95,6 @@ class graphletComposition:
                ]
 
 if __name__ == "__main__":
-    df_net = simpleDistance(repertoire=ImmuneRepertoire.fromCSV(path=path, name="test repertoire"), distance=sequenceAligner("BLOSUM62"))
+    df_net = simpleDistance(repertoire=ImmuneRepertoireFactory.fromCSV(path=path, name="test repertoire"), distance=sequenceAligner("BLOSUM62"))
     graphletList = graphletComposition(df_net).toList()
     print(graphletList)

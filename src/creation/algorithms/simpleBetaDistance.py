@@ -5,7 +5,7 @@ import logging
 import pandas as pd
 from src.creation.algorithms.common_methods import *
 from src.creation.algorithms.algorithm import *
-from src.orm.models import Network
+from src.models import Network
 from src.creation.immuneNetwork import ImmuneNetwork
 
 @algorithm

@@ -53,5 +53,5 @@ class hammingDistance:
         return name_string
 
 if __name__ == "__main__":
-    df_net = simpleDistance(repertoire=ImmuneRepertoire.fromCSVTest(path), distance=hammingDistance(group = True))
+    df_net = simpleDistance(repertoire=ImmuneRepertoireFactory.fromCSVTest(path), distance=hammingDistance(group = True))
     print(df_net)

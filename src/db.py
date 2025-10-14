@@ -3,12 +3,12 @@ from sqlalchemy.orm import sessionmaker
 from pathlib import Path
 from dotenv import load_dotenv
 import os 
-from src.orm.models import *
+from src.models import *
 
 
 
 load_dotenv()
-pgSocket = os.environ["POSTGRES_SOCKET"]
+pgSocket = os.environ["PGHOST"]
 pg_db = os.environ["POSTGRES_DB"]
 pg_user = os.environ["POSTGRES_USER"]
 pg_passwd = os.environ["POSTGRES_PASSWORD"]

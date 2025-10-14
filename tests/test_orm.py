@@ -1,11 +1,13 @@
 import unittest
-from src.orm.models import *
-from src.orm.db import engine,SessionLocal
+from src.models import *
+from src.db import engine,SessionLocal
 from sqlalchemy import insert,select,delete
 from datetime import date,time,datetime
 from sqlalchemy.orm import Session
 from pathlib import Path
 import pandas as pd
+from src.factories import RepertoireFactory
+from src.mappers import RepertoireMapper
 
 class testORM(unittest.TestCase):
     def test_ORMConnetion(self):
@@ -33,7 +35,7 @@ class testORM(unittest.TestCase):
         test_dir = Path(__file__).parent
         covid_path = test_dir / "test_data/covid_test_clonotypes.csv" # covid
         with Session(engine) as session:
-            repertoire = Repertoire.fromCSV(name="test_covid",desc="some bile sample", path = covid_path)
+            repertoire = RepertoireFactory.fromCSV(name="test_covid",desc="some bile sample", path = covid_path)
             session.add(repertoire)
             session.commit()
 
@@ -41,7 +43,7 @@ class testORM(unittest.TestCase):
             stmt = select(Repertoire).where(Repertoire.name == "test_covid")
             result = session.execute(stmt)
             repertoire = result.scalars().first()
-            immuneRepertoire = repertoire.toImmuneRepertoire()
+            immuneRepertoire = RepertoireMapper.toImmuneRepertoire(repertoire)
             print(immuneRepertoire.clones) 
             results = session.scalars(select(Repertoire).where(Repertoire.name == "test_covid"))
             for obj in results:

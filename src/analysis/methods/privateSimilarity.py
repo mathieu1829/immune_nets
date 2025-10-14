@@ -1,13 +1,14 @@
 import numpy as np
-import pandas as pd
+import igraph as ig
+import itertools
+
 from src.creation.immuneRepertoire import ImmuneRepertoire
 from src.creation.algorithms.simpleBetaDistance import simpleBetaDistance
 from src.creation.distance.levenshtein import levenshteinDistance
 from src.analysis.methods.publicSimilarity import publicSimilarity
-import igraph as ig
-import itertools
 
 from src.creation.utils.pathManager import pathManager
+from src.factories import ImmuneRepertoireFactory
 
 path = pathManager().testDataPath / "healthy_test_clonotypes_0.csv"
 
@@ -66,4 +67,4 @@ def privateSimilarity(repertoire, frequencyCutoff = None, top_k = 20, absouluteP
 
 
 if __name__ == "__main__":
-   print(privateSimilarity(ImmuneRepertoire.fromCSVTest(path)))
+   print(privateSimilarity(ImmuneRepertoireFactory.fromCSVTest(path)))

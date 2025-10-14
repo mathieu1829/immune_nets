@@ -1,11 +1,11 @@
 import numpy as np
-import pandas as pd
 from src.creation.immuneRepertoire import ImmuneRepertoire
 from src.creation.algorithms.simpleBetaDistance import simpleBetaDistance
 from src.creation.distance.levenshtein import levenshteinDistance
 import igraph as ig
 
 from src.creation.utils.pathManager import pathManager
+from src.factories import ImmuneRepertoireFactory
 
 path = pathManager().testDataPath / "healthy_test_clonotypes_0.csv"
 

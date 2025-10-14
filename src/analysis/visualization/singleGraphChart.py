@@ -5,7 +5,7 @@ from src.analysis.visualization.graphVisualization import graphVisualization
 from src.creation.algorithms.simpleBetaDistance import simpleBetaDistance
 from src.creation.algorithms.simpleVectorBetaDistance import simpleVectorBetaDistance
 from src.creation.distance.alignment import sequenceAligner
-from src.creation.immuneRepertoire import ImmuneRepertoire
+from src.factories import ImmuneRepertoireFactory
 
 
 def singleGraphChart(name, repertoire, immuneNet):
@@ -21,7 +21,7 @@ if __name__ == "__main__":
     root_dir = Path(__file__).parent.parent.parent.parent
     
     healthy_path = root_dir / "tests/test_data/healthy_test_clonotypes_1.csv" #healthy
-    repertoire = ImmuneRepertoire.fromCSVTest(healthy_path)
+    repertoire = ImmuneRepertoireFactory.fromCSVTest(healthy_path)
     distance_fun = sequenceAligner("BLOSUM62")
     immuneNet = simpleVectorBetaDistance(repertoire=repertoire,
                                      distance=distance_fun,
