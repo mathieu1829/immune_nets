@@ -41,7 +41,7 @@ class Network(Base):
     def algorithmParams(self):
         return eval(self.network_algorithm_parameters)
 
-    def setGraph(self, new_graph):
+    def setGraph(self, new_graph: pd.DataFrame):
         self.network_edges = [ 
                            NetworkData(network_id=self.network_id,
                                          r1 = row['r1'],
@@ -49,33 +49,6 @@ class Network(Base):
                                         ) 
                            for index,row in new_graph.iterrows()]
 
-    def toImmuneNetwork(self):
-        new_graph = pd.DataFrame([{
-            "r1": n.r1,
-            "r2": n.r2
-        } for n in self.network_edges])
 
-        return ImmuneNetwork(graph=new_graph,
-                             method=self.algorithm,
-                             sampleId=self.repertoire_id,
-                             distanceFun=self.distance_function,
-                             threshold=eval(self.network_algorithm_parameters)["threshold"],
-                             sampleSize=len(self.source_repertoire.clonotypes),
-                             name=self.name
-                            )
-
-    @classmethod
-    def fromImmuneNetwork(cls, network: ImmuneNetwork):
-        parameters =  {"threshold":network.threshold}
-        parameters = str(parameters)
-        new_network = cls(repertoire_id=network.sampleId,
-                          algorithm=network.method,
-                          distance_function=network.distanceFun,
-                          network_algorithm_parameters=parameters,
-                          sample_size=network.sampleSize,
-                          name = network.name
-                          )
-        new_network.setGraph(network.graph)
-        return new_network
         
 

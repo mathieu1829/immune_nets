@@ -1,7 +1,3 @@
-from Bio.Align import PairwiseAligner
-from Bio.Align import substitution_matrices
-from scipy.spatial.distance import hamming
-from scipy.spatial.distance import pdist
 import numpy as np
 
 def split_tcr_column(x, subunit):

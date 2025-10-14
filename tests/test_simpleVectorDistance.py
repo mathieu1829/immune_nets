@@ -1,14 +1,13 @@
 import unittest
-import uuid
 import pandas as pd
+
 from pathlib import Path
-import numpy as np
 from src.creation.algorithms.common_methods import *
 from src.creation.algorithms.simpleVectorDistance import *
 from src.creation.enums.matrices import *
 from src.creation.distance.alignment import sequenceAligner
 from src.creation.enums.utils import * 
-from src.creation.immuneRepertoire import ImmuneRepertoire
+from src.factories import ImmuneRepertoireFactory
 
 class TestSimpleVectorDistance(unittest.TestCase):
 
@@ -19,7 +18,7 @@ class TestSimpleVectorDistance(unittest.TestCase):
 
     def test_simple_vector_network(self):
         for dist in makeEnumDict(Matrices):
-            df_net = simpleVectorDistance(repertoire=ImmuneRepertoire.fromCSVTest(self.path), distance=sequenceAligner(dist))
+            df_net = simpleVectorDistance(repertoire=ImmuneRepertoireFactory.fromCSVTest(self.path), distance=sequenceAligner(dist))
             expected_df = pd.DataFrame(data={'r1': [16,17], 'r2': [15,16]})
             match dist:
                 case "PAM250":

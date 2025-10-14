@@ -4,7 +4,7 @@ from pathlib import Path
 from src.analysis.visualization.graphVisualization import graphVisualization
 from src.creation.algorithms.simpleBetaDistance import simpleBetaDistance
 from src.creation.distance.alignment import sequenceAligner
-from src.creation.immuneRepertoire import ImmuneRepertoire
+from src.factories import ImmuneRepertoireFactory
 
 def multiGraphChart(groups, repertoires, immuneNets):
     fig, axes = plt.subplots(nrows=1,ncols=len(groups),figsize=(16, 16))
@@ -30,9 +30,9 @@ if __name__ == "__main__":
 
     # TO DO - get repertoires for each group from database
     repertoires = [
-            ImmuneRepertoire.fromCSVTest(leukemia_path),
-            ImmuneRepertoire.fromCSVTest(covid_path),
-            ImmuneRepertoire.fromCSVTest(healthy_path),
+            ImmuneRepertoireFactory.fromCSVTest(leukemia_path),
+            ImmuneRepertoireFactory.fromCSVTest(covid_path),
+            ImmuneRepertoireFactory.fromCSVTest(healthy_path),
             ]
 
     distance_fun = sequenceAligner("BLOSUM62")

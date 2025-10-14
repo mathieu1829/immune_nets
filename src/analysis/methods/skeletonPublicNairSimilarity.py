@@ -7,6 +7,7 @@ import igraph as ig
 
 from src.creation.utils.pathManager import pathManager
 from src.creation.immuneRepertoire import ImmuneRepertoire
+from src.factories import ImmuneRepertoireFactory
 
 path = pathManager().testDataPath / "healthy_test_clonotypes_0.csv"
 
@@ -103,4 +104,4 @@ def skeletonPublicNairSimilarity(repertoire, top_k = 20, absoulutePublic=False, 
     #         print(f"{dfIdx2}: {prepared_clones.loc[dfIdx2]["sampleID"]}")
 
 if __name__ == "__main__":
-   print(skeletonPublicNairSimilarity(ImmuneRepertoire.fromCSVTest(path),absoulutePublic=True))
+   print(skeletonPublicNairSimilarity(ImmuneRepertoireFactory.fromCSVTest(path),absoulutePublic=True))

@@ -8,6 +8,7 @@ import igraph as ig
 import itertools
 
 from src.creation.utils.pathManager import pathManager
+from src.factories import ImmuneRepertoireFactory
 
 path = pathManager().testDataPath / "healthy_test_clonotypes_0.csv"
 
@@ -62,4 +63,4 @@ def skeletonPrivateNairSimilarity(repertoire, top_k = 20, absoulutePublic=False,
    
 
 if __name__ == "__main__":
-   print(skeletonPrivateNairSimilarity(ImmuneRepertoire.fromCSVTest(path)))
+   print(skeletonPrivateNairSimilarity(ImmuneRepertoireFactory.fromCSVTest(path)))

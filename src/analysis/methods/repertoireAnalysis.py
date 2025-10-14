@@ -11,6 +11,7 @@ import igraph as ig
 import uuid
 from src.creation.utils.pathManager import pathManager
 import pickle
+from src.factories import ImmuneRepertoireFactory
 
 path = pathManager().testDataPath / "healthy_test_clonotypes_0.csv"
 
@@ -42,6 +43,6 @@ class repertoireAnalysis:
         return [self.num_of_tcra, self.num_of_tcrb, self.num_of_all_tcr, self.unique_tcra_distribution, self.unique_tcrb_distribution, self.unique_all_tcr_distribution, self.simpson_index_tcra, self.simpson_index_tcrb, self.simpson_index_all_tcr, self.shannon_index_tcra, self.shannon_index_tcrb, self.shannon_index_all_tcr]
 
 if __name__ == "__main__":
-    repertoireStats =  repertoireAnalysis(ImmuneRepertoire.fromCSVTest(path))
+    repertoireStats =  repertoireAnalysis(ImmuneRepertoireFactory.fromCSVTest(path))
     print(repertoireStats)
     

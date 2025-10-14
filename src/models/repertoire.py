@@ -38,7 +38,7 @@ class Repertoire(Base):
     repertoire_stats: Mapped[List["RepertoireStat"]] = relationship(back_populates="source_repertoire") # type: ignore
     repertoire_networks: Mapped[List["Network"]] = relationship(back_populates="source_repertoire") # type: ignore
 
-    def setClones(self, new_clones):
+    def setClones(self, new_clones: pd.DataFrame):
         self.clonotypes = [ 
                            ClonotypeData(repertoire_id=self.repertoire_id,
                                          proportion = row['proportion'],
@@ -50,38 +50,7 @@ class Repertoire(Base):
                                         ) 
                            for index,row in new_clones.iterrows()]
 
-    @classmethod
-    def fromCSV(cls, name, desc,  path):
-        df =  pd.read_csv(path)
-        df['tcra_aa'] = df['cdr3s_aa'].apply(lambda x: split_tcr_column(x, subunit="TRA"))
-        df['tcrb_aa'] = df['cdr3s_aa'].apply(lambda x: split_tcr_column(x, subunit="TRB"))
-        new_repertoire = cls(name=name, description=desc)
-        new_repertoire.setClones(df)
-        return new_repertoire
+
     
-    @classmethod
-    def fromImmuneRepertoire(cls, repertoire):
-        new_repertoire = cls(repertoire_id=repertoire.repertoires,
-                             name=repertoire.name,
-                             description=repertoire.description
-                             )
-        new_repertoire.setClones(repertoire.clones)
-        return new_repertoire
-
-    def toImmuneRepertoire(self):
-        clones = pd.DataFrame([{
-            "proportion": c.proportion,
-            "tcra_aa": c.tcra_aa,
-            "tcrb_aa": c.tcrb_aa,
-            "cdr3s_nt": c.cdr3s_nt,
-            "inkt_evidence": c.inkt_evidence,
-            "mait_evidence": c.mait_evidence
-        } for c in self.clonotypes])
-
-        return ImmuneRepertoire(repertoire_id=self.repertoire_id,
-                                name=self.name,
-                                description=self.description,
-                                clones=clones
-                                )
     
     

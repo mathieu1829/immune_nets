@@ -3,6 +3,7 @@ from src.models import Repertoire,Dataset
 from src.db import engine
 from sqlalchemy.orm import Session
 from pathlib import Path
+from src.factories import RepertoireFactory
 
 
 root_dir = Path(__file__).parent.parent.parent
@@ -17,13 +18,13 @@ with Session(engine) as session:
     covid = Dataset(name="covid", description=" ")
 
     healthy.repertoires = [
-            Repertoire.fromCSV(name="healthy",desc=" ",path=healthy_path)
+            RepertoireFactory.fromCSV(name="healthy",desc=" ",path=healthy_path)
             ]
     covid.repertoires = [
-            Repertoire.fromCSV(name="covid",desc=" ",path=covid_path)
+            RepertoireFactory.fromCSV(name="covid",desc=" ",path=covid_path)
             ]
     leukemia.repertoires = [
-            Repertoire.fromCSV(name="leukemia",desc=" ",path=leukemia_path)
+            RepertoireFactory.fromCSV(name="leukemia",desc=" ",path=leukemia_path)
             ]
     session.add_all([healthy,leukemia,covid])
     session.commit()
