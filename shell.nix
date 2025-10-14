@@ -19,7 +19,7 @@ let
         log_filename = 'postgresql-%Y-%m-%d_%H%M%S.log'
         logging_collector = on
         log_min_error_statement = error
-        listen_addresses = ' '
+        listen_addresses = '''
         unix_socket_directories = '${PGDATA}'
       '';
 

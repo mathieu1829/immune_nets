@@ -8,7 +8,7 @@ from src.models import *
 
 
 load_dotenv()
-pgSocket = os.environ["POSTGRES_SOCKET"]
+pgSocket = os.environ["PGHOST"]
 pg_db = os.environ["POSTGRES_DB"]
 pg_user = os.environ["POSTGRES_USER"]
 pg_passwd = os.environ["POSTGRES_PASSWORD"]
