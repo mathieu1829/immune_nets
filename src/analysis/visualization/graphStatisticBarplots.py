@@ -10,6 +10,7 @@ from src.creation.algorithms.simpleBetaDistance import simpleBetaDistance
 from src.creation.immuneRepertoire import ImmuneRepertoire
 from src.creation.distance.alignment import sequenceAligner
 from src.analysis.methods.graphletComposition import graphletComposition
+from sklearn.preprocessing import MinMaxScaler
 
 def graphStatisticBarplots(immuneNets):
     statList = [
@@ -32,6 +33,7 @@ def graphStatisticBarplots(immuneNets):
                 "expected_component_size"
             ]
     immuneNetsStats = { group:graphletComposition(immuneNets[group]).toList() for group in immuneNets}
+    
     groups = [ group for group in immuneNets ]
     x = np.arange(3)
     width = 0.25
