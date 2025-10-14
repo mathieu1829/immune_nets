@@ -8,7 +8,7 @@ from scipy.spatial.distance import pdist
 from scipy.spatial.distance import squareform
 from src.creation.immuneNetwork import ImmuneNetwork
 
-from src.orm.models import Network
+from src.models import Network
 
 @algorithm
 def simpleVectorBetaDistance( repertoire, distance, threshold = None, **kwargs):

@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker
 from pathlib import Path
 from dotenv import load_dotenv
 import os 
-from src.orm.models import *
+from src.models import *
 
 
 

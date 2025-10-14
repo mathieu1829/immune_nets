@@ -6,7 +6,7 @@ from src.creation.algorithms.algorithm import *
 import pandas as pd
 from scipy.spatial.distance import pdist
 from scipy.spatial.distance import squareform
-from src.orm.models import Repertoire
+from src.models import Repertoire
 from src.creation.immuneNetwork import ImmuneNetwork
 
 @algorithm

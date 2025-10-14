@@ -5,8 +5,8 @@ from itertools import combinations
 from src.analysis.networkDistanceOptimization import objectiveBuilder
 from src.creation.immuneRepertoire import ImmuneRepertoire
 
-from src.orm.models import Repertoire,Dataset
-from src.orm.db import engine
+from src.models import Repertoire,Dataset
+from src.db import engine
 from sqlalchemy.orm import Session, selectinload
 from sqlalchemy import insert,select,delete
 
