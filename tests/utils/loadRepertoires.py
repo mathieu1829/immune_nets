@@ -4,7 +4,7 @@ from src.db import engine
 from sqlalchemy.orm import Session, selectinload
 from sqlalchemy import select
 from pathlib import Path
-from src.factories import ImmuneRepertoireFactory
+from src.factories import ImmuneRepertoireFactory, ImmuneNetworkFactory
 from src.creation.immuneRepertoire import ImmuneRepertoire
 from src.mappers import RepertoireMapper, NetworkMapper
 from src.creation.algorithms.simpleBetaDistance import simpleBetaDistance
@@ -12,13 +12,19 @@ from src.creation.distance.alignment import sequenceAligner
 
 
 root_dir = Path(__file__).parent.parent.parent
+test_data_path = root_dir / "tests/test_data"
 
-leukemia_path = root_dir  / "tests/test_data/leukemia_test_clonotypes.csv" # leukemia
-covid_path = root_dir / "tests/test_data/covid_test_clonotypes.csv" # covid
-healthy_path = root_dir / "tests/test_data/healthy_test_clonotypes_1.csv" #healthy
+leukemia_path = test_data_path  / "leukemia_test_clonotypes.csv" # leukemia
+covid_path = test_data_path / "covid_test_clonotypes.csv" # covid
+healthy_path = test_data_path / "healthy_test_clonotypes_1.csv" #healthy
+
+leukemia_network_path = test_data_path  / "leukemia_test_network.pkl" # leukemia
+covid_network_path = test_data_path / "covid_test_network.pkl" # covid
+healthy_network_path = test_data_path / "healthy_test_network.pkl" #healthy
 
 groups = ["healthy", "leukemia", "covid"]
 paths = [healthy_path, leukemia_path, covid_path]
+networkPaths = [healthy_network_path, leukemia_network_path, covid_network_path]
 groupPaths = {group:path for group,path in zip(groups,paths)}
 
 immuneRepertoires = {}
@@ -56,24 +62,34 @@ immuneNets = {}
 
 with Session(engine) as session:
     networks = []
-    for group in groups:
+    for group, networkPath in zip(groups, networkPaths):
         name = f"{group} test network"
         stmt = select(Network).where(Network.name == name)
         result = session.execute(stmt)
         network = result.scalars().first()
-        if network is None:
-            print(f"\tNetwork: {name} - not present the db; initializing ...")
-            net = simpleBetaDistance(repertoire=immuneRepertoires[group],
-                                        distance=distance_fun,
-                                        threshold=0.3)
-            net.name = name
-            immuneNets[group] = net
-            networks.append(NetworkMapper.fromImmuneNetwork(immuneNets[group]))
+        newNet = None
 
-            print(f"\tNetwork: {name} - computed")
-        else :
+        if network is not None :
             print(f"\tNetwork: {name} - is present the db; skipping generation ...")
             networks.append(network)
+            continue
+
+        if newNet is None and networkPath.is_file():
+            print(f"\tNetwork: {name} - not present the db; retrieving from file ...")
+            newNet = ImmuneNetworkFactory.fromPickle(networkPath)
+            newNet.sampleId = immuneRepertoires[group].repertoire_id
+
+        if newNet is None:
+            print(f"\tNetwork: {name} - not present the db; initializing ...")
+            newNet = simpleBetaDistance(repertoire=immuneRepertoires[group],
+                                        distance=distance_fun,
+                                        threshold=0.3)
+            newNet.name = name 
+
+        networks.append(NetworkMapper.fromImmuneNetwork(newNet))
+
+        print(f"\tNetwork: {name} - computed")
+
 
     session.add_all(networks)
     session.commit()

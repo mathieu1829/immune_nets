@@ -9,7 +9,7 @@ class GraphStatsMapper:
                 float(stats.isolateVerticeRatio),
                 float(stats.edgeDensity),
                 float(stats.density),
-                float(stats.eccentrity),
+                float(stats.meanEccentricity),
                 float(stats.giantComponent),
                 float(stats.meanDegree),
                 float(stats.componentCount),
@@ -22,7 +22,7 @@ class GraphStatsMapper:
                 stats.isolateVerticeRatio,
                 stats.edgeDensity,
                 stats.density,
-                stats.eccentrity,
+                stats.eccentricity,
                 stats.giantComponent,
                 stats.degreeDistribution,
                 stats.componentCount,
@@ -35,11 +35,11 @@ class GraphStatsMapper:
                 "isolatedVerticeRatio",
                 "edgeDensity",
                 "density",
-                "eccentricity",
+                "meanEccentricity",
                 "giantComponent",
-                "degreeDistribution",
+                "meanDegree",
                 "componentCount",
-                "componentSizeDistribution"
+                "meanComponentSize"
                ]
 
     @classmethod

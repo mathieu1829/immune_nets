@@ -9,7 +9,7 @@ from src.analysis.visualization.graphVisualization import graphVisualization
 from src.creation.algorithms.simpleBetaDistance import simpleBetaDistance
 from src.creation.immuneRepertoire import ImmuneRepertoire
 from src.creation.distance.alignment import sequenceAligner
-from src.analysis.methods.grapStats import GraphStats
+from src.analysis.methods.graphStats import GraphStats
 from src.mappers import GraphStatsMapper
 from sklearn.preprocessing import MinMaxScaler
 from sqlalchemy.orm import Session, selectinload
@@ -19,30 +19,11 @@ from src.models import Network
 from src.mappers import NetworkMapper
 
 def graphStatisticBarplots(immuneNets):
-    statList = [
-                "vertice_num",
-                "isolated_vertices_num",
-                "edge_density",
-                "percolation_threshold",
-                "density",
-                "eccentrity.mean()",
-                "eigenvector_centrality.mean()",
-                "harmonic_centrality.mean()",
-                "giant_component",
-                "betweenness.mean()",
-                "diameter",
-                "mean_closeness",
-                "mean_shortest_path",
-                "expected_pagerank",
-                "expected_degree",
-                "component_count",
-                "expected_component_size"
-            ]
-    immuneNetsStats = { group:GraphStatsMapper.toList(GraphStats(immuneNets[group])) for group in immuneNets}
+    immuneNetsStats = { group:GraphStatsMapper.toStatVector(GraphStats(immuneNets[group])) for group in immuneNets}
 
     stds = []
     means = []
-    for i,stat in enumerate(statList):
+    for i,stat in enumerate(GraphStatsMapper.colnames()):
         statCol = [immuneNetsStats[group][i] for group in immuneNetsStats]
         scaler = MinMaxScaler()
         scaledCol = scaler.fit_transform([[v] for v in statCol])
@@ -56,7 +37,7 @@ def graphStatisticBarplots(immuneNets):
     for name,stat in zip(["std","mean"],[stds,means]):
         plt.bar(x, stat, color='skyblue')
 
-        plt.xticks(x, statList, rotation=45, ha='right')
+        plt.xticks(x, GraphStatsMapper.colnames(), rotation=45, ha='right')
 
         plt.ylabel("Value")
         plt.title(f"{name} Barplot")

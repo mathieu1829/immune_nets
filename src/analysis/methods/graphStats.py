@@ -14,7 +14,6 @@ from src.creation.enums.matrices import *
 from src.creation.enums.utils import * 
 from src.creation.utils.pathManager import pathManager
 from src.factories import ImmuneRepertoireFactory
-from src.mappers import GraphStatsMapper
 
 
 path = pathManager().testDataPath / "test_clonotypes.csv"
@@ -45,7 +44,8 @@ class GraphStats:
 
         self.edgeDensity = float(self.graph.ecount()) / float( 0.5 * self.verticeNum * (self.verticeNum-1) ) if edges > 0 else 0.0
         self.density = self.graph.density()
-        self.eccentrity = np.array(self.graph.eccentricity())
+        self.eccentricity = np.array(self.graph.eccentricity())
+        self.meanEccentricity = self.eccentricity.mean()
         self.giantComponent = self.graph.components().giant().vcount()
         # assortativity = graph.assortativity()
         # assortativity_degree = graph.assortativity_degree()
@@ -65,8 +65,3 @@ class GraphStats:
         self.componentSizeDistribution = { component_size:(float((self.componentList == component_size).sum())/float(self.componentCount)) for component_size in np.unique(self.componentList)}
         self.meanComponentSize = sum([ key*self.componentSizeDistribution[key] for key in self.componentSizeDistribution])
 
-
-if __name__ == "__main__":
-    df_net = simpleDistance(repertoire=ImmuneRepertoireFactory.fromCSV(path=path, name="test repertoire", desc=""), distance=sequenceAligner("BLOSUM62"))
-    graphletList = GraphStatsMapper.toList(GraphStats(df_net))
-    print(graphletList)
