@@ -2,7 +2,8 @@ import optuna
 import numpy as np
 from itertools import combinations
 
-from src.analysis.methods.graphletComposition import graphletComposition
+from src.analysis.methods.graphStats import GraphStats
+from src.mappers import GraphStatsMapper
 from src.creation.algorithms.simpleDistance import simpleDistance
 from src.creation.algorithms.simpleBetaDistance import simpleBetaDistance
 from src.creation.algorithms.simpleVectorBetaDistance import simpleVectorBetaDistance
@@ -49,8 +50,8 @@ def objectiveBuilder(repertoires):
                             distance=distance_fun,
                             threshold=threshold
                         )
-                stats = graphletComposition(network)
-                group_results[group].append(stats.toList())
+                stats = GraphStats(network)
+                group_results[group].append(GraphStatsMapper.toList(stats))
                 # print(f"{group} stats: {str(stats.toList())}")
                     
         inter_group_distances = []

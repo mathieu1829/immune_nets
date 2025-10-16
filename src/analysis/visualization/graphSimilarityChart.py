@@ -9,7 +9,8 @@ from src.analysis.visualization.graphVisualization import graphVisualization
 from src.creation.algorithms.simpleBetaDistance import simpleBetaDistance
 from src.creation.immuneRepertoire import ImmuneRepertoire
 from src.creation.distance.alignment import sequenceAligner
-from src.analysis.methods.graphletComposition import graphletComposition
+from src.analysis.methods.graphStats import GraphStats
+from src.mappers import GraphStatsMapper
 from src.factories import ImmuneRepertoireFactory
 
 def graphSimilarityChart(grouped_immuneNets):
@@ -23,8 +24,8 @@ def graphSimilarityChart(grouped_immuneNets):
         group_immuneNets = grouped_immuneNets[group]
 
         for immuneNet in group_immuneNets:
-            stats = graphletComposition(immuneNet)
-            group_results.append(stats.toList())
+            stats = GraphStats(immuneNet)
+            group_results.append(GraphStatsMapper.toList(stats))
     scaler = MinMaxScaler()
     normalizedResults = scaler.fit_transform(group_results)
     if total_samples > 3:

@@ -9,7 +9,8 @@ from src.analysis.visualization.graphVisualization import graphVisualization
 from src.creation.algorithms.simpleBetaDistance import simpleBetaDistance
 from src.creation.immuneRepertoire import ImmuneRepertoire
 from src.creation.distance.alignment import sequenceAligner
-from src.analysis.methods.graphletComposition import graphletComposition
+from src.analysis.methods.grapStats import GraphStats
+from src.mappers import GraphStatsMapper
 from sklearn.preprocessing import MinMaxScaler
 from sqlalchemy.orm import Session, selectinload
 from sqlalchemy import insert,select,delete
@@ -37,30 +38,34 @@ def graphStatisticBarplots(immuneNets):
                 "component_count",
                 "expected_component_size"
             ]
-    immuneNetsStats = { group:graphletComposition(immuneNets[group]).toList() for group in immuneNets}
+    immuneNetsStats = { group:GraphStatsMapper.toList(GraphStats(immuneNets[group])) for group in immuneNets}
 
     stds = []
+    means = []
     for i,stat in enumerate(statList):
         statCol = [immuneNetsStats[group][i] for group in immuneNetsStats]
         scaler = MinMaxScaler()
         scaledCol = scaler.fit_transform([[v] for v in statCol])
         scaledCol = [float(x[0]) for x in scaledCol]
-        stds.append(np.std(statCol))
+        stds.append(np.std(scaledCol))
+        means.append(np.mean(scaledCol))
 
     x = np.arange(len(stds))
+    # width = 0.05                      
 
-    plt.bar(x, stds, color='skyblue')
+    for name,stat in zip(["std","mean"],[stds,means]):
+        plt.bar(x, stat, color='skyblue')
 
-    plt.xticks(x, statList, rotation=45, ha='right')
+        plt.xticks(x, statList, rotation=45, ha='right')
 
-    plt.ylabel("Value")
-    plt.title("Statistics Barplot")
+        plt.ylabel("Value")
+        plt.title(f"{name} Barplot")
 
-    for i, v in enumerate(stds):
-        plt.text(x[i], v + 0.01, f"{v:.2f}", ha='center', va='bottom')
+        for i, v in enumerate(stat):
+            plt.text(x[i], v + 0.01, f"{v:.2f}", ha='center', va='bottom')
 
-    plt.tight_layout()
-    plt.show()
+        plt.tight_layout()
+        plt.show()
 
     # for i,stat in enumerate(statList):
     #     statCol = [immuneNetsStats[group][i] for group in immuneNetsStats]
