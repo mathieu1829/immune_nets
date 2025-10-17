@@ -43,7 +43,7 @@ class GraphStatsMapper:
                ]
 
     @classmethod
-    def toDataframe(cls, statList: list[GraphStats]):
+    def toDataframe(cls, statList: list[GraphStats]) -> pd.DataFrame:
         data = [ cls.toList(stat) for stat in statList ]
         df = pd.DataFrame(data=data, columns=pd.Index(cls.colnames()))
         return df

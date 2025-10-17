@@ -5,7 +5,7 @@ from src.models import Network
 
 class NetworkMapper:
     @staticmethod
-    def toImmuneNetwork(network: Network):
+    def toImmuneNetwork(network: Network) -> ImmuneNetwork:
         new_graph = pd.DataFrame([{
             "r1": n.r1,
             "r2": n.r2
@@ -21,7 +21,7 @@ class NetworkMapper:
                             )
 
     @staticmethod
-    def fromImmuneNetwork( network: ImmuneNetwork):
+    def fromImmuneNetwork( network: ImmuneNetwork) -> Network:
         parameters =  {"threshold":network.threshold}
         parameters = str(parameters)
         new_network = Network(repertoire_id=network.sampleId,
