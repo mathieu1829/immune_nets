@@ -33,6 +33,8 @@ def generateBasicNetworks():
 
         net.name = f"{group} test network"
         filename = f"{group}_test_network.pkl"
+        filename_csv = f"{group}_test_network.csv"
+        net.graph.to_csv(test_data_path / filename_csv)
         ImmuneNetworkMapper.toPickle(net, test_data_path / filename)
         print(f"Generated: {filename}")
         statList.append(GraphStats(net))
