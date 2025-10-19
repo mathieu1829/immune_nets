@@ -1,4 +1,4 @@
-from src.creation.globalSettings import globalSettings
+from src.globalSettings import GlobalSettings
 
 from src.creation.immuneRepertoire import ImmuneRepertoire
 

@@ -1,0 +1,27 @@
+import pandas as pd 
+from pathlib import Path
+
+class GlobalSettings(object):
+    def __new__(cls):
+        if not hasattr(cls, 'instance'):
+            cls.instance = super(GlobalSettings, cls).__new__(cls)
+        return cls.instance
+    defaultCsvPath = "./"
+    defaultDBProvider = "postgres"
+    defaultDBUser = "postgres"
+    defaultDBPassword = ""
+    defaultDBHost = "localhost"
+    defaultDB = ""
+    version = "0.7"
+    defaultUsername = "Admin"
+    graphStatVectorNames = [
+                "isolatedVerticeRatio",
+                "edgeDensity",
+                "density",
+                "meanEccentricity",
+                "giantComponent",
+                "meanDegree",
+                "componentCount",
+                "meanComponentSize"
+               ]
+

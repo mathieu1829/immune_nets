@@ -13,7 +13,7 @@ import pandas as pd
 from .base import Base
 from .clonotypeData import ClonotypeData
 
-from src.creation.globalSettings import globalSettings
+from src.globalSettings import GlobalSettings
 from src.creation.algorithms.common_methods import split_tcr_column
 
 class Repertoire(Base):
@@ -24,8 +24,8 @@ class Repertoire(Base):
                                                      default=uuid.uuid4)
     name: Mapped[str] =  mapped_column(String(30), nullable = False)
     description: Mapped[str] =  mapped_column(String(120), nullable = True)
-    version: Mapped[str] =  mapped_column(String(10), nullable = False, default=globalSettings().version)
-    username: Mapped[str] =  mapped_column(String(30), nullable = False, default=globalSettings().defaultUsername)
+    version: Mapped[str] =  mapped_column(String(10), nullable = False, default=GlobalSettings().version)
+    username: Mapped[str] =  mapped_column(String(30), nullable = False, default=GlobalSettings().defaultUsername)
     modificationDate: Mapped[date] =  mapped_column(Date, nullable = False, default=datetime.now())
     creationDate: Mapped[date] =  mapped_column(Date, nullable = False, default=datetime.now())
 

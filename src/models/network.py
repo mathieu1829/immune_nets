@@ -12,7 +12,7 @@ import pandas as pd
 from .base import Base
 from .networkData import NetworkData
 
-from src.creation.globalSettings import globalSettings
+from src.globalSettings import GlobalSettings
 from src.creation.immuneNetwork import ImmuneNetwork
 
 class Network(Base):
@@ -28,8 +28,8 @@ class Network(Base):
     algorithm: Mapped[str] =  mapped_column(String(30), nullable = False)
     distance_function: Mapped[str] =  mapped_column(String(30), nullable = False)
     network_algorithm_parameters: Mapped[str] =  mapped_column(String(30), nullable = False)
-    version: Mapped[str] =  mapped_column(String(10), nullable = False, default = globalSettings().version)
-    username: Mapped[str] =  mapped_column(String(30), nullable = False, default = globalSettings().defaultUsername)
+    version: Mapped[str] =  mapped_column(String(10), nullable = False, default = GlobalSettings().version)
+    username: Mapped[str] =  mapped_column(String(30), nullable = False, default = GlobalSettings().defaultUsername)
     modificationDate: Mapped[date] =  mapped_column(Date, nullable = False, default=datetime.now())
     creationDate: Mapped[date] =  mapped_column(Date, nullable = False, default=datetime.now())
 
