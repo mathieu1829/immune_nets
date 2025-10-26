@@ -11,13 +11,13 @@ class ImmuneNetwork:
                  threshold_alpha=0.0,
                  threshold_beta=0.0,
                  name=None,
-                 sampleId=uuid.uuid4
+                 sampleId=None
                  ):
         assert type(graph) == type(pd.DataFrame()), f"Net, should be a DataFrame, and not {type(graph)}" 
-        assert len(graph.columns) == 2, f"Net must have two columns"
+        # assert len(graph.columns) == 2, f"Net must have two columns"
         self.graph = graph 
         self.method = method
-        self.sampleId = sampleId
+        self.sampleId = sampleId if sampleId is not None else uuid.uuid4()
         self.distanceFun = distanceFun 
         self.threshold = threshold
         self.sampleSize = sampleSize

@@ -42,10 +42,15 @@ class Network(Base):
         return eval(self.network_algorithm_parameters)
 
     def setGraph(self, new_graph: pd.DataFrame):
+        new_graph = new_graph.dropna(subset=["r1", "r2"])
+
+        new_graph["r1"] = new_graph["r1"].astype(int)
+        new_graph["r2"] = new_graph["r2"].astype(int)
+
         self.network_edges = [ 
                            NetworkData(network_id=self.network_id,
-                                         r1 = row['r1'],
-                                         r2 = row['r2'],
+                                         r1 = int(row['r1']),
+                                         r2 = int(row['r2']),
                                         ) 
                            for index,row in new_graph.iterrows()]
 

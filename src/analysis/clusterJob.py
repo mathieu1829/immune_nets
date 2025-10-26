@@ -15,7 +15,7 @@ groups = ["leukemia", "covid", "healthy"]
 dataset_repertoires = {}
 with Session(engine) as session: 
     for group in groups :
-        stmt = select(Dataset).options(selectinload(Dataset.repertoires).selectinload(Repertoire.clonotypes)).where(Dataset.name == group)
+        stmt = select(Dataset).options(selectinload(Dataset.repertoires).selectinload(Repertoire.clonotypes)).where(Dataset.name == f"{group} test dataset")
         result = session.execute(stmt)
         dataset = result.scalars().first()
         dataset_repertoires[group] = [ repertoire.toImmuneRepertoire() for repertoire in dataset.repertoires]
