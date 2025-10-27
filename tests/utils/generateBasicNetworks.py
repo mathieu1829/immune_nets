@@ -39,7 +39,7 @@ def generateBasicNetworks():
         print(f"Generated: {filename}")
         statList.append(GraphStats(net))
 
-    GraphStatsMapper.toDataframe(statList).to_csv(test_data_path / "graphStats.csv")
+
 
 if __name__ == "__main__":
     generateBasicNetworks()
