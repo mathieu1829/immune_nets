@@ -14,14 +14,3 @@ class GlobalSettings(object):
     defaultDB = ""
     version = "0.7"
     defaultUsername = "Admin"
-    graphStatVectorNames = [
-                "isolatedVerticeRatio",
-                "edgeDensity",
-                "density",
-                "meanEccentricity",
-                "giantComponent",
-                "meanDegree",
-                "componentCount",
-                "meanComponentSize"
-               ]
-
