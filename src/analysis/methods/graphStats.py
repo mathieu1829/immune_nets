@@ -1,19 +1,12 @@
 #return information on graphlets within the the network for comparizon
 import igraph as ig
-import numpy as np
-import pandas as pd
-import math
 
-import uuid
-import src.creation.algorithms.simpleDistance 
-import src.creation.distance.alignment
 from src.creation.algorithms.common_methods import *
-from src.creation.distance.alignment import sequenceAligner
 from src.creation.algorithms.simpleDistance import *
 from src.creation.enums.matrices import *
 from src.creation.enums.utils import * 
+from src.creation.immuneNetwork import ImmuneNetwork
 from src.creation.utils.pathManager import pathManager
-from src.factories import ImmuneRepertoireFactory
 
 
 path = pathManager().testDataPath / "test_clonotypes.csv"
@@ -21,24 +14,16 @@ path = pathManager().testDataPath / "test_clonotypes.csv"
 
 
 class GraphStats:
-    def __init__(self,immuneNet):
+    def __init__(self,
+                 immuneNet: ImmuneNetwork
+                ):
         edges = immuneNet.graph.shape[0]
         vertices = np.unique(immuneNet.graph.to_numpy().flatten())
         self.verticeNum = vertices.shape[0]
-        self.isolatedVertices = [ i for i in np.arange(immuneNet.sampleSize) if not i in vertices ]
-        self.isolatedVerticeNum = len(self.isolatedVertices)
-        self.isolateVerticeRatio = self.isolatedVerticeNum / self.verticeNum
+        isolatedVertices = [ i for i in np.arange(immuneNet.sampleSize) if not i in vertices ]
+        self.isolatedVerticeNum = len(isolatedVertices)
+        self.isolatedVerticeRatio = self.isolatedVerticeNum / self.verticeNum
 
-        #transform
-        # active = isolated_vertices
-        # outOfBound = vertices[vertices > vertice_num]
-        # minGraph = immuneNet.network.to_numpy()
-        # for i in outOfBound:
-        #     np.place(minGraph, minGraph == outOfBound, active.pop(0))
-
-
-
-        # graph = ig.Graph(minGraph)
         self.graph = ig.Graph(immuneNet.graph.to_numpy())
         self.graph.add_vertices(immuneNet.sampleSize - self.graph.vcount())
 
@@ -47,14 +32,6 @@ class GraphStats:
         self.eccentricity = np.array(self.graph.eccentricity())
         self.meanEccentricity = self.eccentricity.mean()
         self.giantComponent = self.graph.components().giant().vcount()
-        # assortativity = graph.assortativity()
-        # assortativity_degree = graph.assortativity_degree()
-        
-        
-
-        self.paths = np.array(self.graph.distances(vertices))
-
-        self.pagerankDistribution = self.graph.pagerank() 
 
         self.degreeDistribution = self.graph.degree_distribution()
         self.meanDegree = self.degreeDistribution.mean
@@ -64,4 +41,55 @@ class GraphStats:
         self.componentCount = self.componentList.shape[0]
         self.componentSizeDistribution = { component_size:(float((self.componentList == component_size).sum())/float(self.componentCount)) for component_size in np.unique(self.componentList)}
         self.meanComponentSize = sum([ key*self.componentSizeDistribution[key] for key in self.componentSizeDistribution])
+
+    def toStatVector(self):
+        return [ 
+                float(self.isolatedVerticeRatio),
+                float(self.edgeDensity),
+                float(self.density),
+                float(self.meanEccentricity),
+                float(self.giantComponent),
+                float(self.meanDegree),
+                float(self.componentCount),
+                float(self.meanComponentSize)
+               ]
+
+    def toList(self):
+        return [ 
+                self.isolatedVerticeRatio,
+                self.edgeDensity,
+                self.density,
+                self.eccentricity,
+                self.giantComponent,
+                self.degreeDistribution,
+                self.componentCount,
+                self.componentSizeDistribution
+               ]
+
+
+    @staticmethod
+    def vectorStatNames():
+        return [
+                "isolatedVerticeRatio",
+                "edgeDensity",
+                "density",
+                "meanEccentricity",
+                "giantComponent",
+                "meanDegree",
+                "componentCount",
+                "meanComponentSize"
+               ]
+    @staticmethod
+    def listStatNames():
+        return [
+                "isolatedVerticeRatio",
+                "edgeDensity",
+                "density",
+                "eccentricity",
+                "giantComponent",
+                "degreeDistribution",
+                "componentCount",
+                "componentSizeDistribution"
+               ]
+
 
