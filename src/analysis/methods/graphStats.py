@@ -22,7 +22,7 @@ class GraphStats:
         self.verticeNum = vertices.shape[0]
         isolatedVertices = [ i for i in np.arange(immuneNet.sampleSize) if not i in vertices ]
         self.isolatedVerticeNum = len(isolatedVertices)
-        self.isolatedVerticeRatio = self.isolatedVerticeNum / self.verticeNum
+        self.isolatedVerticeRatio = self.isolatedVerticeNum / self.verticeNum if self.verticeNum != 0 else -1
 
         self.graph = ig.Graph(immuneNet.graph.to_numpy())
         self.graph.add_vertices(immuneNet.sampleSize - self.graph.vcount())

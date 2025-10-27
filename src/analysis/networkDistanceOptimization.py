@@ -9,10 +9,10 @@ from src.creation.algorithms.simpleBetaDistance import simpleBetaDistance
 from src.creation.algorithms.simpleVectorBetaDistance import simpleVectorBetaDistance
 from src.creation.distance.alignment import sequenceAligner
 from src.creation.distance.levenshtein import levenshteinDistance 
-from scipy.spatial.distance import euclidean
 
-def objectiveBuilder(repertoires):
+def objectiveBuilder(repertoires, statDistance):
     groups = [group for group in repertoires]
+    statDistanceFun = statDistance.stat_dist
     def objective(trial):
         group_results = { group:[] for group in groups}
         threshold = trial.suggest_float("threshold",low=0.2,high=0.4)
@@ -51,14 +51,14 @@ def objectiveBuilder(repertoires):
                             threshold=threshold
                         )
                 stats = GraphStats(network)
-                group_results[group].append(GraphStatsMapper.toList(stats))
+                group_results[group].append(stats)
                 # print(f"{group} stats: {str(stats.toList())}")
                     
         inter_group_distances = []
         for combo in combinations(groups,2):
             group_a = group_results[combo[0]]
             group_b = group_results[combo[1]]
-            inter_group_distance = np.array([euclidean(a,b) for a in group_a for b in group_b ])
+            inter_group_distance = np.array([statDistanceFun(a,b) for a in group_a for b in group_b ])
             inter_group_distances.append(inter_group_distance.mean())
             # print(f"distance between group {combo[0]} and {combo[1]} is {inter_group_distance.mean()}")
         
