@@ -22,7 +22,6 @@ class Network(Base):
                                                           primary_key=True,
                                                           default=uuid.uuid4)
     repertoire_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("repertoire.repertoire_id"))
-    sample_size: Mapped[int] = mapped_column(Integer, nullable=False)
 
     name: Mapped[str] =  mapped_column(String(30), nullable = True, default=None)
     algorithm: Mapped[str] =  mapped_column(String(30), nullable = False)

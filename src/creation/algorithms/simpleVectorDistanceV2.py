@@ -102,7 +102,8 @@ def simpleVectorDistanceV2(repertoire, distance, threshold_alpha = None, thresho
                               distanceFun=str(distance),
                               threshold_alpha=threshold_alpha,
                               threshold_beta=threshold_beta,
-                              sampleSize=len(clonotypes)
+                              sampleSize=len(clonotypes),
+                              proportions=clonotypes["proportion"].to_numpy()
                               )
 
     return immuneNet

@@ -41,7 +41,8 @@ def simpleBetaDistance(repertoire, distance, threshold = 0.8, **kwargs):
                               sampleId=repertoire.repertoire_id,
                               distanceFun=str(distance),
                               threshold=threshold, 
-                              sampleSize=len(clonotypes)
+                              sampleSize=len(clonotypes),
+                              proportions=clonotypes["proportion"].to_numpy()
                               )
 
     return immuneNet

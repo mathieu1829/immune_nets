@@ -4,6 +4,7 @@ import uuid
 class ImmuneNetwork:
     def __init__(self,
                  graph,
+                 proportions,
                  method,
                  distanceFun,
                  sampleSize,
@@ -21,6 +22,7 @@ class ImmuneNetwork:
         self.distanceFun = distanceFun 
         self.threshold = threshold
         self.sampleSize = sampleSize
+        self.proportions = proportions
         self.threshold_alpha = threshold_alpha
         self.threshold_beta = threshold_beta
         self.name = name

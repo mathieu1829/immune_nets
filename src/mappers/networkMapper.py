@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 from src.creation.immuneNetwork import ImmuneNetwork
 from src.models import Network
@@ -17,6 +18,7 @@ class NetworkMapper:
                              distanceFun=network.distance_function,
                              threshold=eval(network.network_algorithm_parameters)["threshold"],
                              sampleSize=len(network.source_repertoire.clonotypes),
+                             proportions=np.array([ clone.proportion  for clone in network.source_repertoire.clonotypes]),
                              name=network.name
                             )
 
@@ -28,7 +30,6 @@ class NetworkMapper:
                           algorithm=network.method,
                           distance_function=network.distanceFun,
                           network_algorithm_parameters=parameters,
-                          sample_size=network.sampleSize,
                           name = network.name
                           )
         new_network.setGraph(network.graph)
