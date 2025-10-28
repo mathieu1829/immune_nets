@@ -17,20 +17,19 @@ class GraphStats:
     def __init__(self,
                  immuneNet: ImmuneNetwork
                 ):
-        edges = immuneNet.graph.shape[0]
-        vertices = np.unique(immuneNet.graph.to_numpy().flatten())
-        self.verticeNum = vertices.shape[0]
-        isolatedVertices = [ i for i in np.arange(immuneNet.sampleSize) if not i in vertices ]
+        self.numEdges = immuneNet.graph.shape[0]
+        self.nonIsolatedVertices = np.unique(immuneNet.graph.to_numpy().flatten())
+        self.verticeNum = self.nonIsolatedVertices.shape[0]
+        isolatedVertices = [ i for i in np.arange(immuneNet.sampleSize) if not i in self.nonIsolatedVertices ]
         self.isolatedVerticeNum = len(isolatedVertices)
         self.isolatedVerticeRatio = self.isolatedVerticeNum / self.verticeNum if self.verticeNum != 0 else -1
 
         self.graph = ig.Graph(immuneNet.graph.to_numpy())
         self.graph.add_vertices(immuneNet.sampleSize - self.graph.vcount())
 
-        self.edgeDensity = float(self.graph.ecount()) / float( 0.5 * self.verticeNum * (self.verticeNum-1) ) if edges > 0 else 0.0
+        self.edgeDensity = float(self.graph.ecount()) / float( 0.5 * self.verticeNum * (self.verticeNum-1) ) if self.numEdges > 0 else 0.0
         self.density = self.graph.density()
-        self.eccentricity = np.array(self.graph.eccentricity())
-        self.meanEccentricity = self.eccentricity.mean()
+        self.eccentricity = min(self.graph.eccentricity(self.nonIsolatedVertices)) if self.nonIsolatedVertices.size != 0 else 0 
         self.giantComponent = self.graph.components().giant().vcount()
 
         self.degreeDistribution = self.graph.degree_distribution()
@@ -47,7 +46,7 @@ class GraphStats:
                 float(self.isolatedVerticeRatio),
                 float(self.edgeDensity),
                 float(self.density),
-                float(self.meanEccentricity),
+                float(self.eccentricity),
                 float(self.giantComponent),
                 float(self.meanDegree),
                 float(self.componentCount),
