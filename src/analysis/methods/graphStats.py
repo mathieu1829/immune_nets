@@ -39,7 +39,8 @@ class GraphStats:
         self.componentList = np.array([ len(i) for i in self.components])
         self.componentCount = self.componentList.shape[0]
         self.componentSizeDistribution = { component_size:(float((self.componentList == component_size).sum())/float(self.componentCount)) for component_size in np.unique(self.componentList)}
-        self.meanComponentSize = sum([ key*self.componentSizeDistribution[key] for key in self.componentSizeDistribution])
+        self.componentProportionDistribution = np.array([ immuneNet.proportions[component].sum for component in self.components])
+
 
     def toStatVector(self):
         return [ 
@@ -49,8 +50,7 @@ class GraphStats:
                 float(self.eccentricity),
                 float(self.giantComponent),
                 float(self.meanDegree),
-                float(self.componentCount),
-                float(self.meanComponentSize)
+                float(self.componentCount)
                ]
 
     def toList(self):
@@ -62,7 +62,8 @@ class GraphStats:
                 self.giantComponent,
                 self.degreeDistribution,
                 self.componentCount,
-                self.componentSizeDistribution
+                self.componentSizeDistribution,
+                self.componentProportionDistribution
                ]
 
 
@@ -72,11 +73,10 @@ class GraphStats:
                 "isolatedVerticeRatio",
                 "edgeDensity",
                 "density",
-                "meanEccentricity",
+                "eccentricity",
                 "giantComponent",
                 "meanDegree",
                 "componentCount",
-                "meanComponentSize"
                ]
     @staticmethod
     def listStatNames():
@@ -88,7 +88,8 @@ class GraphStats:
                 "giantComponent",
                 "degreeDistribution",
                 "componentCount",
-                "componentSizeDistribution"
+                "componentSizeDistribution",
+                "componentProportionDistribution"
                ]
 
 
