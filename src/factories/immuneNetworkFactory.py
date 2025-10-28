@@ -14,6 +14,7 @@ class ImmuneNetworkFactory:
                              threshold_beta=obj.threshold_beta,
                              name=obj.name,
                              sampleId=obj.sampleId,
+                             proportions=obj.proportions
                              )
 
     @classmethod
