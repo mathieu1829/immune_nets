@@ -55,8 +55,8 @@ if __name__ == "__main__":
 
     root_dir = Path(__file__).parent.parent.parent.parent
 
-    leukemia_path = root_dir  / "tests/test_data/leukemia_test_clonotypes.csv" # leukemia
-    covid_path = root_dir / "tests/test_data/covid_test_clonotypes.csv" # covid
+    leukemia_path = root_dir  / "tests/test_data/leukemia_test_clonotypes_0.csv" # leukemia
+    covid_path = root_dir / "tests/test_data/covid_test_clonotypes_0.csv" # covid
     healthy_path = root_dir / "tests/test_data/healthy_test_clonotypes_1.csv" #healthy
 
     # TO DO - get repertoires for each group from database

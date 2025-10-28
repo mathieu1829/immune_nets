@@ -14,8 +14,8 @@ from src.creation.distance.alignment import sequenceAligner
 root_dir = Path(__file__).parent.parent.parent
 test_data_path = root_dir / "tests/test_data"
 
-leukemia_path = test_data_path  / "leukemia_test_clonotypes.csv" # leukemia
-covid_path = test_data_path / "covid_test_clonotypes.csv" # covid
+leukemia_path = test_data_path  / "leukemia_test_clonotypes_0.csv" # leukemia
+covid_path = test_data_path / "covid_test_clonotypes_0.csv" # covid
 healthy_path = test_data_path / "healthy_test_clonotypes_1.csv" #healthy
 
 leukemia_network_path = test_data_path  / "leukemia_test_network.pkl" # leukemia

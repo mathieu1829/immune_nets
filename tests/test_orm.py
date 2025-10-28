@@ -33,7 +33,7 @@ class testORM(unittest.TestCase):
             print(list(connection.execute(stmt)))
     def test_repertoireLoading(self):
         test_dir = Path(__file__).parent
-        covid_path = test_dir / "test_data/covid_test_clonotypes.csv" # covid
+        covid_path = test_dir / "test_data/covid_test_clonotypes_0.csv" # covid
         with Session(engine) as session:
             repertoire = RepertoireFactory.fromCSV(name="test_covid",desc="some bile sample", path = covid_path)
             session.add(repertoire)
