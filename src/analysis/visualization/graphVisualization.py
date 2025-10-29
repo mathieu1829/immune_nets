@@ -31,7 +31,7 @@ def graphVisualization(repertoire, immuneNet, ax):
     # print(f"all vertices: {immuneNet.sampleSize}")
 
     # Creating igraph object from immuneNet
-    graph = ig.Graph(immuneNet.network.to_numpy())
+    graph = ig.Graph(immuneNet.graph.to_numpy())
     graph.add_vertices(immuneNet.sampleSize - graph.vcount())
 
 
