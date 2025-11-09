@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import uuid
 
 from src.creation.immuneNetwork import ImmuneNetwork
 from src.models import Network
@@ -26,7 +27,8 @@ class NetworkMapper:
     def fromImmuneNetwork( network: ImmuneNetwork) -> Network:
         parameters =  {"threshold":network.threshold}
         parameters = str(parameters)
-        new_network = Network(repertoire_id=network.sampleId,
+        new_network = Network(network_id=network.network_id,
+                          repertoire_id=network.sampleId,
                           algorithm=network.method,
                           distance_function=network.distanceFun,
                           network_algorithm_parameters=parameters,

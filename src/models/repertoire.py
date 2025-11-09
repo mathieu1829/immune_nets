@@ -35,8 +35,8 @@ class Repertoire(Base):
     )
     clonotypes: Mapped[List["ClonotypeData"]] = relationship(back_populates="source_repertoire", cascade="all, delete-orphan") # type: ignore
     
-    repertoire_stats: Mapped[List["RepertoireStat"]] = relationship(back_populates="source_repertoire") # type: ignore
-    repertoire_networks: Mapped[List["Network"]] = relationship(back_populates="source_repertoire") # type: ignore
+    repertoire_stats: Mapped[List["RepertoireStat"]] = relationship(back_populates="source_repertoire", cascade="all, delete-orphan") # type: ignore
+    repertoire_networks: Mapped[List["Network"]] = relationship(back_populates="source_repertoire", cascade="all, delete-orphan") # type: ignore
 
     def setClones(self, new_clones: pd.DataFrame):
         self.clonotypes = [ 

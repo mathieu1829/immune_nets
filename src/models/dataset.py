@@ -25,7 +25,7 @@ class Dataset(Base):
     modificationDate: Mapped[date] =  mapped_column(Date, nullable = False, default=datetime.now())
     creationDate: Mapped[date] =  mapped_column(Date, nullable = False, default=datetime.now())
 
-    dataset_metadata_list: Mapped[List["DatasetMetadata"]] = relationship(back_populates="source_dataset") # type: ignore
+    dataset_metadata_list: Mapped[List["DatasetMetadata"]] = relationship(back_populates="source_dataset", cascade="all, delete-orphan") # type: ignore
     repertoires: Mapped[List["Repertoire"]] = relationship( # type: ignore
         secondary="repertoire_datasets",   
         back_populates="datasets",

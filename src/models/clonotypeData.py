@@ -16,7 +16,7 @@ class ClonotypeData(Base):
     clone_record_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), 
                                                             primary_key=True,
                                                             default=uuid.uuid4)
-    repertoire_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("repertoire.repertoire_id"))
+    repertoire_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("repertoire.repertoire_id"), nullable=False)
     proportion: Mapped[float] = mapped_column(Float, nullable = False)
     tcra_aa: Mapped[str] = mapped_column(String(30), nullable = True)
     tcrb_aa: Mapped[str] = mapped_column(String(30), nullable = True)

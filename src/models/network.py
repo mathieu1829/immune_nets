@@ -33,8 +33,8 @@ class Network(Base):
     creationDate: Mapped[date] =  mapped_column(Date, nullable = False, default=datetime.now())
 
     source_repertoire: Mapped["Repertoire"] = relationship(back_populates="repertoire_networks") # type: ignore
-    network_stats: Mapped[List["NetworkStat"]] = relationship(back_populates="source_network") # type: ignore
-    network_edges: Mapped[List["NetworkData"]] = relationship(back_populates="source_network") # type: ignore
+    network_stats: Mapped[List["NetworkStat"]] = relationship(back_populates="source_network", cascade="all, delete-orphan") # type: ignore
+    network_edges: Mapped[List["NetworkData"]] = relationship(back_populates="source_network", cascade="all, delete-orphan") # type: ignore
 
     @property
     def algorithmParams(self):
@@ -52,6 +52,7 @@ class Network(Base):
                                          r2 = int(row['r2']),
                                         ) 
                            for index,row in new_graph.iterrows()]
+
 
 
         
