@@ -3,7 +3,7 @@ import pandas as pd
 from pathlib import Path
 import numpy as np
 import uuid
-from src.analysis.methods.graphletComposition import graphletComposition
+from src.analysis.methods.graphStats import GraphStats
 import pickle 
 
 import src.creation.algorithms.simpleDistance 
@@ -31,12 +31,12 @@ class TestGraphletComposition(unittest.TestCase):
 
 
     def test_graphletComposition(self):
-        graphStats = graphletComposition(self.df_net)
+        graphStats = GraphStats(self.df_net)
         graphStatsList = self.listToStr(graphStats.toList())
-        # with open("expected_graphletComposition","wb") as f:
+        # with open("expected_graphStats","wb") as f:
         #     pickle.dump(graphStatsList,f)
-        with open(Path(__file__).parent / "expected/expected_graphletComposition", "rb") as f:
-            expectedGraphletComposition = pickle.load(f)
+        with open(Path(__file__).parent / "expected/expected_graphStats", "rb") as f:
+            expectedGraphStatList = pickle.load(f)
         # for i,j in zip(graphStatsList, expectedGraphletComposition):
         #     print(i == j)
 
@@ -44,7 +44,7 @@ class TestGraphletComposition(unittest.TestCase):
         # print(expectedGraphletComposition[6])
 
         
-        self.assertEqual(graphStatsList, expectedGraphletComposition)
+        self.assertEqual(graphStatsList, expectedGraphStatList)
     
 
 

@@ -18,7 +18,7 @@ class GraphStats:
                  immuneNet: ImmuneNetwork
                 ):
         self.numEdges = immuneNet.graph.shape[0]
-        self.nonIsolatedVertices = np.unique(immuneNet.graph.to_numpy().flatten())
+        self.nonIsolatedVertices = np.unique(immuneNet.graph.to_numpy().flatten()).tolist()
         self.verticeNum = self.nonIsolatedVertices.shape[0]
         isolatedVertices = [ i for i in np.arange(immuneNet.sampleSize) if not i in self.nonIsolatedVertices ]
         self.isolatedVerticeNum = len(isolatedVertices)
@@ -91,5 +91,3 @@ class GraphStats:
                 "componentSizeDistribution",
                 "componentProportionDistribution"
                ]
-
-
