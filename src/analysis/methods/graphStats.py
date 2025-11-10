@@ -18,10 +18,10 @@ class GraphStats:
                  immuneNet: ImmuneNetwork
                 ):
         self.numEdges = immuneNet.graph.shape[0]
-        self.nonIsolatedVertices = np.unique(immuneNet.graph.to_numpy().flatten()).tolist()
-        self.verticeNum = self.nonIsolatedVertices.shape[0]
-        isolatedVertices = [ i for i in np.arange(immuneNet.sampleSize) if not i in self.nonIsolatedVertices ]
-        self.isolatedVerticeNum = len(isolatedVertices)
+        self.nonIsolatedVerticeArray = np.unique(immuneNet.graph.to_numpy().flatten())
+        self.verticeNum = self.nonIsolatedVerticeArray.shape[0]
+        isolatedVerticeArray = np.setdiff1d(np.arange(immuneNet.sampleSize),self.nonIsolatedVerticeArray)
+        self.isolatedVerticeNum = isolatedVerticeArray.shape[0]
         self.isolatedVerticeRatio = self.isolatedVerticeNum / self.verticeNum if self.verticeNum != 0 else -1
 
         self.graph = ig.Graph(immuneNet.graph.to_numpy())
@@ -29,16 +29,16 @@ class GraphStats:
 
         self.edgeDensity = float(self.graph.ecount()) / float( 0.5 * self.verticeNum * (self.verticeNum-1) ) if self.numEdges > 0 else 0.0
         self.density = self.graph.density()
-        self.eccentricity = min(self.graph.eccentricity(self.nonIsolatedVertices)) if self.nonIsolatedVertices.size != 0 else 0 
-        self.giantComponent = self.graph.components().giant().vcount()
+        self.eccentricity = min(self.graph.eccentricity(self.nonIsolatedVerticeArray)) if self.nonIsolatedVerticeArray.size != 0 else 0 
 
         self.degreeDistribution = { leftBound:float(num/immuneNet.sampleSize) for leftBound, _, num in self.graph.degree_distribution().bins()}
         self.meanDegree = self.graph.degree_distribution().mean
 
         self.components = self.graph.components()
-        self.componentList = np.array([ len(i) for i in self.components])
-        self.componentCount = self.componentList.shape[0]
-        self.componentSizeDistribution = { component_size:(float((self.componentList == component_size).sum())/float(self.componentCount)) for component_size in np.unique(self.componentList)}
+        self.componentSizeArray = np.array([ len(i) for i in self.components])
+        self.componentCount = self.componentSizeArray.shape[0]
+        self.giantComponentSize = self.components.giant().vcount()
+        self.componentSizeDistribution = { component_size:(float((self.componentSizeArray == component_size).sum())/float(self.componentCount)) for component_size in np.unique(self.componentSizeArray)}
         self.componentProportionDistribution = { idx:immuneNet.proportions[component].sum() for idx,component in enumerate(self.components)}
 
 
@@ -48,7 +48,7 @@ class GraphStats:
                 float(self.edgeDensity),
                 float(self.density),
                 float(self.eccentricity),
-                float(self.giantComponent),
+                float(self.giantComponentSize),
                 float(self.meanDegree),
                 float(self.componentCount)
                ]
@@ -59,7 +59,7 @@ class GraphStats:
                 self.edgeDensity,
                 self.density,
                 self.eccentricity,
-                self.giantComponent,
+                self.giantComponentSize,
                 self.degreeDistribution,
                 self.componentCount,
                 self.componentSizeDistribution,

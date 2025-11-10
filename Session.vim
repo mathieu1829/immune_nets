@@ -13,13 +13,22 @@ if &shortmess =~ 'A'
 else
   set shortmess=aoO
 endif
-badd +0 src/mappers/networkMapper.py
-badd +1 src/analysis/methods/graphStats.py
-badd +1 src/models/networkStat.py
-badd +1 tests/test_graphStats.py
+badd +13 src/mappers/networkMapper.py
+badd +34 src/analysis/methods/graphStats.py
+badd +22 src/models/networkStat.py
+badd +39 tests/test_graphStats.py
+badd +62 src/mappers/networkStatMapper.py
+badd +12 ~/Documents/python/immune_nets/src/mappers/graphStatsMapper.py
+badd +160 tests/test_orm.py
+badd +22 src/factories/immuneNetworkFactory.py
+badd +0 src/creation/immuneNetwork.py
+badd +1 ~/Documents/python/immune_nets/src/factories/graphStatsFactory.py
+badd +23 tests/test_simpleDistance.py
+badd +1 ~/Documents/python/immune_nets/src/mappers/immuneNetworkMapper.py
+badd +18 src/models/network.py
 argglobal
 %argdel
-edit src/mappers/networkMapper.py
+edit src/mappers/networkStatMapper.py
 let s:save_splitbelow = &splitbelow
 let s:save_splitright = &splitright
 set splitbelow splitright
@@ -28,6 +37,10 @@ vsplit
 wincmd _ | wincmd |
 vsplit
 2wincmd h
+wincmd _ | wincmd |
+split
+1wincmd k
+wincmd w
 wincmd w
 wincmd w
 wincmd _ | wincmd |
@@ -43,12 +56,15 @@ set winminheight=0
 set winheight=1
 set winminwidth=0
 set winwidth=1
+exe '1resize ' . ((&lines * 37 + 38) / 77)
 exe 'vert 1resize ' . ((&columns * 126 + 190) / 381)
+exe '2resize ' . ((&lines * 37 + 38) / 77)
 exe 'vert 2resize ' . ((&columns * 126 + 190) / 381)
-exe '3resize ' . ((&lines * 37 + 38) / 77)
-exe 'vert 3resize ' . ((&columns * 127 + 190) / 381)
+exe 'vert 3resize ' . ((&columns * 126 + 190) / 381)
 exe '4resize ' . ((&lines * 37 + 38) / 77)
 exe 'vert 4resize ' . ((&columns * 127 + 190) / 381)
+exe '5resize ' . ((&lines * 37 + 38) / 77)
+exe 'vert 5resize ' . ((&columns * 127 + 190) / 381)
 argglobal
 balt src/mappers/networkMapper.py
 setlocal foldmethod=manual
@@ -61,19 +77,19 @@ setlocal foldnestmax=20
 setlocal foldenable
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 1 - ((0 * winheight(0) + 37) / 74)
+let s:l = 62 - ((16 * winheight(0) + 18) / 36)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 1
-normal! 0
+keepjumps 62
+normal! 024|
 wincmd w
 argglobal
 if bufexists(fnamemodify("src/analysis/methods/graphStats.py", ":p")) | buffer src/analysis/methods/graphStats.py | else | edit src/analysis/methods/graphStats.py | endif
 if &buftype ==# 'terminal'
   silent file src/analysis/methods/graphStats.py
 endif
-balt src/mappers/networkMapper.py
+balt ~/Documents/python/immune_nets/src/mappers/graphStatsMapper.py
 setlocal foldmethod=manual
 setlocal foldexpr=0
 setlocal foldmarker={{{,}}}
@@ -84,40 +100,17 @@ setlocal foldnestmax=20
 setlocal foldenable
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 1 - ((0 * winheight(0) + 37) / 74)
+let s:l = 37 - ((24 * winheight(0) + 18) / 36)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 1
-normal! 0
+keepjumps 37
+normal! 09|
 wincmd w
 argglobal
-if bufexists(fnamemodify("tests/test_graphStats.py", ":p")) | buffer tests/test_graphStats.py | else | edit tests/test_graphStats.py | endif
+if bufexists(fnamemodify("tests/test_orm.py", ":p")) | buffer tests/test_orm.py | else | edit tests/test_orm.py | endif
 if &buftype ==# 'terminal'
-  silent file tests/test_graphStats.py
-endif
-balt src/models/networkStat.py
-setlocal foldmethod=manual
-setlocal foldexpr=0
-setlocal foldmarker={{{,}}}
-setlocal foldignore=#
-setlocal foldlevel=0
-setlocal foldminlines=1
-setlocal foldnestmax=20
-setlocal foldenable
-silent! normal! zE
-let &fdl = &fdl
-let s:l = 1 - ((0 * winheight(0) + 18) / 36)
-if s:l < 1 | let s:l = 1 | endif
-keepjumps exe s:l
-normal! zt
-keepjumps 1
-normal! 0
-wincmd w
-argglobal
-if bufexists(fnamemodify("src/models/networkStat.py", ":p")) | buffer src/models/networkStat.py | else | edit src/models/networkStat.py | endif
-if &buftype ==# 'terminal'
-  silent file src/models/networkStat.py
+  silent file tests/test_orm.py
 endif
 balt src/analysis/methods/graphStats.py
 setlocal foldmethod=manual
@@ -130,20 +123,69 @@ setlocal foldnestmax=20
 setlocal foldenable
 silent! normal! zE
 let &fdl = &fdl
-let s:l = 1 - ((0 * winheight(0) + 18) / 36)
+let s:l = 160 - ((60 * winheight(0) + 37) / 74)
 if s:l < 1 | let s:l = 1 | endif
 keepjumps exe s:l
 normal! zt
-keepjumps 1
-normal! 0
+keepjumps 160
+normal! 041|
 wincmd w
-3wincmd w
+argglobal
+if bufexists(fnamemodify("src/creation/immuneNetwork.py", ":p")) | buffer src/creation/immuneNetwork.py | else | edit src/creation/immuneNetwork.py | endif
+if &buftype ==# 'terminal'
+  silent file src/creation/immuneNetwork.py
+endif
+balt tests/test_graphStats.py
+setlocal foldmethod=manual
+setlocal foldexpr=0
+setlocal foldmarker={{{,}}}
+setlocal foldignore=#
+setlocal foldlevel=0
+setlocal foldminlines=1
+setlocal foldnestmax=20
+setlocal foldenable
+silent! normal! zE
+let &fdl = &fdl
+let s:l = 23 - ((22 * winheight(0) + 18) / 36)
+if s:l < 1 | let s:l = 1 | endif
+keepjumps exe s:l
+normal! zt
+keepjumps 23
+normal! 025|
+wincmd w
+argglobal
+if bufexists(fnamemodify("src/models/networkStat.py", ":p")) | buffer src/models/networkStat.py | else | edit src/models/networkStat.py | endif
+if &buftype ==# 'terminal'
+  silent file src/models/networkStat.py
+endif
+balt tests/test_graphStats.py
+setlocal foldmethod=manual
+setlocal foldexpr=0
+setlocal foldmarker={{{,}}}
+setlocal foldignore=#
+setlocal foldlevel=0
+setlocal foldminlines=1
+setlocal foldnestmax=20
+setlocal foldenable
+silent! normal! zE
+let &fdl = &fdl
+let s:l = 22 - ((21 * winheight(0) + 18) / 36)
+if s:l < 1 | let s:l = 1 | endif
+keepjumps exe s:l
+normal! zt
+keepjumps 22
+normal! 046|
+wincmd w
+5wincmd w
+exe '1resize ' . ((&lines * 37 + 38) / 77)
 exe 'vert 1resize ' . ((&columns * 126 + 190) / 381)
+exe '2resize ' . ((&lines * 37 + 38) / 77)
 exe 'vert 2resize ' . ((&columns * 126 + 190) / 381)
-exe '3resize ' . ((&lines * 37 + 38) / 77)
-exe 'vert 3resize ' . ((&columns * 127 + 190) / 381)
+exe 'vert 3resize ' . ((&columns * 126 + 190) / 381)
 exe '4resize ' . ((&lines * 37 + 38) / 77)
 exe 'vert 4resize ' . ((&columns * 127 + 190) / 381)
+exe '5resize ' . ((&lines * 37 + 38) / 77)
+exe 'vert 5resize ' . ((&columns * 127 + 190) / 381)
 tabnext 1
 if exists('s:wipebuf') && len(win_findbuf(s:wipebuf)) == 0 && getbufvar(s:wipebuf, '&buftype') isnot# 'terminal'
   silent exe 'bwipe ' . s:wipebuf
@@ -159,7 +201,6 @@ if filereadable(s:sx)
 endif
 let &g:so = s:so_save | let &g:siso = s:siso_save
 set hlsearch
-nohlsearch
 doautoall SessionLoadPost
 unlet SessionLoad
 " vim: set ft=vim :

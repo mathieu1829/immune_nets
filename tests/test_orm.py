@@ -1,20 +1,42 @@
 import unittest
 from src.models import *
 from src.db import engine,SessionLocal
-from sqlalchemy import insert,select,delete
-from datetime import date,time,datetime
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 from pathlib import Path
-import pandas as pd
-import uuid
-from tests.utils.loadRepertoires import loadRepertoires
 
+from src.analysis.methods.graphStats import GraphStats
 from src.creation.immuneNetwork import ImmuneNetwork
 from src.creation.immuneRepertoire import ImmuneRepertoire
 from src.factories import RepertoireFactory, ImmuneNetworkFactory, ImmuneRepertoireFactory
-from src.mappers import RepertoireMapper, NetworkMapper, ImmuneNetworkMapper
+from src.mappers import RepertoireMapper, NetworkMapper, ImmuneNetworkMapper, NetworkStatMapper
 
 class testORM(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        test_dir = Path(__file__).parent / "test_data"
+        cls.covid_network_path = test_dir / "covid_test_network_0.pkl" # covid
+        cls.covid_clonotype_path = test_dir / "covid_test_clonotypes_0.csv" # covid
+        cls.repertoireName = "test_covid"
+        cls.networkName = "covid test network_0"
+
+    def deleteObjects(self, stmt, session):
+        result = session.execute(stmt)
+        for obj in result.scalars().all():
+            session.delete(obj)
+        session.commit()
+
+    def confirmDeletion(self, stmt, session):
+        result = session.execute(stmt)
+        self.assertIsNone(result.scalars().first())
+
+    def deleteAndCheck(self, stmt, session):
+        self.deleteObjects(stmt, session)
+        self.confirmDeletion(stmt, session)
+
+    def getRepertoire(self) -> Repertoire:
+        return RepertoireFactory.fromCSV(name=self.repertoireName,desc="some bile sample", path = self.covid_clonotype_path)
+
     def test_ORMConnetion(self):
         with engine.connect() as connection:
             pass
@@ -35,24 +57,16 @@ class testORM(unittest.TestCase):
             self.assertIsNotNone(datasetDB)
             if datasetDB is not None:
                 self.assertEqual(datasetDB.description, "test description")
-            
-            result = session.execute(stmt)
-            for obj in result.scalars().all():
-                session.delete(obj)
-            session.commit()
 
-            result = session.execute(stmt)
-            self.assertIsNone(result.scalars().first())
+            self.deleteAndCheck(stmt, session)
             
     def test_singleRepertoireLoading(self):
-        test_dir = Path(__file__).parent / "test_data"
-        covid_path = test_dir / "covid_test_clonotypes_0.csv" # covid
         with Session(engine) as session:
-            repertoire: Repertoire = RepertoireFactory.fromCSV(name="test_covid",desc="some bile sample", path = covid_path)
+            repertoire: Repertoire = self.getRepertoire()
             session.add(repertoire)
             session.commit()
 
-            stmt = select(Repertoire).where(Repertoire.name == "test_covid")
+            stmt = select(Repertoire).where(Repertoire.name == self.repertoireName)
             result = session.execute(stmt)
             repertoireDB: Repertoire|None = result.scalars().first()
             self.assertIsNotNone(repertoireDB)
@@ -62,24 +76,13 @@ class testORM(unittest.TestCase):
             immuneRepertoire = RepertoireMapper.toImmuneRepertoire(repertoire)
             self.assertEqual(immuneRepertoire.clones.empty,False) 
 
-            result = session.execute(stmt)
-            for obj in result.scalars().all():
-                session.delete(obj)
-            session.commit()
-
-            result = session.execute(stmt)
-            self.assertIsNone(result.scalars().first())
+            self.deleteAndCheck(stmt, session)
 
     def test_singleNetworkLoading(self):
-        test_dir = Path(__file__).parent / "test_data"
-        covid_network_path = test_dir / "covid_test_network_0.pkl" # covid
-        covid_clonotype_path = test_dir / "covid_test_clonotypes_0.csv" # covid
-
-        
-        immuneNetwork: ImmuneNetwork = ImmuneNetworkFactory.fromPickle(covid_network_path)
+        immuneNetwork: ImmuneNetwork = ImmuneNetworkFactory.fromPickle(self.covid_network_path)
         
         with Session(engine) as session:
-            repertoire = RepertoireFactory.fromCSV(name="test_covid",desc="some bile sample", path = covid_clonotype_path)
+            repertoire = self.getRepertoire()
             session.add(repertoire)
             session.commit()
 
@@ -88,9 +91,8 @@ class testORM(unittest.TestCase):
             session.add(network)
             session.commit()
 
-
-            stmt = select(Network).where(Network.name == "covid test network_0")
-            stmt2 = select(Repertoire).where(Repertoire.name == "test_covid")
+            stmt = select(Network).where(Network.name == self.networkName)
+            stmt2 = select(Repertoire).where(Repertoire.name == self.repertoireName)
 
             result = session.execute(stmt)
             networkDB: Network|None = result.scalars().first()
@@ -99,31 +101,16 @@ class testORM(unittest.TestCase):
                 immuneNetDB: ImmuneNetwork = NetworkMapper.toImmuneNetwork(networkDB)
                 self.assertEqual(immuneNetDB.graph.empty, False)
 
-            result = session.execute(stmt)
-            for obj in result.scalars().all():
-                session.delete(obj)
-            session.commit()
-            
-            result = session.execute(stmt2)
-            for obj in result.scalars().all():
-                session.delete(obj)
-            session.commit()
-
-            result = session.execute(stmt)
-            self.assertIsNone(result.scalars().first())
-            result = session.execute(stmt2)
-            self.assertIsNone(result.scalars().first())
+            self.deleteAndCheck(stmt, session)
+            self.deleteAndCheck(stmt2, session)
 
     def test_cascadeRepertoireDelete(self):
-        test_dir = Path(__file__).parent / "test_data"
-        covid_network_path = test_dir / "covid_test_network_0.pkl" # covid
-        covid_clonotype_path = test_dir / "covid_test_clonotypes_0.csv" # covid
 
         
-        immuneNetwork: ImmuneNetwork = ImmuneNetworkFactory.fromPickle(covid_network_path)
+        immuneNetwork: ImmuneNetwork = ImmuneNetworkFactory.fromPickle(self.covid_network_path)
         
         with Session(engine) as session:
-            repertoire = RepertoireFactory.fromCSV(name="test_covid",desc="some bile sample", path = covid_clonotype_path)
+            repertoire = self.getRepertoire()
 
             immuneNetwork.sampleId = repertoire.repertoire_id
             network: Network = NetworkMapper.fromImmuneNetwork(immuneNetwork)
@@ -131,8 +118,8 @@ class testORM(unittest.TestCase):
             session.add(repertoire)
             session.commit()
 
-            stmt = select(Network).where(Network.name == "covid test network_0")
-            stmt2 = select(Repertoire).where(Repertoire.name == "test_covid")
+            stmt = select(Network).where(Network.name == self.networkName)
+            stmt2 = select(Repertoire).where(Repertoire.name == self.repertoireName)
 
             result = session.execute(stmt)
             networkDB: Network|None = result.scalars().first()
@@ -141,15 +128,41 @@ class testORM(unittest.TestCase):
                 immuneNetDB: ImmuneNetwork = NetworkMapper.toImmuneNetwork(networkDB)
                 self.assertEqual(immuneNetDB.graph.empty, False)
 
-            result = session.execute(stmt2)
-            for obj in result.scalars().all():
-                session.delete(obj)
+            self.deleteObjects(stmt2, session)
+
+            self.confirmDeletion(stmt, session)
+            self.confirmDeletion(stmt2, session)
+
+    def test_networkStatLoading(self):
+        immuneNetwork: ImmuneNetwork = ImmuneNetworkFactory.fromPickle(self.covid_network_path)
+        stats = GraphStats(immuneNetwork)
+        
+        with Session(engine) as session:
+            repertoire = self.getRepertoire()
+
+            immuneNetwork.sampleId = repertoire.repertoire_id
+            network: Network = NetworkMapper.fromImmuneNetwork(immuneNetwork)
+            network.network_stats = NetworkStatMapper.fromGraphStat(stats,immuneNetwork)
+            repertoire.repertoire_networks.append(network)
+            session.add(repertoire)
             session.commit()
 
+            stmt = select(Network).where(Network.name == self.networkName)
+            stmt2 = select(Repertoire).where(Repertoire.name == self.repertoireName)
+            stmt3 = select(NetworkStat).where(NetworkStat.network_id == network.network_id)
+
             result = session.execute(stmt)
-            self.assertIsNone(result.scalars().first())
-            result = session.execute(stmt2)
-            self.assertIsNone(result.scalars().first())
+            networkDB: Network|None = result.scalars().first()
+            self.assertIsNotNone(networkDB)
+            if networkDB is not None:
+                statsDB = NetworkStatMapper.toGraphStat(networkDB.network_stats)
+                self.assertEqual(statsDB.toList(), stats.toList())
+
+            self.deleteObjects(stmt2, session)
+
+            self.confirmDeletion(stmt, session)
+            self.confirmDeletion(stmt2, session)
+            self.confirmDeletion(stmt3, session)
             
 if __name__ == '__main__':
     unittest.main()

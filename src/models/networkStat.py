@@ -17,9 +17,9 @@ class NetworkStat(Base):
                                                           primary_key=True,
                                                           default=uuid.uuid4)
     network_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("network.network_id"), nullable = False)
-    stat_name: Mapped[str] =  mapped_column(String(30), nullable = False)
+    stat_name: Mapped[str] =  mapped_column(String(40), nullable = False)
     datatype: Mapped[str] =  mapped_column(String(20), nullable = False)
-    value: Mapped[str] =  mapped_column(String(120), nullable = False)
+    value: Mapped[str] =  mapped_column(String, nullable = False)
 
     source_network: Mapped["Network"] = relationship(back_populates="network_stats") # type: ignore
 
