@@ -3,7 +3,6 @@ import numpy as np
 from itertools import combinations
 
 from src.analysis.methods.graphStats import GraphStats
-from src.mappers import GraphStatsMapper
 from src.creation.algorithms.simpleDistance import simpleDistance
 from src.creation.algorithms.simpleBetaDistance import simpleBetaDistance
 from src.creation.algorithms.simpleVectorBetaDistance import simpleVectorBetaDistance
