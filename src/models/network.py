@@ -24,9 +24,9 @@ class Network(Base):
     repertoire_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("repertoire.repertoire_id"))
 
     name: Mapped[str] =  mapped_column(String(30), nullable = True, default=None)
-    algorithm: Mapped[str] =  mapped_column(String(30), nullable = False)
-    distance_function: Mapped[str] =  mapped_column(String(30), nullable = False)
-    network_algorithm_parameters: Mapped[str] =  mapped_column(String(30), nullable = False)
+    algorithm: Mapped[str] =  mapped_column(String(50), nullable = False)
+    distance_function: Mapped[str] =  mapped_column(String(50), nullable = False)
+    network_algorithm_parameters: Mapped[str] =  mapped_column(String(50), nullable = False)
     version: Mapped[str] =  mapped_column(String(10), nullable = False, default = GlobalSettings().version)
     username: Mapped[str] =  mapped_column(String(30), nullable = False, default = GlobalSettings().defaultUsername)
     modificationDate: Mapped[date] =  mapped_column(Date, nullable = False, default=datetime.now())

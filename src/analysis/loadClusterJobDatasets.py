@@ -12,6 +12,7 @@ from src.mappers import RepertoireMapper, NetworkMapper
 from src.creation.algorithms.simpleBetaDistance import simpleBetaDistance
 from src.creation.distance.alignment import sequenceAligner
 
+#move to some utils
 def max_string_lengths_across_dfs(repertoires):
     # Find string / object columns (assume same across all dfs)
     string_cols = repertoires[0].clones.select_dtypes(include=['object', 'string']).columns
@@ -78,7 +79,7 @@ if __name__ == "__main__":
     groupPaths = groupPaths.split(",")
     groupPaths = { pair.split(":")[0]:pair.split(":")[1] for pair in groupPaths}
 
-    # loadClusterJobDatasets(groupPaths)
+    loadClusterJobDatasets(groupPaths)
     showDBContents(groupPaths)
 
 

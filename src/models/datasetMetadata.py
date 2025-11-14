@@ -19,7 +19,7 @@ class DatasetMetadata(Base):
     dataset_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("dataset.dataset_id"))
     name: Mapped[str] =  mapped_column(String(30), nullable = False)
     description: Mapped[str] =  mapped_column(String(120), nullable = False)
-    value: Mapped[str] =  mapped_column(String(120), nullable = False)
+    value: Mapped[str] =  mapped_column(String, nullable = False)
 
 
     source_dataset: Mapped["Dataset"] = relationship(back_populates="dataset_metadata_list") # type: ignore

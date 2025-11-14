@@ -18,7 +18,7 @@ class RepertoireStat(Base):
                                                           default=uuid.uuid4)
     repertoire_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("repertoire.repertoire_id"))
     stat_name: Mapped[str] =  mapped_column(String(30), nullable = False)
-    value: Mapped[str] =  mapped_column(String(120), nullable = False)
+    value: Mapped[str] =  mapped_column(String, nullable = False)
     description: Mapped[str] =  mapped_column(String(120), nullable = False)
 
     source_repertoire: Mapped["Repertoire"] = relationship(back_populates="repertoire_stats") # type: ignore
