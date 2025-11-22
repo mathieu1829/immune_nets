@@ -28,7 +28,7 @@ def max_string_lengths_across_dfs(repertoires):
     return max_lengths
 
 
-def loadClusterJobDatasets(groupPaths):
+def loadClusterJobDatasetsToDB(groupPaths):
 
     immuneRepertoires = {}
 
