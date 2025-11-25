@@ -14,7 +14,7 @@ from src.analysis.networkDistanceOptimization import objectiveBuilder
 # from sqlalchemy.orm import Session, selectinload
 # from sqlalchemy import insert,select,delete
 from src.analysis.statDistance import WassersteinStatDistance
-from src.mappers import ImmuneNetworkMapper
+from src.mappers.immuneNetworkMapper import ImmuneNetworkMapper
 from src.factories import ImmuneRepertoireFactory
 
 from src.creation.immuneRepertoire import ImmuneRepertoire
