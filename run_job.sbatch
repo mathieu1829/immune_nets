@@ -1,11 +1,10 @@
 #!/bin/bash
-#SBATCH --job-name=immune_nets_job
-#SBATCH --output=logs/immune_nets_%j.out
-#SBATCH --error=logs/immune_nets_%j.err
-#SBATCH --time=02:00:00
-#SBATCH --nodes=1
-#SBATCH --ntasks=1
+#SBATCH -p obl
+#SBATCH -w obl1
+#SBATCH -n1
+#SBATCH -A inz_tcr
+#SBATCH --gres=gpu:0
+#SBATCH --time=05-01:05:10
 
-cd /home/teuthid/Documents/python/immune_nets
+/home/inf155621/miniconda3/bin/conda run -n immune-nets python -m tests.test_clusterjob
 
-NIX_SHELL_COMMAND="python -m src.analysis.clusterJob" nix-shell
