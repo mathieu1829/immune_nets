@@ -25,9 +25,6 @@ from src.creation.distance.levenshtein import levenshteinDistance
 from src.creation.distance.alignment import sequenceAligner
 
 
-with open("a.csv","w") as f:
-    f.write("a")
-
 def shuffleGroupAndDivide(groupedRepertoires, group):
   repertoireGroup = groupedRepertoires[group]
   np.random.shuffle(repertoireGroup)
@@ -98,17 +95,16 @@ def loadClusterJobDatasetsFromFile(groupPaths):
         
 def runClusterJob(allRepertoires, numOfTrials=20, testCase=False):
     distributionNames = ["degreeDistribution", "componentSizeDistribution", "componentProportionDistribution"]
-    distributionCombos = list(combinations(distributionNames, 2))
     runId = uuid.uuid4()
 
-    for combo in distributionCombos:
+    for distributionName in distributionNames:
         results = {}
         for repertoire_group in allRepertoires:
             print(f"Running study for {repertoire_group} repertoires")
             analyzed_repertoires = allRepertoires[repertoire_group]
             study = optuna.create_study(direction="maximize")
             objectiveFunction = objectiveBuilder(repertoires=analyzed_repertoires,
-                                                 statDistance=WassersteinStatDistance(combo[0], combo[1])
+                                                 statDistance=WassersteinStatDistance(distributionName)
                                                 )
             study.optimize(func=objectiveFunction,n_trials=numOfTrials)
             results[repertoire_group] = study
@@ -121,9 +117,9 @@ def runClusterJob(allRepertoires, numOfTrials=20, testCase=False):
                 sampleRepertoire = allRepertoires[repertoire_group][repertoire_dataset][0]
                 immuneNet = makeBestNetwork(sampleRepertoire, study)
                 if not testCase:
-                    ImmuneNetworkMapper.toPickle(network=immuneNet,path=f"network_{combo[0]}_{combo[1]}_{repertoire_group}_{repertoire_dataset}_{runId}.csv")
+                    ImmuneNetworkMapper.toPickle(network=immuneNet,path=f"network_{distributionName}_{repertoire_group}_{repertoire_dataset}_{runId}.csv")
         if not testCase: 
-            with open(f"results_{combo[0]}_{combo[1]}_{runId}", "wb") as f:
+            with open(f"results_{distributionName}_{runId}", "wb") as f:
                 pickle.dump(results, f)
 
 
