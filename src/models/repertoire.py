@@ -7,7 +7,7 @@ from sqlalchemy.dialects.postgresql import UUID
 import uuid
 from datetime import date, datetime
 from typing import List
-from src.creation.immuneRepertoire import ImmuneRepertoire
+from src.entities import ImmuneRepertoire
 import pandas as pd
 
 from .base import Base

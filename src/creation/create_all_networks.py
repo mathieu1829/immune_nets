@@ -12,7 +12,7 @@ import inspect
 from src.creation.distance.alignment import sequenceAligner
 from src.creation.distance.hamming import hammingDistance
 from src.creation.distance.negativeHamming import negativeHammingDistance
-from src.creation.immuneRepertoire import immuneRepertoire
+from src.entities import ImmuneRepertoire
 
 from src.creation.io_strategies.db_strategy import db_strategy 
 from src.creation.io_strategies.test_csv_strategy import test_csv_strategy

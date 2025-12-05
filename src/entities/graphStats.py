@@ -5,7 +5,7 @@ from src.creation.algorithms.common_methods import *
 from src.creation.algorithms.simpleDistance import *
 from src.creation.enums.matrices import *
 from src.creation.enums.utils import * 
-from src.creation.immuneNetwork import ImmuneNetwork
+from .immuneNetwork import ImmuneNetwork
 from src.creation.utils.pathManager import pathManager
 
 

@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import uuid
 
-from src.creation.immuneNetwork import ImmuneNetwork
+from src.entities import ImmuneNetwork
 from src.models import Network
 
 class NetworkMapper:

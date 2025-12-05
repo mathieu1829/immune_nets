@@ -3,7 +3,7 @@ import pandas as pd
 from pathlib import Path
 import numpy as np
 import uuid
-from src.analysis.methods.graphStats import GraphStats
+from src.entities import GraphStats
 import pickle 
 
 import src.creation.algorithms.simpleDistance 

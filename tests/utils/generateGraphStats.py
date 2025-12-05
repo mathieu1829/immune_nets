@@ -2,7 +2,7 @@ from pathlib import Path
 
 from src.factories import ImmuneNetworkFactory
 from src.mappers import GraphStatsMapper
-from src.analysis.methods.graphStats import GraphStats
+from src.entities import GraphStats
 
 def generateGraphStats():
     root_dir = Path(__file__).parent.parent.parent

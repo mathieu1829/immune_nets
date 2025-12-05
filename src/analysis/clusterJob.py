@@ -14,11 +14,11 @@ from src.analysis.networkDistanceOptimization import objectiveBuilder
 # from sqlalchemy.orm import Session, selectinload
 # from sqlalchemy import insert,select,delete
 from src.analysis.statDistance import WassersteinStatDistance
-from src.mappers.immuneNetworkMapper import ImmuneNetworkMapper
+from src.mappers import ImmuneNetworkMapper
 from src.factories import ImmuneRepertoireFactory
 
-from src.creation.immuneRepertoire import ImmuneRepertoire
-from src.creation.immuneNetwork import ImmuneNetwork
+from src.entities import ImmuneRepertoire
+from src.entities import ImmuneNetwork
 from src.creation.algorithms.simpleBetaDistance import simpleBetaDistance
 from src.creation.algorithms.simpleVectorBetaDistance import simpleVectorBetaDistance
 from src.creation.distance.levenshtein import levenshteinDistance

@@ -6,8 +6,8 @@ import igraph as ig
 from sqlalchemy.orm import Session
 
 from src.models import NetworkStat, Network
-from src.creation.immuneNetwork import ImmuneNetwork
-from src.analysis.methods.graphStats import GraphStats
+from src.entities import ImmuneNetwork
+from src.entities import GraphStats
 from src.factories import ImmuneNetworkFactory
 from src.mappers import NetworkMapper
 from src.db import engine

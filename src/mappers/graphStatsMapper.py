@@ -1,6 +1,6 @@
 import pandas as pd
 
-from src.analysis.methods.graphStats import GraphStats
+from src.entities import GraphStats
 
 class GraphStatsMapper:
     @classmethod

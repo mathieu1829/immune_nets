@@ -10,7 +10,7 @@ from src.creation.algorithms.simpleDistance import simpleDistance
 from src.creation.algorithms.common_methods import split_tcr_column
 import uuid
 from src.creation.utils.pathManager import pathManager
-from src.creation.immuneRepertoire import ImmuneRepertoire
+from src.entities import ImmuneRepertoire
 
 path = pathManager().testDataPath / "healthy_test_clonotypes_0.csv"
 

@@ -4,7 +4,7 @@ from src.creation.algorithms.simpleBetaDistance import simpleBetaDistance
 from src.creation.distance.alignment import sequenceAligner
 
 from src.mappers import ImmuneNetworkMapper, GraphStatsMapper
-from src.analysis.methods.graphStats import GraphStats
+from src.entities import GraphStats
 from src.factories import ImmuneRepertoireFactory
 
 def generateBasicNetworks():

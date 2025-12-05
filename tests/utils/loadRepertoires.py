@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session, selectinload
 from sqlalchemy import select
 from pathlib import Path
 from src.factories import ImmuneRepertoireFactory, ImmuneNetworkFactory
-from src.creation.immuneRepertoire import ImmuneRepertoire
+from src.entities import ImmuneRepertoire
 from src.mappers import RepertoireMapper, NetworkMapper
 from src.creation.algorithms.simpleBetaDistance import simpleBetaDistance
 from src.creation.distance.alignment import sequenceAligner

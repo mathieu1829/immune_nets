@@ -1,5 +1,5 @@
 from src.models import Repertoire
-from src.creation.immuneRepertoire import ImmuneRepertoire
+from src.entities import ImmuneRepertoire
 import pandas as pd
 
 class RepertoireMapper:

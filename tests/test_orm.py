@@ -5,9 +5,8 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 from pathlib import Path
 
-from src.analysis.methods.graphStats import GraphStats
-from src.creation.immuneNetwork import ImmuneNetwork
-from src.creation.immuneRepertoire import ImmuneRepertoire
+from src.entities import GraphStats
+from src.entities import ImmuneNetwork
 from src.factories import RepertoireFactory, ImmuneNetworkFactory, ImmuneRepertoireFactory
 from src.mappers import RepertoireMapper, NetworkMapper, ImmuneNetworkMapper, NetworkStatMapper
 

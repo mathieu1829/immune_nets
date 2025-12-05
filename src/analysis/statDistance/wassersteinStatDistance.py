@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.stats import wasserstein_distance
 
-from src.analysis.methods.graphStats import GraphStats
+from src.entities import GraphStats
 
 class WassersteinStatDistance:
     def __init__(self, distributionName):

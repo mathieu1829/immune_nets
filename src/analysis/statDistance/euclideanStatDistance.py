@@ -1,4 +1,4 @@
-from src.analysis.methods.graphStats import GraphStats
+from src.entities import GraphStats
 from scipy.spatial.distance import euclidean
 
 class EuclideanStatDistance:

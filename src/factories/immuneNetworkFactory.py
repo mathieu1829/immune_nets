@@ -1,7 +1,7 @@
 import pickle
 import pandas as pd
 
-from src.creation.immuneNetwork import ImmuneNetwork
+from src.entities import ImmuneNetwork
 
 class ImmuneNetworkFactory:
     @staticmethod

@@ -7,9 +7,9 @@ import numpy as np
 
 from src.analysis.visualization.graphVisualization import graphVisualization
 from src.creation.algorithms.simpleBetaDistance import simpleBetaDistance
-from src.creation.immuneRepertoire import ImmuneRepertoire
+from src.entities import ImmuneRepertoire
 from src.creation.distance.alignment import sequenceAligner
-from src.analysis.methods.graphStats import GraphStats
+from src.entities import GraphStats
 from src.mappers import GraphStatsMapper
 from sklearn.preprocessing import MinMaxScaler
 from sqlalchemy.orm import Session, selectinload

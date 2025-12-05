@@ -1,6 +1,6 @@
 import pandas as pd
 
-from src.creation.immuneRepertoire import ImmuneRepertoire
+from src.entities import ImmuneRepertoire
 from src.creation.algorithms.common_methods import split_tcr_column
 
 class ImmuneRepertoireFactory:

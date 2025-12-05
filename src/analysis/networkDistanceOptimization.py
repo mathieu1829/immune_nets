@@ -2,7 +2,7 @@ import optuna
 import numpy as np
 from itertools import combinations
 
-from src.analysis.methods.graphStats import GraphStats
+from src.entities import GraphStats
 from src.creation.algorithms.simpleDistance import simpleDistance
 from src.creation.algorithms.simpleBetaDistance import simpleBetaDistance
 from src.creation.algorithms.simpleVectorBetaDistance import simpleVectorBetaDistance

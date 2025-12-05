@@ -13,7 +13,7 @@ from .base import Base
 from .networkData import NetworkData
 
 from src.globalSettings import GlobalSettings
-from src.creation.immuneNetwork import ImmuneNetwork
+from src.entities import ImmuneNetwork
 
 class Network(Base):
     __tablename__ = "network"
