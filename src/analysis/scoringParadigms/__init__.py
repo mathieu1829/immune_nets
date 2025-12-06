@@ -1,0 +1,4 @@
+from .pairwiseScoringParadigm import PairwiseScoringParadigm
+from .interGroupScoringParadigm import InterGroupScoringParadigm
+from .holisticScoringParadigm import HolisticScoringParadigm
+from .scoringParadigm import ScoringParadigm

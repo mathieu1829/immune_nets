@@ -7,13 +7,14 @@ import pickle
 import argparse
 import os
 
-from src.analysis.networkDistanceOptimization import objectiveBuilder
+from src.analysis.optunaObjectives import objectiveBuilder
 
 # from src.models import Repertoire,Dataset
 # from src.db import engine
 # from sqlalchemy.orm import Session, selectinload
 # from sqlalchemy import insert,select,delete
-from src.analysis.statDistance import WassersteinStatDistance
+from src.analysis.statDistances import WassersteinStatDistance
+from src.analysis.scoringParadigms import PairwiseScoringParadigm
 from src.mappers import ImmuneNetworkMapper
 from src.factories import ImmuneRepertoireFactory
 
@@ -103,8 +104,10 @@ def runClusterJob(allRepertoires, numOfTrials=20, testCase=False):
             print(f"Running study for {repertoire_group} repertoires")
             analyzed_repertoires = allRepertoires[repertoire_group]
             study = optuna.create_study(direction="maximize")
+            distanceType = WassersteinStatDistance(distributionName)
+            scoringParadigm = PairwiseScoringParadigm(distanceType)
             objectiveFunction = objectiveBuilder(repertoires=analyzed_repertoires,
-                                                 statDistance=WassersteinStatDistance(distributionName)
+                                                 scoringParadim=scoringParadigm
                                                 )
             study.optimize(func=objectiveFunction,n_trials=numOfTrials)
             results[repertoire_group] = study

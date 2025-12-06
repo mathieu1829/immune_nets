@@ -1,7 +1,8 @@
 from src.entities import GraphStats
+from src.analysis.statDistanceTypes import PairwiseStatDistance
 from scipy.spatial.distance import euclidean
 
-class EuclideanStatDistance:
+class EuclideanStatDistance(PairwiseStatDistance):
     def __init__(self):
         pass
 

@@ -1,0 +1,3 @@
+from .pairwiseStatDistance import PairwiseStatDistance
+from .interGroupStatDistance import InterGroupStatDistance
+from .holisticStatDistance import HolisticStatDistance

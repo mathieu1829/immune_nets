@@ -1,9 +1,10 @@
 import numpy as np
 from scipy.stats import wasserstein_distance
+from src.analysis.statDistanceTypes import PairwiseStatDistance
 
 from src.entities import GraphStats
 
-class WassersteinStatDistance:
+class WassersteinStatDistance(PairwiseStatDistance):
     def __init__(self, distributionName):
         self.distributionName = distributionName
     

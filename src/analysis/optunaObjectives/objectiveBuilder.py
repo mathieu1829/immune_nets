@@ -9,9 +9,11 @@ from src.creation.algorithms.simpleVectorBetaDistance import simpleVectorBetaDis
 from src.creation.distance.alignment import sequenceAligner
 from src.creation.distance.levenshtein import levenshteinDistance 
 
-def objectiveBuilder(repertoires, statDistance):
+from src.analysis.scoringParadigms import ScoringParadigm
+
+def objectiveBuilder(repertoires, scoringParadim: ScoringParadigm):
     groups = [group for group in repertoires]
-    statDistanceFun = statDistance.stat_dist
+    scoringParadimFun = scoringParadim.compute_score
     def objective(trial):
         group_results = { group:[] for group in groups}
         threshold = trial.suggest_float("threshold",low=0.2,high=0.4)
@@ -53,19 +55,7 @@ def objectiveBuilder(repertoires, statDistance):
                 group_results[group].append(stats)
                 # print(f"{group} stats: {str(stats.toList())}")
                     
-        inter_group_distances = []
-        for combo in combinations(groups,2):
-            group_a = group_results[combo[0]]
-            group_b = group_results[combo[1]]
-            inter_group_distance = np.array([statDistanceFun(a,b) for a in group_a for b in group_b ])
-            inter_group_distances.append(inter_group_distance.mean())
-            # print(f"distance between group {combo[0]} and {combo[1]} is {inter_group_distance.mean()}")
-        
-        inter_group_distances = np.array(inter_group_distances)
-        # print(f"mean: {inter_group_distances.mean()}")
-        # print(f"std: {np.std(inter_group_distances)}")
-        # print(f"var: {np.var(inter_group_distances)}")
-        return inter_group_distances.mean() - np.std(inter_group_distances) 
+        return scoringParadimFun(group_results) 
     return objective
 
 
