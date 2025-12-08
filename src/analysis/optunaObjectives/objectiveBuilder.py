@@ -20,7 +20,6 @@ def objectiveBuilder(repertoires, scoringParadim: ScoringParadigm):
         distance = trial.suggest_categorical("distance", ["alignment", "levenshtein"])
         distance_fun = None
         algorithm_name = trial.suggest_categorical("algorithm_name", ["simpleBetaDistance", "simpleVectorBetaDistance"])
-        algorithm = None
         match distance:
             case "alignment":
                 substitution_matrix = trial.suggest_categorical("substitution_matrix", [
@@ -42,6 +41,8 @@ def objectiveBuilder(repertoires, scoringParadim: ScoringParadigm):
                 algorithm = simpleBetaDistance
             case "simpleVectorBetaDistance":
                 algorithm = simpleVectorBetaDistance
+            case _:
+                algorithm = simpleBetaDistance #default
 
 
         for group in groups:
