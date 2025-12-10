@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH -p obl
 #SBATCH -w obl1
-#SBATCH -n1
+#SBATCH -n3
 #SBATCH -A inz_tcr
 #SBATCH --gres=gpu:0
 #SBATCH --time=05-01:05:10
