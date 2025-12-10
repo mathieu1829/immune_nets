@@ -10,5 +10,5 @@ class DistributionIdentifier(ABC):
     }
 
     @abstractmethod
-    def identify_distribution(self, statDict):
+    def identify_distribution(self, statDict) -> str:
         pass
