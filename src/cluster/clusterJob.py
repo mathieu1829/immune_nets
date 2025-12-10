@@ -6,6 +6,7 @@ import uuid
 import pickle
 import argparse
 import os
+from mpi4py import MPI
 
 from src.analysis.optunaObjectives import objectiveBuilder
 
@@ -98,32 +99,39 @@ def runClusterJob(allRepertoires, numOfTrials=20, testCase=False):
     distributionNames = ["degreeDistribution", "componentSizeDistribution", "componentProportionDistribution"]
     runId = uuid.uuid4()
 
-    for distributionName in distributionNames:
-        results = {}
-        for repertoire_group in allRepertoires:
-            print(f"Running study for {repertoire_group} repertoires")
-            analyzed_repertoires = allRepertoires[repertoire_group]
-            study = optuna.create_study(direction="maximize")
-            distanceType = PairwiseDistributionDistance(distributionName)
-            scoringParadigm = PairwiseScoringParadigm(distanceType)
-            objectiveFunction = objectiveBuilder(repertoires=analyzed_repertoires,
-                                                 scoringParadim=scoringParadigm
-                                                )
-            study.optimize(func=objectiveFunction,n_trials=numOfTrials)
-            results[repertoire_group] = study
+    comm = MPI.COMM_WORLD
+    rank = comm.Get_rank()
+    size = comm.Get_size()
 
-            # Best result
-            print("Best score:", study.best_value)
-            print("Best params:", study.best_params)
-            print("Generating sample networks") 
-            for repertoire_dataset in allRepertoires[repertoire_group]:
-                sampleRepertoire = allRepertoires[repertoire_group][repertoire_dataset][0]
-                immuneNet = makeBestNetwork(sampleRepertoire, study)
-                if not testCase:
-                    ImmuneNetworkMapper.toPickle(network=immuneNet,path=f"network_{distributionName}_{repertoire_group}_{repertoire_dataset}_{runId}.csv")
-        if not testCase: 
-            with open(f"results_{distributionName}_{runId}", "wb") as f:
-                pickle.dump(results, f)
+    if size != len(distributionNames):
+        raise ValueError("The number of processes must be equal to number of considered variants")
+
+    distributionName = distributionNames[rank]
+    results = {}
+    for repertoire_group in allRepertoires:
+        print(f"Running study for {repertoire_group} repertoires")
+        analyzed_repertoires = allRepertoires[repertoire_group]
+        study = optuna.create_study(direction="maximize")
+        distanceType = PairwiseDistributionDistance(distributionName)
+        scoringParadigm = PairwiseScoringParadigm(distanceType)
+        objectiveFunction = objectiveBuilder(repertoires=analyzed_repertoires,
+                                             scoringParadim=scoringParadigm
+                                            )
+        study.optimize(func=objectiveFunction,n_trials=numOfTrials)
+        results[repertoire_group] = study
+
+        # Best result
+        print("Best score:", study.best_value)
+        print("Best params:", study.best_params)
+        print("Generating sample networks") 
+        for repertoire_dataset in allRepertoires[repertoire_group]:
+            sampleRepertoire = allRepertoires[repertoire_group][repertoire_dataset][0]
+            immuneNet = makeBestNetwork(sampleRepertoire, study)
+            if not testCase:
+                ImmuneNetworkMapper.toPickle(network=immuneNet,path=f"network_{distributionName}_{repertoire_group}_{repertoire_dataset}_{runId}.csv")
+    if not testCase: 
+        with open(f"results_{distributionName}_{runId}", "wb") as f:
+            pickle.dump(results, f)
 
 
 

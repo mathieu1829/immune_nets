@@ -103,22 +103,17 @@ class PairwiseDistributionDistance(PairwiseStatDistance):
         dist_type_b = self.identifier.identify_distribution(b_distribution) 
         #if distrubutions have diffrent types give max score
         if (dist_type_a != dist_type_b):
-            print(f"mismatch: {dist_type_a} {dist_type_b}")
             return 1 # -> 1 is the max value (0 is the lowest) 
         elif (dist_type_a == 'normal'):
-            print("normal")
             return self.compare_normal(a_distribution, b_distribution)
             
         elif (dist_type_a == 'uniform'):
-            print("uniform")
             return self.compare_uniform(a_distribution, b_distribution)   
 
         elif (dist_type_a == 'power'):
-            print("power")
             return self.compare_power(a_distribution, b_distribution)  
 
         elif (dist_type_a == 'gamma'): #genaral distribution type - let it be the last resort
-            print("gamma")
             return self.compare_gamma(a_distribution, b_distribution)  
         else :
             return 1.0
