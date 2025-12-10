@@ -104,9 +104,10 @@ def runClusterJob(allRepertoires, numOfTrials=20, testCase=False):
     size = comm.Get_size()
 
     if size != len(distributionNames):
-        raise ValueError("The number of processes must be equal to number of considered variants")
+        raise ValueError(f"The number of processes ({size}) must be equal to number of considered variants {len(distributionNames)}")
 
     distributionName = distributionNames[rank]
+    print(f"Starting computation for {distributionName}.")
     results = {}
     for repertoire_group in allRepertoires:
         print(f"Running study for {repertoire_group} repertoires")
@@ -132,6 +133,7 @@ def runClusterJob(allRepertoires, numOfTrials=20, testCase=False):
     if not testCase: 
         with open(f"results_{distributionName}_{runId}", "wb") as f:
             pickle.dump(results, f)
+    print(f"Finished processing for {distributionName}")
 
 
 
