@@ -1,3 +1,3 @@
 from .distributionIdentifier import DistributionIdentifier
 from .klDivergenceIdentifier import KlDivergenceIndentifier
-from .kolomogorovIdentifier import KolomogorovIdentifier
+from .kolomogorovIdentifier import KolomogorovIndentifier
