@@ -39,11 +39,11 @@ class GraphStats:
         self.componentCount = self.componentSizeArray.shape[0]
         self.giantComponentSize = self.components.giant().vcount()
         self.componentSizeDistribution = { component_size:(float((self.componentSizeArray == component_size).sum())/float(self.componentCount)) for component_size in np.unique(self.componentSizeArray)}
-        self.componentProportionDistribution = { idx:immuneNet.proportions[component].sum() for idx,component in enumerate(self.components)}
+        self.proportionCountDistribution = { proportion:(immuneNet.proportions == proportion).sum() for proportion in np.unique(immuneNet.proportions)}
         componentMembers = { componentSize:[] for componentSize in np.unique(self.componentSizeArray)}
         for component in self.components:
             componentMembers[len(component)].extend(component)
-        self.componentSizeContributionDistribution = {key:immuneNet.proportions[component].sum() for key, component in componentMembers.items()}
+        self.componentProportionDistribution = {key:immuneNet.proportions[component].sum() for key, component in componentMembers.items()}
 
 
     def toStatVector(self):
@@ -67,8 +67,8 @@ class GraphStats:
                 self.degreeDistribution,
                 self.componentCount,
                 self.componentSizeDistribution,
+                self.proportionCountDistribution,
                 self.componentProportionDistribution,
-                self.componentSizeContributionDistribution
                ]
 
 
@@ -94,6 +94,6 @@ class GraphStats:
                 "degreeDistribution",
                 "componentCount",
                 "componentSizeDistribution",
+                "proportionCountDistribution",
                 "componentProportionDistribution",
-                "componentSizeContributionDistribution"
                ]
