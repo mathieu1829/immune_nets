@@ -138,8 +138,8 @@ def runClusterJob(allRepertoires, numOfTrials=20, testCase=False):
         rand = random.randint(0, 1_000_000)
         filename = f"proc_{rank}_{rand}.txt"
 
-        with open(filename, "w"):
-            pass
+        with open(filename, "w") as f:
+            f.write("a")
 
     print(f"Finished processing for {distributionName}")
 
