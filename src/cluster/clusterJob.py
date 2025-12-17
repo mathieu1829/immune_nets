@@ -95,8 +95,12 @@ def loadClusterJobDatasetsFromFile(groupPaths):
       all_repertoires[f"{group}_1 vs {group}_2"] = shuffleGroupAndDivide(dataset_repertoires, group)
     return all_repertoires
 
+def stopIfThresholdReached(study, trial):
+    if trial.value is not None and trial.value >= 1.0:
+        study.stop()
+
         
-def runClusterJob(allRepertoires, numOfTrials=20, testCase=False):
+def runClusterJob(allRepertoires, numOfTrials=100, testCase=False):
     distributionNames = ["degreeDistribution", "componentSizeDistribution", "proportionCountDistribution", "componentProportionDistribution"]
     runId = uuid.uuid4()
 
@@ -119,7 +123,7 @@ def runClusterJob(allRepertoires, numOfTrials=20, testCase=False):
         objectiveFunction = objectiveBuilder(repertoires=analyzed_repertoires,
                                              scoringParadim=scoringParadigm
                                             )
-        study.optimize(func=objectiveFunction,n_trials=numOfTrials)
+        study.optimize(func=objectiveFunction,n_trials=numOfTrials, callbacks=[stopIfThresholdReached])
         results[repertoire_group] = study
 
         # Best result

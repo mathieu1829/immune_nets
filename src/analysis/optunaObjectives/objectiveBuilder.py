@@ -53,6 +53,11 @@ def objectiveBuilder(repertoires, scoringParadim: ScoringParadigm):
                             threshold=threshold
                         )
                 stats = GraphStats(network)
+                if stats.numEdges == 0:
+                    return 0.0
+                V = stats.verticeNum
+                if stats.numEdges == ((V*(V-1))/2):
+                    return 0.0
                 group_results[group].append(stats)
                 # print(f"{group} stats: {str(stats.toList())}")
                     
