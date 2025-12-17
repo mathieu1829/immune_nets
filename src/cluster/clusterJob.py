@@ -7,6 +7,7 @@ import pickle
 import argparse
 import os
 from mpi4py import MPI
+import random
 
 from src.analysis.optunaObjectives import objectiveBuilder
 
@@ -133,6 +134,13 @@ def runClusterJob(allRepertoires, numOfTrials=20, testCase=False):
     if not testCase: 
         with open(f"results_{distributionName}_{runId}", "wb") as f:
             pickle.dump(results, f)
+    else:
+        rand = random.randint(0, 1_000_000)
+        filename = f"proc_{rank}_{rand}.txt"
+
+        with open(filename, "w"):
+            pass
+
     print(f"Finished processing for {distributionName}")
 
 
