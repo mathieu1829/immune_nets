@@ -135,10 +135,13 @@ def runClusterJob(allRepertoires, numOfTrials=20, testCase=False):
         with open(f"results_{distributionName}_{runId}", "wb") as f:
             pickle.dump(results, f)
     else:
+        root = Path(__file__).parent.parent.parent
         rand = random.randint(0, 1_000_000)
         filename = f"proc_{rank}_{rand}.txt"
+        print(f"This is testcase. Process rank is {rank}. Id is {rand} and thus filename is {filename}.")
+        path = root / filename
 
-        with open(filename, "w") as f:
+        with open(path, "w") as f:
             f.write("a")
 
     print(f"Finished processing for {distributionName}")
