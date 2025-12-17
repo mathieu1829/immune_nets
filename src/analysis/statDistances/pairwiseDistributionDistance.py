@@ -2,11 +2,11 @@ import numpy as np
 from scipy.stats import wasserstein_distance
 from src.analysis.statDistanceTypes import PairwiseStatDistance
 
-from src.analysis.distributionInference import DistributionIdentifier, KlDivergenceIndentifier
+from src.analysis.distributionInference import DistributionIdentifier, NaiveIdentifier
 from src.entities import GraphStats
 
 class PairwiseDistributionDistance(PairwiseStatDistance):
-    def __init__(self, distributionName, identifier: DistributionIdentifier = KlDivergenceIndentifier()):
+    def __init__(self, distributionName, identifier: DistributionIdentifier = NaiveIdentifier()):
         self.distributionName = distributionName
         self.identifier = identifier
 
