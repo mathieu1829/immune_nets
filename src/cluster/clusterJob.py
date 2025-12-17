@@ -97,6 +97,7 @@ def loadClusterJobDatasetsFromFile(groupPaths):
 
 def stopIfThresholdReached(study, trial):
     if trial.value is not None and trial.value >= 1.0:
+        print("Max score reached - stopping heuristic")
         study.stop()
 
         
