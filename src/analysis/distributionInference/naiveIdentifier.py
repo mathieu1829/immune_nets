@@ -41,14 +41,10 @@ class NaiveIdentifier(DistributionIdentifier):
   
         if len(values) == 1:
             return "uniform"
-        if len(probs) == 2 and probs.argmax() == 0:
-            return "powerlaw"
-        if len(probs) == 2 and probs.argmax() != 0:
-            return "uniform"
-        if self.is_powerlaw_pmf(probs):
-            return "powerlaw"
         if self.is_normal_pmf(probs):
             return "normal"
+        if self.is_powerlaw_pmf(probs):
+            return "powerlaw"
         if self.is_uniform_pmf(probs):
             return "uniform"
         return "gamma"
