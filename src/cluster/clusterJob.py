@@ -135,9 +135,9 @@ def runClusterJob(allRepertoires, numOfTrials=100, testCase=False):
             sampleRepertoire = allRepertoires[repertoire_group][repertoire_dataset][0]
             immuneNet = makeBestNetwork(sampleRepertoire, study)
             if not testCase:
-                ImmuneNetworkMapper.toPickle(network=immuneNet,path=f"network_{distributionName}_{repertoire_group}_{repertoire_dataset}_{runId}.csv")
+                ImmuneNetworkMapper.toPickle(network=immuneNet,path=f"network_{distributionName}_{repertoire_group}_{repertoire_dataset}_{runId}.pkl")
     if not testCase: 
-        with open(f"results_{distributionName}_{runId}", "wb") as f:
+        with open(f"results_{distributionName}_{runId}.pkl", "wb") as f:
             pickle.dump(results, f)
     else:
         rand = random.randint(0, 1_000_000)

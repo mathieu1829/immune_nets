@@ -8,14 +8,14 @@ from src.creation.distance.alignment import sequenceAligner
 from src.factories import ImmuneRepertoireFactory
 
 
-def singleGraphChart(name, repertoire, immuneNet):
+def singleGraphChart(name, immuneNet, filename):
     
     fig, ax = plt.subplots(figsize=(16, 16))
 
     ax.set_title(name)
-    graphVisualization(repertoire, immuneNet, ax)
+    graphVisualization( immuneNet, ax)
 
-    plt.show()
+    plt.savefig(filename)
 
 if __name__ == "__main__":
     root_dir = Path(__file__).parent.parent.parent.parent

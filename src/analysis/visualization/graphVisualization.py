@@ -11,7 +11,7 @@ from src.creation.enums.utils import *
 from src.entities import ImmuneRepertoire
 from src.factories import ImmuneRepertoireFactory
 
-def graphVisualization(repertoire, immuneNet, ax):
+def graphVisualization(immuneNet, ax):
 
     ### DEBUG
     # print("Network:")
@@ -39,7 +39,7 @@ def graphVisualization(repertoire, immuneNet, ax):
     graph.vs["label"] = [str(i) for i in range(graph.vcount())]
     graph.vs["color"] = "skyblue"
     bins = [0.1 * i for i in range(1, 10)]
-    graph.vs["size"] = (np.digitize(repertoire.clones['proportion'].to_numpy(), bins) + 3)**1.5
+    graph.vs["size"] = (np.digitize(immuneNet.proportions, bins) + 3)**1.5
     graph.es["width"] = 1
 
     # Plotting the graph

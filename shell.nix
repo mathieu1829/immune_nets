@@ -68,6 +68,9 @@ let
       eval "$(micromamba shell hook --shell=posix)"
       micromamba activate ${name}
 
+      echo "adding jupyter env"
+      python -m ipykernel install --user --name immune-nets --display-name "immune-nets"
+
       echo "Using ${pkgs.postgresql_15.name}."
 
       # Setup: other env variables

@@ -6,17 +6,16 @@ from src.creation.algorithms.simpleBetaDistance import simpleBetaDistance
 from src.creation.distance.alignment import sequenceAligner
 from src.factories import ImmuneRepertoireFactory
 
-def multiGraphChart(groups, repertoires, immuneNets):
+def multiGraphChart(groups, immuneNets, filename):
     fig, axes = plt.subplots(nrows=1,ncols=len(groups),figsize=(16, 16))
 
     for group_num, group in enumerate(groups):
         axes[group_num].set_title(group)
-        graphVisualization(repertoires[group_num],
-                           immuneNets[group_num],
+        graphVisualization(immuneNets[group_num],
                            axes[group_num]
                            )
 
-    plt.show()
+    plt.savefig(filename)
 
 
 if __name__ == "__main__":

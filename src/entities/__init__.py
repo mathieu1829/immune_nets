@@ -1,9 +1,18 @@
+from typing import TYPE_CHECKING
+
+
 __all__ = [
             "ImmuneNetwork",
             "ImmuneRepertoire",
-            "GraphStats",
+"GraphStats",
             "RepertoireStats",
         ]
+
+if TYPE_CHECKING:
+    from .immuneNetwork import ImmuneNetwork
+    from .immuneRepertoire import ImmuneRepertoire
+    from .graphStats import GraphStats
+    from .repertoireStats import RepertoireStats
 
 def __getattr__(name):
     if name == "ImmuneNetwork":
