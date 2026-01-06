@@ -6,18 +6,31 @@ from src.creation.algorithms.simpleBetaDistance import simpleBetaDistance
 from src.creation.algorithms.simpleVectorBetaDistance import simpleVectorBetaDistance
 from src.creation.distance.alignment import sequenceAligner
 from src.creation.distance.levenshtein import levenshteinDistance 
+from src.analysis.visualization.multiGraphChart import multiGraphChart
 
 class LatexPrettyPrinter:
-    def generateLatexHeuristicHeader(self, results):
-        best_params = [results[test_group].best_params for test_group in results]
-        paramNames = set().union(*best_params)
-        paramNames = [ name.replace("_", " ") for name in paramNames]
+    def generateLatexHeuristicHeader(self, results, polish=True):
+        if not polish:
+            best_params = [results[test_group].best_params for test_group in results]
+            paramNames = set().union(*best_params)
+            paramNames = [ name.replace("_", " ") for name in paramNames]
+        else:
+            paramNames = [
+                "Nazwa algorytmu",
+                "Macierz podstawień",
+                "Próg podobieństwa"
+            ]
     
         header = ""
-        headerNames = [
+        headerNamesEng = [
             "test group",
             "best score",
         ]
+        headerNamesPl = [
+            "Grupa testowa",
+            "Najlepszy wynik"
+        ]
+        headerNames = headerNamesEng.copy() if not polish else headerNamesPl.copy()
         headerNames.extend(paramNames)
         # headerNames.append("visualization")
     
@@ -27,13 +40,19 @@ class LatexPrettyPrinter:
         header = headerBegin + hline + " & ".join(headerNames) + headerEnd + hline
         return header
 
-    def generateLatexGraphHeader(self, results):
+    def generateLatexGraphHeader(self, polish=True):
         headers = []
-        headerPrefix = [
+        headerPrefixEng = [
             "test group",
-            "graph group"
+            "graph group",
         ]
-        headerNames = GraphStats.vectorStatNames()
+        headerPrefixPl = [
+            "Grupa testowa",
+            "Grupa sieci"
+        ]
+        headerPrefix = headerPrefixEng.copy() if not polish else headerPrefixPl.copy()
+
+        headerNames = GraphStats.vectorStatNamesPolish()
         step = 4
         for headerStart in range(0,len(headerNames),step):
             header = ""
@@ -50,7 +69,7 @@ class LatexPrettyPrinter:
 
 
 
-    def generateLatexHeuristicRows(self, results, allRepertoires):
+    def generateLatexHeuristicRows(self, results):
         best_params = [results[test_group].best_params for test_group in results]
         paramNames = set().union(*best_params)
     
@@ -62,16 +81,6 @@ class LatexPrettyPrinter:
     
         for test_group in tqdm(results):
             groupNames = test_group.split(" vs ")
-    
-            # fig1, ax1 = plt.subplots(figsize=(6, 6))
-            # fig2, ax2 = plt.subplots(figsize=(6, 6))
-    
-            # _ = graphVisualization(allRepertoires[test_group][groupNames[0]][0],network1, ax1)
-            # _ = graphVisualization(allRepertoires[test_group][groupNames[0]][1],network2, ax2)
-    
-            # img1 = fig_to_base64(fig1)
-            # img2 = fig_to_base64(fig2)
-    
     
             rowEnd = " \\\\\n"
             rowValueList = []
@@ -89,7 +98,7 @@ class LatexPrettyPrinter:
 
         return rows
 
-    def generateLatexGraphRows(self, results, allRepertoires, headers, test_group_networks, genPlots=False):
+    def generateLatexGraphRows(self, results, headers, test_group_networks, distributionName, genPlots=False):
         best_params = [results[test_group].best_params for test_group in results]
         paramNames = set().union(*best_params)
     
@@ -108,6 +117,8 @@ class LatexPrettyPrinter:
             network2: ImmuneNetwork = test_group_networks[test_group][groupNames[1]]
 
             if genPlots:
+                plotTitles = [ f"Sieć próbki {group} dla {distributionName}" for group in groupNames] 
+                multiGraphChart(plotTitles, [network1, network2], f"{distributionName}_{test_group}.png")
 
     
             rowEnd = " \\\\\n"
@@ -155,13 +166,13 @@ class LatexPrettyPrinter:
             # rows += genCline(1,len(rowValueList)+1)
         return rowSegments
 
-    def printTable(self, result, allRepertoires, test_group_networks, genPlots=False):
+    def printTable(self, result, test_group_networks, distributionName, genPlots=False):
         best_params = [result[test_group].best_params for test_group in result]
         paramNames = set().union(*best_params)
 
         heuristicLatex = ""
         heuristicLatex += self.generateLatexHeuristicHeader(result)
-        heuristicLatex += self.generateLatexHeuristicRows(result, allRepertoires)
+        heuristicLatex += self.generateLatexHeuristicRows(result)
         heuristicLatex += "\\end{tabular}"
 
         print()
@@ -169,7 +180,7 @@ class LatexPrettyPrinter:
         print()
 
         graphHeaders = self.generateLatexGraphHeader(result)
-        graphRowSegments = self.generateLatexGraphRows(result, allRepertoires, graphHeaders, test_group_networks, genPlots)
+        graphRowSegments = self.generateLatexGraphRows(result, graphHeaders, test_group_networks, distributionName, genPlots)
 
         for header, rowSegment in zip(graphHeaders, graphRowSegments):
             graphLatex = ""

@@ -84,6 +84,18 @@ class GraphStats:
                 "componentCount",
                ]
     @staticmethod
+    def vectorStatNamesPolish():
+        return [
+                "Proporcja izolowanych wierzchołków",
+                "Gęstość krawędzi",
+                "Gęstość",
+                "Ekscentryczność",
+                "Wielki komponent",
+                "Średni stopień",
+                "Liczka komponentów",
+               ]
+
+    @staticmethod
     def listStatNames():
         return [
                 "isolatedVerticeRatio",

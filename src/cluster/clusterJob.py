@@ -90,7 +90,7 @@ def loadClusterJobDatasetsFromFile(groupPaths):
         dataset_repertoires[group] = repertoireList
 
     all_repertoires = { f"healthy vs {group}":{"healthy":dataset_repertoires["healthy"], group:dataset_repertoires[group]} for group in groups if not group == "healthy"}
-    all_repertoires["universal"] = dataset_repertoires
+    # all_repertoires["universal"] = dataset_repertoires
     for group in groups:
       all_repertoires[f"{group}_1 vs {group}_2"] = shuffleGroupAndDivide(dataset_repertoires, group)
     return all_repertoires
