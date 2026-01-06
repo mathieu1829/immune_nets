@@ -106,6 +106,9 @@ class LatexPrettyPrinter:
     
             network1: ImmuneNetwork = test_group_networks[test_group][groupNames[0]]
             network2: ImmuneNetwork = test_group_networks[test_group][groupNames[1]]
+
+            if genPlots:
+
     
             rowEnd = " \\\\\n"
             rowPrefix = [
