@@ -102,47 +102,61 @@ def stopIfThresholdReached(study, trial):
 
         
 def runClusterJob(allRepertoires, numOfTrials=100, testCase=False):
-    distributionNames = ["degreeDistribution", "componentSizeDistribution", "proportionCountDistribution", "componentProportionDistribution"]
+    distributionNames = ["degreeDistribution", "componentSizeDistribution", "componentProportionDistribution"]
     runId = uuid.uuid4()
 
-    comm = MPI.COMM_WORLD
-    rank = comm.Get_rank()
-    size = comm.Get_size()
+    world = MPI.COMM_WORLD
+    world_rank = world.Get_rank()
+    size = world.Get_size()
+    
+    cluster_size = len(allRepertoires)
+    cluster_id = world_rank // cluster_size
 
-    if size != len(distributionNames):
-        raise ValueError(f"The number of processes ({size}) must be equal to number of considered variants {len(distributionNames)}")
+    cluster = world.Split(color=cluster_id, key=world_rank)
+    cluster_rank = cluster.Get_rank()
 
-    distributionName = distributionNames[rank]
-    print(f"Starting computation for {distributionName}.")
+
+
+    print(len(allRepertoires))
+    if size != len(distributionNames)*len(allRepertoires):
+        raise ValueError(f"The number of processes ({size}) must be equal to number of considered variants {len(distributionNames)*len(allRepertoires)}")
+
+    distributionName = distributionNames[cluster_id]
+    print(f"Process {world_rank} is starting computation for {distributionName}.")
     results = {}
-    for repertoire_group in allRepertoires:
-        print(f"Running study for {repertoire_group} repertoires")
-        analyzed_repertoires = allRepertoires[repertoire_group]
-        study = optuna.create_study(direction="maximize")
-        distanceType = PairwiseDistributionDistance(distributionName)
-        scoringParadigm = PairwiseScoringParadigm(distanceType)
-        objectiveFunction = objectiveBuilder(repertoires=analyzed_repertoires,
-                                             scoringParadim=scoringParadigm
-                                            )
-        study.optimize(func=objectiveFunction,n_trials=numOfTrials, callbacks=[stopIfThresholdReached])
-        results[repertoire_group] = study
+    
+    repertoire_group = list(allRepertoires.keys())[cluster_rank]
 
-        # Best result
-        print("Best score:", study.best_value)
-        print("Best params:", study.best_params)
-        print("Generating sample networks") 
-        for repertoire_dataset in allRepertoires[repertoire_group]:
-            sampleRepertoire = allRepertoires[repertoire_group][repertoire_dataset][0]
-            immuneNet = makeBestNetwork(sampleRepertoire, study)
-            if not testCase:
-                ImmuneNetworkMapper.toPickle(network=immuneNet,path=f"network_{distributionName}_{repertoire_group}_{repertoire_dataset}_{runId}.pkl")
-    if not testCase: 
-        with open(f"results_{distributionName}_{runId}.pkl", "wb") as f:
+    print(f"Process {world_rank} is running study for {repertoire_group} repertoires")
+    analyzed_repertoires = allRepertoires[repertoire_group]
+    study = optuna.create_study(direction="maximize")
+    distanceType = PairwiseDistributionDistance(distributionName)
+    scoringParadigm = PairwiseScoringParadigm(distanceType)
+    objectiveFunction = objectiveBuilder(repertoires=analyzed_repertoires,
+                                         scoringParadim=scoringParadigm
+                                        )
+    study.optimize(func=objectiveFunction,n_trials=numOfTrials, callbacks=[stopIfThresholdReached])
+    resultList = cluster.gather(study, root=0)
+    if cluster_rank == 0:
+        for result, repertoire_group in zip(resultList,allRepertoires):
+            results[repertoire_group] = result
+
+    # Best result
+    print("Process {world_rank}: Best score:", study.best_value)
+    print("Process {world_rank}: Best params:", study.best_params)
+    print("Process {world_rank}: Generating sample networks") 
+    for repertoire_dataset in allRepertoires[repertoire_group]:
+        sampleRepertoire = allRepertoires[repertoire_group][repertoire_dataset][0]
+        immuneNet = makeBestNetwork(sampleRepertoire, study)
+        if not testCase:
+            ImmuneNetworkMapper.toPickle(network=immuneNet,path=f"network_{distributionName}_{repertoire_group}_{repertoire_dataset}_{runId}.pkl")
+    if not testCase and cluster_rank == 0: 
+        with open(f"results_comparison_{distributionName}_{runId}.pkl", "wb") as f:
             pickle.dump(results, f)
     else:
         rand = random.randint(0, 1_000_000)
-        filename = f"proc_{rank}_{rand}.txt"
-        print(f"This is testcase. Process rank is {rank}. Id is {rand} and thus filename is {filename}.")
+        filename = f"proc_{world_rank}_{rand}.txt"
+        print(f"This is testcase. Process rank is {world_rank}. Id is {rand} and thus filename is {filename}.")
 
         with open(filename, "w") as f:
             f.write("a")

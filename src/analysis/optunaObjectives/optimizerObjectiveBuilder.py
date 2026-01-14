@@ -1,17 +1,16 @@
 import optuna
 import numpy as np
 from itertools import combinations
+from mpi4py import MPI
 
 from .compareGroups import compareGroups
 
-from src.creation.algorithms.simpleBetaDistance import simpleBetaDistance
-from src.creation.algorithms.simpleVectorBetaDistance import simpleVectorBetaDistance
 from src.creation.distance.alignment import sequenceAligner
 from src.creation.distance.levenshtein import levenshteinDistance 
 from src.analysis.scoringParadigms import ScoringParadigm
 
-def objectiveBuilder(repertoires, scoringParadim: ScoringParadigm):
-    scoringParadigmFun = scoringParadim.compute_score
+def optimizerObjectiveBuilder(repertoires, repertoire_group, scoringParadigm: ScoringParadigm, cluster: MPI.Comm):
+    scoringParadigmFun = scoringParadigm.compute_score
     def objective(trial):
         threshold = trial.suggest_float("threshold",low=0.2,high=0.4)
         distance = trial.suggest_categorical("distance", ["alignment", "levenshtein"])
@@ -33,22 +32,38 @@ def objectiveBuilder(repertoires, scoringParadim: ScoringParadigm):
             case "levenshtein":
                 distance_fun = levenshteinDistance()
 
-        match algorithm_name:
-            case "simpleBetaDistance":
-                algorithm = simpleBetaDistance
-            case "simpleVectorBetaDistance":
-                algorithm = simpleVectorBetaDistance
-            case _:
-                algorithm = simpleBetaDistance #default
 
+
+        for i in range(1,cluster.Get_size()):
+            cluster.send(obj=True,dest=i, tag=1)
+            cluster.send(obj=repertoires, dest=i, tag=1) 
+            cluster.send(obj=algorithm_name, dest=i, tag=1) 
+            cluster.send(obj=threshold, dest=i, tag=1) 
+            cluster.send(obj=distance_fun, dest=i, tag=1) 
+            cluster.send(obj=scoringParadigmFun, dest=i, tag=1) 
 
         result = compareGroups(repertoires,
-                               algorithm,
+                               algorithm_name,
                                threshold,
                                distance_fun,
                                scoringParadigmFun) 
-                    
-        return result
+
+        groupList = cluster.gather(repertoire_group, root=0)
+        resultList = cluster.gather(result, root=0)
+
+        between = 0.0
+        within = []
+        for result, repertoire_group_name in zip(resultList, groupList):
+            if not "_" in repertoire_group_name:
+                between = result
+            else:
+                within.append(result)
+
+        within = np.mean(within)
+        if between == 0.0:
+            return 0.0
+
+        return ((between - within)/between)  
     return objective
 
 

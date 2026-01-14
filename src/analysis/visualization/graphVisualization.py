@@ -53,6 +53,8 @@ def graphVisualization(immuneNet, ax):
         vertex_size=graph.vs["size"],
         edge_width=graph.es["width"],
     )
+    del graph
+    del layout
 
 
 

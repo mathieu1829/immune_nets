@@ -16,6 +16,7 @@ def multiGraphChart(groups, immuneNets, filename):
                            )
 
     plt.savefig(filename)
+    plt.close(fig)
 
 
 if __name__ == "__main__":

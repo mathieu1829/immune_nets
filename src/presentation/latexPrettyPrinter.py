@@ -7,7 +7,7 @@ from src.creation.distance.levenshtein import levenshteinDistance
 from src.analysis.visualization.multiGraphChart import multiGraphChart
 
 class LatexPrettyPrinter:
-    def generateLatexHeuristicHeader(self, results, polish=True):
+    def generateLatexHeuristicHeader(self, results, heuristicStep=2, polish=True):
         best_params = [results[test_group].best_params for test_group in results]
         paramNames = set().union(*best_params)
         paramNamesDict = {
@@ -39,12 +39,15 @@ class LatexPrettyPrinter:
         headerNames.extend(paramNames)
         # headerNames.append("visualization")
         headers = []
-        step = 3 
+        if heuristicStep == 0:
+            step = len(headerNames)
+        else:
+            step = heuristicStep
+
 
         for headerStart in range(0,len(headerNames),step):
             headerContent = headerPrefix.copy()
             headerContent.extend(headerNames[headerStart:headerStart+step])
-
             headerBegin = "\\begin{tabular}{|"+"|".join(["c" for _ in headerContent])+"|}\n"
             headerEnd = " \\\\\n"
             hline = "\\hline\n"
@@ -52,7 +55,7 @@ class LatexPrettyPrinter:
             headers.append(header)
         return headers
 
-    def generateLatexGraphHeader(self, polish=True):
+    def generateLatexGraphHeader(self, graphStep=2, polish=True):
         headers = []
         headerPrefixEng = [
             "test group",
@@ -65,7 +68,12 @@ class LatexPrettyPrinter:
         headerPrefix = headerPrefixEng.copy() if not polish else headerPrefixPl.copy()
 
         headerNames = GraphStats.vectorStatNamesPolish()
-        step = 3
+        if graphStep == 0:
+            step = len(headerNames)
+        else:
+            step = graphStep
+
+
         for headerStart in range(0,len(headerNames),step):
             headerContent = headerPrefix.copy()
             headerContent.extend(headerNames[headerStart:headerStart+step])
@@ -80,13 +88,13 @@ class LatexPrettyPrinter:
 
 
 
-    def generateLatexHeuristicRows(self, results, headers):
+    def generateLatexHeuristicRows(self, results, headers, heuristicStep=2):
         best_params = [results[test_group].best_params for test_group in results]
         paramNames = set().union(*best_params)
     
         
         rowSegments = ["" for header in headers]
-        formatValue = lambda value: f"{value:.2f}" if isinstance(value, float) else f"{value}"
+        formatValue = lambda value: f"{value:.2f}" if isinstance(value, float) else f"{value.replace("_", "\\_")}"
         genCell = lambda value,x: f"{formatValue(value)}" if x == 1 else "\\multirow{"+f"{x}"+"}{*}{"+f"{formatValue(value)}"+"}"
         hline = "\\hline\n"
     
@@ -104,7 +112,12 @@ class LatexPrettyPrinter:
                 value = results[test_group].best_params[param] if param in results[test_group].best_params else "NA"
                 rowValueList.append(genCell(value , 1))
 
-            step = 3
+            if heuristicStep == 0:
+                step = len(rowValueList)
+            else:
+                step = heuristicStep
+
+
             for segmentIdx, rowStart in enumerate(range(0,len(rowValueList),step)):
                 rowContent = rowPrefix.copy()
                 rowContent.extend(rowValueList[rowStart:rowStart+step])
@@ -116,7 +129,7 @@ class LatexPrettyPrinter:
 
         return rowSegments
 
-    def generateLatexGraphRows(self, results, headers, test_group_networks, distributionName, genPlots=False):
+    def generateLatexGraphRows(self, results, headers, test_group_networks, distributionName, graphStep=2):
         best_params = [results[test_group].best_params for test_group in results]
         paramNames = set().union(*best_params)
     
@@ -134,11 +147,6 @@ class LatexPrettyPrinter:
             network1: ImmuneNetwork = test_group_networks[test_group][groupNames[0]]
             network2: ImmuneNetwork = test_group_networks[test_group][groupNames[1]]
 
-            # if genPlots:
-            #     plotTitles = [ f"Sieć próbki {group} dla {distributionName}" for group in groupNames] 
-            #     multiGraphChart(plotTitles, [network1, network2], f"{distributionName}_{test_group}.png")
-
-    
             rowEnd = " \\\\\n"
             rowPrefix = [
                 genCell(test_group, 2),
@@ -149,11 +157,12 @@ class LatexPrettyPrinter:
             for vectorStat in GraphStats(network1).toStatVector():
                 rowValueList.append(genCell(vectorStat, 1))
     
-            step = 3
+            if graphStep == 0:
+                step = len(rowValueList)
+            else:
+                step = graphStep
             # print(len(rowValueList))
             for segmentIdx, rowStart in enumerate(range(0,len(rowValueList),step)):
-                # print(f"rowStart: {rowStart}")
-                # print(f"segmentIdx: {segmentIdx}")
         
                 rowContent = rowPrefix.copy()
                 rowContent.extend(rowValueList[rowStart:rowStart+step])
@@ -176,61 +185,90 @@ class LatexPrettyPrinter:
                 rowContent.extend(rowValueList[rowStart:rowStart+step])
         
                 row = " & ".join(rowContent) + rowEnd
-                # row += genCline(1,len(rowContent)+1)
                 row += hline
                 rowSegments[segmentIdx] = rowSegments[segmentIdx] + row
             rowValueList.clear()
-            # rows += " & ".join(rowValueList) + rowEnd
-            # rows += genCline(1,len(rowValueList)+1)
         return rowSegments
 
-    def printTable(self, result, test_group_networks, distributionName, genPlots=False):
+    def printTable(self, result, test_group_networks, distributionName, actualDistributionName, heuristicStep=2, graphStep=2):
         best_params = [result[test_group].best_params for test_group in result]
         paramNames = set().union(*best_params)
 
+        if heuristicStep == 0 and graphStep == 0:
+            print("\\begin{landscape}")
+        print(f"\\subsection{{Tabele dla {distributionName}}}")
+        # print("\\vspace{1em}")
 
-        print(f"Tabele dla {distributionName}")
-        print("\\vspace{1em}")
+        sectionHeader = ""
+        if heuristicStep == 0 and graphStep == 0:
+            sectionHeader = "Tabela opisująca"
+        else:
+            sectionHeader = "Tabele opisujące"
 
-        heuristicHeaders = self.generateLatexHeuristicHeader(result)
-        heuristicRowSegments = self.generateLatexHeuristicRows(result, heuristicHeaders)
+
+        heuristicHeaders = self.generateLatexHeuristicHeader(result, heuristicStep)
+        heuristicRowSegments = self.generateLatexHeuristicRows(result, heuristicHeaders, heuristicStep)
 
 
-        print(f"Tabele opisujące parametry tworzenia sieci znalezione przez heurystykę")
-        print("\\vspace{1em}")
+        print(f"\\subsubsection{{{sectionHeader} parametry tworzenia sieci znalezione przez heurystykę:}}")
+        # print("\\vspace{1em}")
 
 
         for header, rowSegment in zip(heuristicHeaders, heuristicRowSegments):
-            heuristicLatex = ""
+            heuristicLatex = "\\begin{table}[htbp]\n"
+            heuristicLatex += "\\begin{adjustbox}{max width =\\linewidth}\n"
             heuristicLatex = heuristicLatex + header
             heuristicLatex = heuristicLatex + rowSegment
-            heuristicLatex += "\\end{tabular}"
+            heuristicLatex += "\\end{tabular}\n"
+            heuristicLatex += "\\end{adjustbox}\n"
+            heuristicLatex += "\\end{table}\n"
 
             print()
             print("\\noindent")
             print(heuristicLatex)
             print()
-            print("\\vspace{1em}")
+            print("\\vspace{1em} \\\\")
 
-        graphHeaders = self.generateLatexGraphHeader(result)
-        graphRowSegments = self.generateLatexGraphRows(result, graphHeaders, test_group_networks, distributionName, genPlots)
+        graphHeaders = self.generateLatexGraphHeader(graphStep)
+        graphRowSegments = self.generateLatexGraphRows(result, graphHeaders, test_group_networks, distributionName, graphStep)
 
-        print("Tabele porównujące sieci wygenerowane na podstawie parametrów dla różnych grup")
-        print("\\vspace{1em}")
+        print(f"\\subsubsection{{{sectionHeader} sieci wygenerowane na podstawie parametrów dla różnych grup}}")
+        # print("\\vspace{1em}")
 
         for header, rowSegment in zip(graphHeaders, graphRowSegments):
-            graphLatex = ""
+            graphLatex = "\\begin{table}[htbp]\n"
+            graphLatex += "\\begin{adjustbox}{max width =\\linewidth}\n"
             graphLatex = graphLatex + header
             graphLatex = graphLatex + rowSegment
-            graphLatex += "\\end{tabular}"
+            graphLatex += "\\end{tabular}\n"
+            graphLatex += "\\end{adjustbox}\n"
+            graphLatex += "\\end{table}\n"
 
             print()
             print("\\noindent")
             print(graphLatex)
-            print("\\vspace{1em}")
+            print("\\vspace{1em} \\\\")
         print()
         print("\\vspace{1em}")
         print()
+        if heuristicStep == 0 and graphStep == 0:
+            print("\\end{landscape}")
+
+        print("\\subsubsection{Wizualizacje porównujące sieci wygenerowane dla różnych grup}")
+        for test_group in result:
+            figure = f'''
+\\begin{{figure}}[H]
+  \\centering
+  \\includegraphics[width=1.0\\textwidth]{{figures/{actualDistributionName}_{test_group}.png}}
+\\caption{{opis}}
+  \\label{{fig:{actualDistributionName}_{test_group.replace(" ", "_")}}}
+\\end{{figure}} \\\\
+            '''
+            print(figure)
+            print()
+            print("\\vspace{1em}")
+            print()
+            
 
 
 
