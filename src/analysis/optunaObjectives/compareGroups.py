@@ -2,9 +2,6 @@ import optuna
 import numpy as np
 from itertools import combinations
 
-from src.creation.distance.alignment import sequenceAligner
-from src.creation.distance.levenshtein import levenshteinDistance 
-
 from src.entities import GraphStats
 from src.creation.algorithms.simpleBetaDistance import simpleBetaDistance
 from src.creation.algorithms.simpleVectorBetaDistance import simpleVectorBetaDistance

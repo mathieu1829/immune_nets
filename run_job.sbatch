@@ -4,7 +4,7 @@
 #SBATCH --ntasks=9
 #SBATCH -A inz_tcr
 #SBATCH --gres=gpu:0
-#SBATCH --time=05-01:05:10
+#SBATCH --time=02-00:00:00
 
 ulimit -l 4194304 || true
 eval "$(/home/inf155621/miniconda3/bin/conda shell.bash hook)"
