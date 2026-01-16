@@ -63,7 +63,9 @@ def optimizerObjectiveBuilder(repertoires, repertoire_group, scoringParadigm: Sc
         if between == 0.0:
             return 0.0
 
-        return ((between - within)/between)  
+        # within * 0.95
+        # within * heuristic progress (temperature)
+        return ((between - 0.8 * within)/between)  
     return objective
 
 
