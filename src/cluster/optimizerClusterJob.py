@@ -125,17 +125,18 @@ def runClusterJob(allRepertoires, run_id, numOfTrials=100, testCase=False):
     results = {}
     
     repertoire_group = list(allRepertoires.keys())[cluster_rank]
+    distanceType = PairwiseDistributionDistance(distributionName)
+    scoringParadigm = PairwiseScoringParadigm(distanceType)
 
     if cluster_rank == 0:
         print(f"Process {world_rank} is running study for {repertoire_group} repertoires")
         analyzed_repertoires = allRepertoires[repertoire_group]
         study = optuna.create_study(direction="maximize")
-        distanceType = PairwiseDistributionDistance(distributionName)
-        scoringParadigm = PairwiseScoringParadigm(distanceType)
         objectiveFunction = optimizerObjectiveBuilder(repertoires=analyzed_repertoires,
                                              repertoire_group=repertoire_group,
                                              scoringParadigm=scoringParadigm,
-                                             cluster=cluster
+                                             cluster=cluster,
+                                             world_com=world
                                             )
         study.optimize(func=objectiveFunction,n_trials=numOfTrials, callbacks=[stopIfThresholdReached])
 
@@ -143,8 +144,8 @@ def runClusterJob(allRepertoires, run_id, numOfTrials=100, testCase=False):
             cluster.send(obj=False,dest=i, tag=1)
 
         # Best result
-        print("Process {world_rank}: Best score:", study.best_value)
-        print("Process {world_rank}: Best params:", study.best_params)
+        print(f"Process {world_rank}: Best score: {study.best_value}")
+        print(f"Process {world_rank}: Best params: {study.best_params}" )
 
         if not testCase:  
             with open(f"results_optimizer_{distributionName}_{run_id}.pkl", "wb") as f:
@@ -166,17 +167,18 @@ def runClusterJob(allRepertoires, run_id, numOfTrials=100, testCase=False):
         
         while(continueSignal):
             print(f"Process {world_rank}, cluster_rank: {cluster_rank} got signal to resume computation")
-            repertoires = cluster.recv(source=0, tag=1)
             algorithm_name = cluster.recv(source=0, tag=1)
             threshold = cluster.recv(source=0, tag=1)
             distance_fun = cluster.recv(source=0, tag=1)
             scoringParadigmFun = cluster.recv(source=0, tag=1)
 
-            result = compareGroups(repertoires,
-                                   algorithm_name,
-                                   threshold,
-                                   distance_fun,
-                                   scoringParadigmFun) 
+            result = compareGroups(repertoires=allRepertoires[repertoire_group],
+                                   algorithm_name=algorithm_name,
+                                   threshold=threshold,
+                                   distance_fun=distance_fun,
+                                   scoringParadigmFun=scoringParadigmFun) 
+
+            print(f"Process {world_rank}, cluster_rank: {cluster_rank} has computed score {result} for {repertoire_group} ")
 
 
             groupList = cluster.gather(repertoire_group, root=0)
