@@ -44,10 +44,13 @@ class LatexPrettyPrinter:
         else:
             step = heuristicStep
 
+        bold = lambda x: f"\\textbf{{{x}}}"
+
 
         for headerStart in range(0,len(headerNames),step):
             headerContent = headerPrefix.copy()
             headerContent.extend(headerNames[headerStart:headerStart+step])
+            headerContent = [bold(header) for header in headerContent]
             headerBegin = "\\begin{tabular}{|"+"|".join(["c" for _ in headerContent])+"|}\n"
             headerEnd = " \\\\\n"
             hline = "\\hline\n"
@@ -73,10 +76,12 @@ class LatexPrettyPrinter:
         else:
             step = graphStep
 
+        bold = lambda x: f"\\textbf{{{x}}}"
 
         for headerStart in range(0,len(headerNames),step):
             headerContent = headerPrefix.copy()
             headerContent.extend(headerNames[headerStart:headerStart+step])
+            headerContent = [bold(header) for header in headerContent]
     
             headerBegin = "\\begin{tabular}{|"+"|".join(["c" for header in headerContent])+"|}\n"
             headerEnd = " \\\\\n"
@@ -221,6 +226,7 @@ class LatexPrettyPrinter:
             heuristicLatex = heuristicLatex + rowSegment
             heuristicLatex += "\\end{tabular}\n"
             heuristicLatex += "\\end{adjustbox}\n"
+            heuristicLatex += f"\\caption{{Opis}}\n"
             heuristicLatex += "\\end{table}\n"
 
             print()
@@ -242,6 +248,7 @@ class LatexPrettyPrinter:
             graphLatex = graphLatex + rowSegment
             graphLatex += "\\end{tabular}\n"
             graphLatex += "\\end{adjustbox}\n"
+            graphLatex += f"\\caption{{Opis}}\n"
             graphLatex += "\\end{table}\n"
 
             print()
@@ -256,11 +263,12 @@ class LatexPrettyPrinter:
 
         print("\\subsubsection{Wizualizacje porównujące sieci wygenerowane dla różnych grup}")
         for test_group in result:
+            groupNames = test_group.split(" vs ")
             figure = f'''
 \\begin{{figure}}[H]
   \\centering
   \\includegraphics[width=1.0\\textwidth]{{figures/{actualDistributionName}_{test_group}.png}}
-\\caption{{opis}}
+\\caption{{Wizualizacja porównująca przykładowe sieci dla grup {groupNames[0].replace("_", "\\_")} i {groupNames[1].replace("_", "\\_")} dla {distributionName}. }}
   \\label{{fig:{actualDistributionName}_{test_group.replace(" ", "_")}}}
 \\end{{figure}} \\\\
             '''
