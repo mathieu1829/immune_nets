@@ -56,12 +56,15 @@ def optimizerObjectiveBuilder(repertoires, repertoire_group, scoringParadigm: Sc
         within = []
         for result, repertoire_group_name in zip(resultList, groupList):
             print(f"Process {world_com.Get_rank()}, cluster_rank: {cluster.Get_rank()} has received {result} for {repertoire_group_name} ")
+            trial.set_user_attr(f"{repertoire_group_name} score", result)
             if not "_" in repertoire_group_name:
                 between = result
             else:
                 within.append(result)
 
         within = np.mean(within)
+        trial.set_user_attr(f"between", between)
+        trial.set_user_attr(f"within", within)
         if between == 0.0:
             return 0.0
 

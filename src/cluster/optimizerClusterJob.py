@@ -149,7 +149,7 @@ def runClusterJob(allRepertoires, run_id, numOfTrials=100, testCase=False):
 
         if not testCase:  
             with open(f"results_optimizer_{distributionName}_{run_id}.pkl", "wb") as f:
-                pickle.dump(results, f)
+                pickle.dump(study, f)
         else:
             filename = f"proc_{world_rank}_{run_id}.txt"
             print(f"This is testcase. Process rank is {world_rank}. Id is {run_id} and thus filename is {filename}.")
