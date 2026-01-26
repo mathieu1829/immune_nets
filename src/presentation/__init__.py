@@ -1,1 +1,2 @@
 from .latexPrettyPrinter import LatexPrettyPrinter
+from .latexPrettyPrinterTransposed import LatexPrettyPrinterTransposed

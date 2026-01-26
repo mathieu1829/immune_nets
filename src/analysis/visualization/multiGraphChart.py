@@ -7,10 +7,13 @@ from src.creation.distance.alignment import sequenceAligner
 from src.factories import ImmuneRepertoireFactory
 
 def multiGraphChart(groups, immuneNets, filename):
-    fig, axes = plt.subplots(nrows=1,ncols=len(groups),figsize=(16, 16))
+    fig, axes = plt.subplots(nrows=1,ncols=len(groups),figsize=(15, 10))
 
     for group_num, group in enumerate(groups):
-        axes[group_num].set_title(group)
+        axes[group_num].set_title(group,
+                                  loc="left",
+                                  fontsize=20,
+                                  fontweight="bold")
         graphVisualization(immuneNets[group_num],
                            axes[group_num]
                            )

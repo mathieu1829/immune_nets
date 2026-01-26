@@ -49,7 +49,6 @@ class GraphStats:
     def toStatVector(self):
         return [ 
                 float(self.isolatedVerticeRatio),
-                float(self.edgeDensity),
                 float(self.density),
                 float(self.eccentricity),
                 float(self.giantComponentSize),
@@ -76,7 +75,6 @@ class GraphStats:
     def vectorStatNames():
         return [
                 "isolatedVerticeRatio",
-                "edgeDensity",
                 "density",
                 "eccentricity",
                 "giantComponent",
@@ -87,7 +85,6 @@ class GraphStats:
     def vectorStatNamesPolish():
         return [
                 "Proporcja izolowanych wierzchołków",
-                "Gęstość krawędzi",
                 "Gęstość",
                 "Ekscentryczność",
                 "Wielki komponent",

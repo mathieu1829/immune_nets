@@ -4,7 +4,6 @@ from src.creation.algorithms.simpleBetaDistance import simpleBetaDistance
 from src.creation.algorithms.simpleVectorBetaDistance import simpleVectorBetaDistance
 from src.creation.distance.alignment import sequenceAligner
 from src.creation.distance.levenshtein import levenshteinDistance 
-from src.analysis.visualization.multiGraphChart import multiGraphChart
 
 class LatexPrettyPrinter:
     def generateLatexHeuristicHeader(self, results, heuristicStep=2, polish=True):
@@ -195,7 +194,7 @@ class LatexPrettyPrinter:
             rowValueList.clear()
         return rowSegments
 
-    def printTable(self, result, test_group_networks, distributionName, actualDistributionName, heuristicStep=2, graphStep=2):
+    def printTable(self, result, test_group_networks, distributionName, actualDistributionName, heuristicStep=0, graphStep=0):
         best_params = [result[test_group].best_params for test_group in result]
         paramNames = set().union(*best_params)
 

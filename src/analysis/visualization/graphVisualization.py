@@ -1,4 +1,5 @@
 import igraph as ig
+
 import matplotlib.pyplot as plt
 from pathlib import Path
 from src.creation.algorithms.common_methods import *
@@ -10,49 +11,56 @@ from src.creation.enums.matrices import *
 from src.creation.enums.utils import * 
 from src.entities import ImmuneRepertoire
 from src.factories import ImmuneRepertoireFactory
+from matplotlib.collections import LineCollection
 
 def graphVisualization(immuneNet, ax):
 
-    ### DEBUG
-    # print("Network:")
-    # print(immuneNet.network.to_numpy())
-    # edges = immuneNet.network.shape[0]
-    # print(f"Num of edges: {edges}")
-    # vertices = np.unique(immuneNet.network.to_numpy().flatten())
+    ### debug
+    # print("network:")
+    # print(immunenet.network.to_numpy())
+    # edges = immunenet.network.shape[0]
+    # print(f"num of edges: {edges}")
+    # vertices = np.unique(immunenet.network.to_numpy().flatten())
     # print(f"vertices: {vertices}")
     # prop = repertoire.clones["proportion"].to_numpy()[vertices]
     # print(f"proportions: {prop}")
     # print(f"proportions: {prop.sum()/repertoire.clones['proportion'].to_numpy().sum()}")
     # vertice_num = vertices.shape[0]
-    # print(f"Num vertices: {vertice_num}")
-    # isolated_vertices = [ i for i in np.arange(immuneNet.sampleSize) if not i in vertices]
-    # print("Isolated vertices:")
+    # print(f"num vertices: {vertice_num}")
+    # isolated_vertices = [ i for i in np.arange(immunenet.samplesize) if not i in vertices]
+    # print("isolated vertices:")
     # print(isolated_vertices)
-    # print(f"all vertices: {immuneNet.sampleSize}")
+    # print(f"all vertices: {immunenet.samplesize}")
 
-    # Creating igraph object from immuneNet
-    graph = ig.Graph(immuneNet.graph.to_numpy())
-    graph.add_vertices(immuneNet.sampleSize - graph.vcount())
+    # creating igraph object from immunenet
+    edges = immuneNet.graph.to_numpy()  # (E, 2)
 
-
-    # Setting vertex attributes
-    graph.vs["label"] = [str(i) for i in range(graph.vcount())]
-    graph.vs["color"] = "skyblue"
-    bins = [0.1 * i for i in range(1, 10)]
-    graph.vs["size"] = (np.digitize(immuneNet.proportions, bins) + 3)**1.5
-    graph.es["width"] = 1
-
-    # Plotting the graph
-    layout = graph.layout("fr") # Options: "fr" (Fruchterman-Reingold), "kk", "circle", etc.
-    ig.plot(
-        graph,
-        target=ax,
-        layout=layout,
-        vertex_label=None,
-        vertex_color=graph.vs["color"],
-        vertex_size=graph.vs["size"],
-        edge_width=graph.es["width"],
+    graph = ig.Graph(
+        n=immuneNet.sampleSize,
+        edges=edges,
+        directed=False
     )
+
+    layout = graph.layout_fruchterman_reingold(
+        niter=400,   # default ~1000 (too slow)
+        # grid=True
+    )  # or lgl/fr
+    print("create layout")
+    coords = np.asarray(layout.coords)
+
+    bins = [0.1 * i for i in range(1, 10)]
+    sizes = (np.digitize(immuneNet.proportions, bins) + 3)**1.5
+
+    # ---- FAST EDGE DRAWING ----
+    edge_coords = coords[edges]  # (E, 2, 2)
+    lc = LineCollection(edge_coords, linewidths=0.3, alpha=0.3)
+    ax.add_collection(lc)
+
+    # ---- nodes ----
+    ax.scatter(coords[:,0], coords[:,1], s=sizes)
+
+    ax.axis("off")
+
     del graph
     del layout
 
