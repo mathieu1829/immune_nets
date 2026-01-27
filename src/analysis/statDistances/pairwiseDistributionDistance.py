@@ -110,7 +110,7 @@ class PairwiseDistributionDistance(PairwiseStatDistance):
         elif (dist_type_a == 'uniform'):
             return self.compare_uniform(a_distribution, b_distribution)   
 
-        elif (dist_type_a == 'power'):
+        elif (dist_type_a == 'powerlaw'):
             return self.compare_power(a_distribution, b_distribution)  
 
         elif (dist_type_a == 'gamma'): #genaral distribution type - let it be the last resort
