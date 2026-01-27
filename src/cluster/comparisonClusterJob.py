@@ -101,9 +101,8 @@ def stopIfThresholdReached(study, trial):
         study.stop()
 
         
-def runClusterJob(allRepertoires, numOfTrials=100, testCase=False):
+def runClusterJob(allRepertoires, run_id, numOfTrials=100, testCase=False):
     distributionNames = ["degreeDistribution", "componentSizeDistribution", "componentProportionDistribution"]
-    runId = uuid.uuid4()
 
     world = MPI.COMM_WORLD
     world_rank = world.Get_rank()
@@ -117,7 +116,7 @@ def runClusterJob(allRepertoires, numOfTrials=100, testCase=False):
 
 
 
-    print(len(allRepertoires))
+    # print(len(allRepertoires))
     if size != len(distributionNames)*len(allRepertoires):
         raise ValueError(f"The number of processes ({size}) must be equal to number of considered variants {len(distributionNames)*len(allRepertoires)}")
 
@@ -125,10 +124,10 @@ def runClusterJob(allRepertoires, numOfTrials=100, testCase=False):
     print(f"Process {world_rank} is starting computation for {distributionName}.")
     results = {}
     
-    repertoire_group = list(allRepertoires.keys())[cluster_rank]
+    test_group = list(allRepertoires.keys())[cluster_rank]
 
-    print(f"Process {world_rank} is running study for {repertoire_group} repertoires")
-    analyzed_repertoires = allRepertoires[repertoire_group]
+    print(f"Process {world_rank} is running study for {test_group} repertoires")
+    analyzed_repertoires = allRepertoires[test_group]
     study = optuna.create_study(direction="maximize")
     distanceType = PairwiseDistributionDistance(distributionName)
     scoringParadigm = PairwiseScoringParadigm(distanceType)
@@ -145,17 +144,18 @@ def runClusterJob(allRepertoires, numOfTrials=100, testCase=False):
     print("Process {world_rank}: Best score:", study.best_value)
     print("Process {world_rank}: Best params:", study.best_params)
     print("Process {world_rank}: Generating sample networks") 
-    for repertoire_dataset in allRepertoires[repertoire_group]:
-        sampleRepertoire = allRepertoires[repertoire_group][repertoire_dataset][0]
+    for repertoire_dataset in allRepertoires[test_group]:
+        sampleRepertoire = allRepertoires[test_group][repertoire_dataset][0]
         immuneNet = makeBestNetwork(sampleRepertoire, study)
         if not testCase:
-            ImmuneNetworkMapper.toPickle(network=immuneNet,path=f"network_{distributionName}_{repertoire_group}_{repertoire_dataset}_{runId}.pkl")
+            ImmuneNetworkMapper.toPickle(network=immuneNet,path=f"network_{distributionName}_{test_group}_{repertoire_dataset}_{run_id}.pkl")
+
     if not testCase and cluster_rank == 0: 
-        with open(f"results_comparison_{distributionName}_{runId}.pkl", "wb") as f:
+        with open(f"results_comparison_{distributionName}_{run_id}.pkl", "wb") as f:
             pickle.dump(results, f)
     else:
         rand = random.randint(0, 1_000_000)
-        filename = f"proc_{world_rank}_{rand}.txt"
+        filename = f"proc_{world_rank}_{run_id}.txt"
         print(f"This is testcase. Process rank is {world_rank}. Id is {rand} and thus filename is {filename}.")
 
         with open(filename, "w") as f:
@@ -174,7 +174,10 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--group-paths", type=str, required=True)
+    parser.add_argument("--run-id", type=int, required=True)
     args = parser.parse_args()
+
+    run_id = args.run_id
 
     groupPaths = args.group_paths
     groupPaths = groupPaths.split(",")
@@ -182,7 +185,7 @@ if __name__ == '__main__':
 
     all_repertoires = loadClusterJobDatasetsFromFile(groupPaths)
 
-    runClusterJob(all_repertoires)
+    runClusterJob(all_repertoires, run_id)
 
 
 

@@ -32,7 +32,7 @@ class TestClusterJob(unittest.TestCase):
                                     }
                                 }
     def test_clusterJob(self):
-        runClusterJob(self.all_repertoires, 3, True)
+        runClusterJob(self.all_repertoires,1, 3, True)
 
 if __name__ == '__main__':
     unittest.main()
