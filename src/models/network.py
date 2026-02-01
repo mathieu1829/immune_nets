@@ -12,8 +12,8 @@ import pandas as pd
 from .base import Base
 from .networkData import NetworkData
 
-from src.creation.globalSettings import globalSettings
-from src.creation.immuneNetwork import ImmuneNetwork
+from src.globalSettings import GlobalSettings
+from src.entities import ImmuneNetwork
 
 class Network(Base):
     __tablename__ = "network"
@@ -22,20 +22,19 @@ class Network(Base):
                                                           primary_key=True,
                                                           default=uuid.uuid4)
     repertoire_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("repertoire.repertoire_id"))
-    sample_size: Mapped[int] = mapped_column(Integer, nullable=False)
 
     name: Mapped[str] =  mapped_column(String(30), nullable = True, default=None)
-    algorithm: Mapped[str] =  mapped_column(String(30), nullable = False)
-    distance_function: Mapped[str] =  mapped_column(String(30), nullable = False)
-    network_algorithm_parameters: Mapped[str] =  mapped_column(String(30), nullable = False)
-    version: Mapped[str] =  mapped_column(String(10), nullable = False, default = globalSettings().version)
-    username: Mapped[str] =  mapped_column(String(30), nullable = False, default = globalSettings().defaultUsername)
+    algorithm: Mapped[str] =  mapped_column(String(50), nullable = False)
+    distance_function: Mapped[str] =  mapped_column(String(50), nullable = False)
+    network_algorithm_parameters: Mapped[str] =  mapped_column(String(50), nullable = False)
+    version: Mapped[str] =  mapped_column(String(10), nullable = False, default = GlobalSettings().version)
+    username: Mapped[str] =  mapped_column(String(30), nullable = False, default = GlobalSettings().defaultUsername)
     modificationDate: Mapped[date] =  mapped_column(Date, nullable = False, default=datetime.now())
     creationDate: Mapped[date] =  mapped_column(Date, nullable = False, default=datetime.now())
 
     source_repertoire: Mapped["Repertoire"] = relationship(back_populates="repertoire_networks") # type: ignore
-    network_stats: Mapped[List["NetworkStat"]] = relationship(back_populates="source_network") # type: ignore
-    network_edges: Mapped[List["NetworkData"]] = relationship(back_populates="source_network") # type: ignore
+    network_stats: Mapped[List["NetworkStat"]] = relationship(back_populates="source_network", cascade="all, delete-orphan") # type: ignore
+    network_edges: Mapped[List["NetworkData"]] = relationship(back_populates="source_network", cascade="all, delete-orphan") # type: ignore
 
     @property
     def algorithmParams(self):
@@ -53,6 +52,7 @@ class Network(Base):
                                          r2 = int(row['r2']),
                                         ) 
                            for index,row in new_graph.iterrows()]
+
 
 
         

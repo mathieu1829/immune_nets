@@ -2,7 +2,7 @@ import numpy as np
 import igraph as ig
 import itertools
 
-from src.creation.immuneRepertoire import ImmuneRepertoire
+from src.entities import ImmuneRepertoire
 from src.creation.algorithms.simpleBetaDistance import simpleBetaDistance
 from src.creation.distance.levenshtein import levenshteinDistance
 from src.analysis.methods.publicSimilarity import publicSimilarity

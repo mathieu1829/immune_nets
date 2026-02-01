@@ -1,10 +1,10 @@
 from src.models import Repertoire
-from src.creation.immuneRepertoire import ImmuneRepertoire
+from src.entities import ImmuneRepertoire
 import pandas as pd
 
 class RepertoireMapper:
     @staticmethod
-    def fromImmuneRepertoire(repertoire: ImmuneRepertoire):
+    def fromImmuneRepertoire(repertoire: ImmuneRepertoire) -> Repertoire:
         new_repertoire = Repertoire(repertoire_id=repertoire.repertoire_id,
                              name=repertoire.name,
                              description=repertoire.description
@@ -13,7 +13,7 @@ class RepertoireMapper:
         return new_repertoire
 
     @staticmethod
-    def toImmuneRepertoire(repertoire: Repertoire):
+    def toImmuneRepertoire(repertoire: Repertoire) -> ImmuneRepertoire:
         clones = pd.DataFrame([{
             "proportion": c.proportion,
             "tcra_aa": c.tcra_aa,

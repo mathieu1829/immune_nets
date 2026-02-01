@@ -1,10 +1,10 @@
 import pandas as pd 
 from pathlib import Path
 
-class globalSettings(object):
+class GlobalSettings(object):
     def __new__(cls):
         if not hasattr(cls, 'instance'):
-            cls.instance = super(globalSettings, cls).__new__(cls)
+            cls.instance = super(GlobalSettings, cls).__new__(cls)
         return cls.instance
     defaultCsvPath = "./"
     defaultDBProvider = "postgres"
@@ -14,4 +14,3 @@ class globalSettings(object):
     defaultDB = ""
     version = "0.7"
     defaultUsername = "Admin"
-

@@ -5,8 +5,7 @@ import logging
 import pandas as pd
 from src.creation.algorithms.common_methods import *
 from src.creation.algorithms.algorithm import *
-from src.models import Network
-from src.creation.immuneNetwork import ImmuneNetwork
+from src.entities import ImmuneNetwork
 
 @algorithm
 def simpleBetaDistance(repertoire, distance, threshold = 0.8, **kwargs):
@@ -41,7 +40,8 @@ def simpleBetaDistance(repertoire, distance, threshold = 0.8, **kwargs):
                               sampleId=repertoire.repertoire_id,
                               distanceFun=str(distance),
                               threshold=threshold, 
-                              sampleSize=len(clonotypes)
+                              sampleSize=len(clonotypes),
+                              proportions=clonotypes["proportion"].to_numpy()
                               )
 
     return immuneNet

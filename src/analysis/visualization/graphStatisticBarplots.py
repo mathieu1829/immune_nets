@@ -7,67 +7,84 @@ import numpy as np
 
 from src.analysis.visualization.graphVisualization import graphVisualization
 from src.creation.algorithms.simpleBetaDistance import simpleBetaDistance
-from src.creation.immuneRepertoire import ImmuneRepertoire
+from src.entities import ImmuneRepertoire
 from src.creation.distance.alignment import sequenceAligner
-from src.analysis.methods.graphletComposition import graphletComposition
+from src.entities import GraphStats
+from src.mappers import GraphStatsMapper
 from sklearn.preprocessing import MinMaxScaler
+from sqlalchemy.orm import Session, selectinload
+from sqlalchemy import insert,select,delete
+from src.db import engine
+from src.models import Network
+from src.mappers import NetworkMapper
 
 def graphStatisticBarplots(immuneNets):
-    statList = [
-                "vertice_num",
-                "isolated_vertices_num",
-                "edge_density",
-                "percolation_threshold",
-                "density",
-                "eccentrity.mean()",
-                "eigenvector_centrality.mean()",
-                "harmonic_centrality.mean()",
-                "giant_component",
-                "betweenness.mean()",
-                "diameter",
-                "mean_closeness",
-                "mean_shortest_path",
-                "expected_pagerank",
-                "expected_degree",
-                "component_count",
-                "expected_component_size"
-            ]
-    immuneNetsStats = { group:graphletComposition(immuneNets[group]).toList() for group in immuneNets}
-    
-    groups = [ group for group in immuneNets ]
-    x = np.arange(3)
-    width = 0.25
-    
-    for stat_num, stat in enumerate(statList) :
-        currentStat = [ immuneNetsStats[group][stat_num] for group in immuneNetsStats]
-        plt.bar(x+stat_num*width, currentStat, width, label=stat)
-    plt.xticks(x + width, labels = groups) 
+    immuneNetsStats = { group:GraphStatsMapper.toStatVector(GraphStats(immuneNets[group])) for group in immuneNets}
 
-    plt.show()
+    stds = []
+    means = []
+    for i,stat in enumerate(GraphStatsMapper.colnames()):
+        statCol = [immuneNetsStats[group][i] for group in immuneNetsStats]
+        scaler = MinMaxScaler()
+        scaledCol = scaler.fit_transform([[v] for v in statCol])
+        scaledCol = [float(x[0]) for x in scaledCol]
+        stds.append(np.std(scaledCol))
+        means.append(np.mean(scaledCol))
+
+    x = np.arange(len(stds))
+    # width = 0.05                      
+
+    for name,stat in zip(["std","mean"],[stds,means]):
+        plt.bar(x, stat, color='skyblue')
+
+        plt.xticks(x, GraphStatsMapper.colnames(), rotation=45, ha='right')
+
+        plt.ylabel("Value")
+        plt.title(f"{name} Barplot")
+
+        for i, v in enumerate(stat):
+            plt.text(x[i], v + 0.01, f"{v:.2f}", ha='center', va='bottom')
+
+        plt.tight_layout()
+        plt.show()
+
+    # for i,stat in enumerate(statList):
+    #     statCol = [immuneNetsStats[group][i] for group in immuneNetsStats]
+    #     scaler = MinMaxScaler()
+    #     scaledCol = scaler.fit_transform([[v] for v in statCol])
+    #     scaledCol = [float(x[0]) for x in scaledCol]
+    #     for idx,group in enumerate(immuneNetsStats):
+    #         immuneNetsStats[group][i] = scaledCol[idx]
+    # 
+    # x = np.arange(len(groups))        
+    # width = 0.05                      
+    #
+    # plt.figure(figsize=(14, 6))
+    #
+    # for i, stat in enumerate(statList):
+    #     stat_values = [immuneNetsStats[group][i] for group in groups]
+    #     plt.bar(x + i * width - (len(statList) / 2) * width, stat_values, width, label=stat)
+    #
+    # plt.xticks(x, groups)
+    # plt.ylabel("Scaled statistic (MinMax)")
+    # plt.title("Network Statistics per Group")
+    # plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', ncol=2)
+    # plt.tight_layout()
+    # plt.show()
 
            
 if __name__ == "__main__":
     groups = ["leukemia", "covid", "healthy"]
 
-    root_dir = Path(__file__).parent.parent.parent.parent
+    grouped_immuneNets = {}
+    with Session(engine) as session: 
+        for group in groups :
+            stmt = select(Network).options(selectinload(Network.network_edges)).where(Network.name == f"{group} test network")
+            result = session.execute(stmt)
+            network = result.scalars().first()
+            grouped_immuneNets[group] = NetworkMapper.toImmuneNetwork(network)
+            print(grouped_immuneNets[group].graph)
 
-    leukemia_path = root_dir  / "tests/test_data/leukemia_test_clonotypes.csv" # leukemia
-    covid_path = root_dir / "tests/test_data/covid_test_clonotypes.csv" # covid
-    healthy_path = root_dir / "tests/test_data/healthy_test_clonotypes_1.csv" #healthy
 
-    # TO DO - get repertoires for each group from database
-    repertoire_list = [
-            ImmuneRepertoire.fromCSV(path=leukemia_path, name="leukemia", desc=" "),
-            ImmuneRepertoire.fromCSV(path=covid_path, name="leukemia", desc=" "),
-            ImmuneRepertoire.fromCSV(path=healthy_path, name="leukemia", desc=" "),
-            ]
-    distance_fun = sequenceAligner("BLOSUM62")
-    grouped_immuneNets = { 
-                   group: simpleBetaDistance(repertoire=repertoire_list[i],
-                                                distance=distance_fun,
-                                                threshold=0.2)
-                         
-                   for i,group in enumerate(groups)
-                   }
     graphStatisticBarplots(grouped_immuneNets)
 

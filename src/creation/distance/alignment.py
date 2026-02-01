@@ -72,7 +72,7 @@ class sequenceAligner:
         return (-1 if self.negative == True else 1) * res
 
     def __str__(self):
-        return self.__matrix
+        return f"Alignment({self.__matrix})"
 
 # if __name__ == "__main__":
 #     a = sequenceAligner(matrix = "BLOSUM62", group = True)

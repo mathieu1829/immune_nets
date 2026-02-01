@@ -1,0 +1,4 @@
+from .euclideanStatDistance import EuclideanStatDistance
+from .wassersteinStatDistance import WassersteinStatDistance
+from .pairwiseDistributionDistance import PairwiseDistributionDistance
+

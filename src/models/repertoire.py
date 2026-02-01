@@ -7,13 +7,13 @@ from sqlalchemy.dialects.postgresql import UUID
 import uuid
 from datetime import date, datetime
 from typing import List
-from src.creation.immuneRepertoire import ImmuneRepertoire
+from src.entities import ImmuneRepertoire
 import pandas as pd
 
 from .base import Base
 from .clonotypeData import ClonotypeData
 
-from src.creation.globalSettings import globalSettings
+from src.globalSettings import GlobalSettings
 from src.creation.algorithms.common_methods import split_tcr_column
 
 class Repertoire(Base):
@@ -24,8 +24,8 @@ class Repertoire(Base):
                                                      default=uuid.uuid4)
     name: Mapped[str] =  mapped_column(String(30), nullable = False)
     description: Mapped[str] =  mapped_column(String(120), nullable = True)
-    version: Mapped[str] =  mapped_column(String(10), nullable = False, default=globalSettings().version)
-    username: Mapped[str] =  mapped_column(String(30), nullable = False, default=globalSettings().defaultUsername)
+    version: Mapped[str] =  mapped_column(String(10), nullable = False, default=GlobalSettings().version)
+    username: Mapped[str] =  mapped_column(String(30), nullable = False, default=GlobalSettings().defaultUsername)
     modificationDate: Mapped[date] =  mapped_column(Date, nullable = False, default=datetime.now())
     creationDate: Mapped[date] =  mapped_column(Date, nullable = False, default=datetime.now())
 
@@ -35,8 +35,8 @@ class Repertoire(Base):
     )
     clonotypes: Mapped[List["ClonotypeData"]] = relationship(back_populates="source_repertoire", cascade="all, delete-orphan") # type: ignore
     
-    repertoire_stats: Mapped[List["RepertoireStat"]] = relationship(back_populates="source_repertoire") # type: ignore
-    repertoire_networks: Mapped[List["Network"]] = relationship(back_populates="source_repertoire") # type: ignore
+    repertoire_stats: Mapped[List["RepertoireStat"]] = relationship(back_populates="source_repertoire", cascade="all, delete-orphan") # type: ignore
+    repertoire_networks: Mapped[List["Network"]] = relationship(back_populates="source_repertoire", cascade="all, delete-orphan") # type: ignore
 
     def setClones(self, new_clones: pd.DataFrame):
         self.clonotypes = [ 

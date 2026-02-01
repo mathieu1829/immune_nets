@@ -7,7 +7,7 @@ import pandas as pd
 from scipy.spatial.distance import pdist
 from scipy.spatial.distance import squareform
 from src.models import Repertoire
-from src.creation.immuneNetwork import ImmuneNetwork
+from src.entities import ImmuneNetwork
 
 @algorithm
 def simpleVectorDistance( repertoire, distance, threshold = None, **kwargs):
@@ -97,7 +97,8 @@ def simpleVectorDistance( repertoire, distance, threshold = None, **kwargs):
                               sampleId=repertoire.repertoire_id,
                               distanceFun=str(distance),
                               threshold=threshold, 
-                              sampleSize=len(clonotypes)
+                              sampleSize=len(clonotypes),
+                              proportions=clonotypes["proportion"].to_numpy()
                               )
 
     return immuneNet

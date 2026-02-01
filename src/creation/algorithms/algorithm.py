@@ -1,6 +1,6 @@
-from src.creation.globalSettings import globalSettings
+from src.globalSettings import GlobalSettings
 
-from src.creation.immuneRepertoire import ImmuneRepertoire
+from src.entities import ImmuneRepertoire
 
     #Checks whether creation algorithm is valid
 def algorithm(algo):

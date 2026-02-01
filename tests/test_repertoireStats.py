@@ -1,6 +1,6 @@
 import unittest
 from pathlib import Path
-from src.analysis.methods.repertoireAnalysis import repertoireAnalysis
+from src.entities import RepertoireStats
 import pickle 
 
 from src.creation.algorithms.common_methods import *
@@ -23,7 +23,7 @@ class TestRepertoireAnalysis(unittest.TestCase):
 
 
     def _test_repertoire_analysis(self):
-        repertoireStats =  repertoireAnalysis(self.repertoire)
+        repertoireStats =  RepertoireStats(self.repertoire)
         repertoireStatsListStr = self.listToStr(repertoireStats.toList())
         # with open("expected_repertoire_stats", "wb") as f:
         #     pickle.dump(repertoireStatsListStr,f)

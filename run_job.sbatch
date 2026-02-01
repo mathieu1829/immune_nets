@@ -1,11 +1,12 @@
 #!/bin/bash
-#SBATCH --job-name=immune_nets_job
-#SBATCH --output=logs/immune_nets_%j.out
-#SBATCH --error=logs/immune_nets_%j.err
-#SBATCH --time=02:00:00
-#SBATCH --nodes=1
-#SBATCH --ntasks=1
+#SBATCH -p obl
+#SBATCH -w obl1
+#SBATCH --ntasks=9
+#SBATCH -A inz_tcr
+#SBATCH --gres=gpu:0
+#SBATCH --time=02-00:00:00
 
-cd /home/teuthid/Documents/python/immune_nets
-
-NIX_SHELL_COMMAND="python -m src.analysis.clusterJob" nix-shell
+ulimit -l 4194304 || true
+eval "$(/home/inf155621/miniconda3/bin/conda shell.bash hook)"
+conda activate immune-nets
+mpirun -np 9 python -m src.cluster.optimizerClusterJob --group-paths "covid:/home/inf155621/immune-nets-datasets/covid,healthy:/home/inf155621/immune-nets-datasets/healthy" --run-id 1

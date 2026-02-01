@@ -12,8 +12,8 @@ from src.factories import ImmuneRepertoireFactory
 class TestSimpleDistance(unittest.TestCase):
 
     @classmethod
-    def setUpClass(self):
-        self.path = Path(__file__).parent / "test_data/test_clonotypes.csv"
+    def setUpClass(cls):
+        cls.path = Path(__file__).parent / "test_data/test_clonotypes.csv"
         
 
     def test_tcr_alig_identical_strings(self):

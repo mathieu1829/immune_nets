@@ -5,7 +5,7 @@ from scipy.spatial.distance import pdist
 from scipy.spatial.distance import squareform
 from src.creation.algorithms.common_methods import *
 from src.creation.algorithms.algorithm import *
-from src.creation.immuneNetwork import ImmuneNetwork
+from src.entities import ImmuneNetwork
 
 @algorithm
 def simpleVectorDistanceV2(repertoire, distance, threshold_alpha = None, threshold_beta = None, **kwargs):
@@ -102,7 +102,8 @@ def simpleVectorDistanceV2(repertoire, distance, threshold_alpha = None, thresho
                               distanceFun=str(distance),
                               threshold_alpha=threshold_alpha,
                               threshold_beta=threshold_beta,
-                              sampleSize=len(clonotypes)
+                              sampleSize=len(clonotypes),
+                              proportions=clonotypes["proportion"].to_numpy()
                               )
 
     return immuneNet
