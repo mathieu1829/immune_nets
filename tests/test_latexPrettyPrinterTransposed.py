@@ -9,6 +9,8 @@ from tqdm import tqdm
 
 from pathlib import Path
 
+from mpi4py import MPI
+
 def find_project_root(start: Path = Path(__file__)):
     for p in [start, *start.parents]:
         if (p / ".git").exists():
@@ -23,29 +25,29 @@ rootPath = find_project_root()
 
 
 resultList = [
-    "results_componentProportionDistribution_6e3e3a9d-4abf-445a-b887-d5eaf9ee15af",
-    "results_componentSizeDistribution_e7031d3d-c12d-454e-9c36-2d856eb4a843",
-    "results_degreeDistribution_3e402735-6b9c-492f-abdb-6205f1caca28",
+    "results_comparison_componentProportionDistribution_10.pkl",
+    "results_comparison_componentSizeDistribution_10.pkl",
+    "results_comparison_degreeDistribution_10.pkl",
 ]
 
 
 
 optResultFilenames = [
-    "results_optimizer_componentProportionDistribution_1.pkl",
-    "results_optimizer_componentProportionDistribution_3.pkl",
-    "results_optimizer_componentProportionDistribution_4.pkl",
-    "results_optimizer_componentProportionDistribution_5.pkl",
-    "results_optimizer_componentProportionDistribution_6.pkl",
-    "results_optimizer_componentSizeDistribution_1.pkl",
-    "results_optimizer_componentSizeDistribution_3.pkl",
-    "results_optimizer_componentSizeDistribution_4.pkl",
-    "results_optimizer_componentSizeDistribution_5.pkl",
-    "results_optimizer_componentSizeDistribution_6.pkl",
-    "results_optimizer_degreeDistribution_1.pkl",
-    "results_optimizer_degreeDistribution_3.pkl",
-    "results_optimizer_degreeDistribution_4.pkl",
-    "results_optimizer_degreeDistribution_5.pkl",
-    "results_optimizer_degreeDistribution_6.pkl",
+    "results_optimizer_componentProportionDistribution_20.pkl",
+    "results_optimizer_componentProportionDistribution_21.pkl",
+    "results_optimizer_componentProportionDistribution_22.pkl",
+    "results_optimizer_componentProportionDistribution_23.pkl",
+    "results_optimizer_componentProportionDistribution_24.pkl",
+    "results_optimizer_componentSizeDistribution_10.pkl",
+    "results_optimizer_componentSizeDistribution_11.pkl",
+    "results_optimizer_componentSizeDistribution_12.pkl",
+    "results_optimizer_componentSizeDistribution_13.pkl",
+    "results_optimizer_componentSizeDistribution_14.pkl",
+    "results_optimizer_degreeDistribution_20.pkl",
+    "results_optimizer_degreeDistribution_21.pkl",
+    "results_optimizer_degreeDistribution_22.pkl",
+    "results_optimizer_degreeDistribution_23.pkl",
+    "results_optimizer_degreeDistribution_24.pkl",
 ]
 
 distributionNameDict = {
@@ -68,7 +70,7 @@ for resultFilename in optResultFilenames:
     distributionName = resultFilenameParts[2]
     with open(rootPath / resultFilename, "rb") as f:
         result = pickle.load(f)
-        isCustom = False if not int(resultFilenameParts[3][0]) in [1,3] else True
+        isCustom = False if not int(resultFilenameParts[3][0]) in [1,3] or distributionName in ["componentSizeDistribution", "degreeDistribution", "componentProportionDistribution"] else True
         bestTrial = result if isCustom else result.best_trial
         optResultDict[distributionName].append(bestTrial)
         
@@ -76,24 +78,24 @@ for resultFilename in optResultFilenames:
 
 
 networkPaths = [
-    'network_componentProportionDistribution_covid_1 vs covid_2_covid_1_6e3e3a9d-4abf-445a-b887-d5eaf9ee15af.csv',
-    'network_componentProportionDistribution_covid_1 vs covid_2_covid_2_6e3e3a9d-4abf-445a-b887-d5eaf9ee15af.csv',
-    'network_componentProportionDistribution_healthy_1 vs healthy_2_healthy_1_6e3e3a9d-4abf-445a-b887-d5eaf9ee15af.csv',
-    'network_componentProportionDistribution_healthy_1 vs healthy_2_healthy_2_6e3e3a9d-4abf-445a-b887-d5eaf9ee15af.csv',
-    'network_componentProportionDistribution_healthy vs covid_covid_6e3e3a9d-4abf-445a-b887-d5eaf9ee15af.csv',
-    'network_componentProportionDistribution_healthy vs covid_healthy_6e3e3a9d-4abf-445a-b887-d5eaf9ee15af.csv',
-    'network_componentSizeDistribution_covid_1 vs covid_2_covid_1_e7031d3d-c12d-454e-9c36-2d856eb4a843.csv',
-    'network_componentSizeDistribution_covid_1 vs covid_2_covid_2_e7031d3d-c12d-454e-9c36-2d856eb4a843.csv',
-    'network_componentSizeDistribution_healthy_1 vs healthy_2_healthy_1_e7031d3d-c12d-454e-9c36-2d856eb4a843.csv',
-    'network_componentSizeDistribution_healthy_1 vs healthy_2_healthy_2_e7031d3d-c12d-454e-9c36-2d856eb4a843.csv',
-    'network_componentSizeDistribution_healthy vs covid_covid_e7031d3d-c12d-454e-9c36-2d856eb4a843.csv',
-    'network_componentSizeDistribution_healthy vs covid_healthy_e7031d3d-c12d-454e-9c36-2d856eb4a843.csv',
-    'network_degreeDistribution_covid_1 vs covid_2_covid_1_3e402735-6b9c-492f-abdb-6205f1caca28.csv',
-    'network_degreeDistribution_covid_1 vs covid_2_covid_2_3e402735-6b9c-492f-abdb-6205f1caca28.csv',
-    'network_degreeDistribution_healthy_1 vs healthy_2_healthy_1_3e402735-6b9c-492f-abdb-6205f1caca28.csv',
-    'network_degreeDistribution_healthy_1 vs healthy_2_healthy_2_3e402735-6b9c-492f-abdb-6205f1caca28.csv',
-    'network_degreeDistribution_healthy vs covid_covid_3e402735-6b9c-492f-abdb-6205f1caca28.csv',
-    'network_degreeDistribution_healthy vs covid_healthy_3e402735-6b9c-492f-abdb-6205f1caca28.csv',
+    'network_componentProportionDistribution_covid_1 vs covid_2_covid_1_10.pkl',
+    'network_componentProportionDistribution_covid_1 vs covid_2_covid_2_10.pkl',
+    'network_componentProportionDistribution_healthy_1 vs healthy_2_healthy_1_10.pkl',
+    'network_componentProportionDistribution_healthy_1 vs healthy_2_healthy_2_10.pkl',
+    'network_componentProportionDistribution_healthy vs covid_covid_10.pkl',
+    'network_componentProportionDistribution_healthy vs covid_healthy_10.pkl',
+    'network_componentSizeDistribution_covid_1 vs covid_2_covid_1_10.pkl',
+    'network_componentSizeDistribution_covid_1 vs covid_2_covid_2_10.pkl',
+    'network_componentSizeDistribution_healthy_1 vs healthy_2_healthy_1_10.pkl',
+    'network_componentSizeDistribution_healthy_1 vs healthy_2_healthy_2_10.pkl',
+    'network_componentSizeDistribution_healthy vs covid_covid_10.pkl',
+    'network_componentSizeDistribution_healthy vs covid_healthy_10.pkl',
+    'network_degreeDistribution_covid_1 vs covid_2_covid_1_10.pkl',
+    'network_degreeDistribution_covid_1 vs covid_2_covid_2_10.pkl',
+    'network_degreeDistribution_healthy_1 vs healthy_2_healthy_1_10.pkl',
+    'network_degreeDistribution_healthy_1 vs healthy_2_healthy_2_10.pkl',
+    'network_degreeDistribution_healthy vs covid_covid_10.pkl',
+    'network_degreeDistribution_healthy vs covid_healthy_10.pkl',
 ]
 
 allNetworks = {}
@@ -135,7 +137,7 @@ def generateBasicTables():
         with open(resultPath, "rb") as f:
             result = pickle.load(f)
         result = { resname:result[resname] for resname in result if resname != "universal"}
-        distributionName = resultFilename.split("_")[1]
+        distributionName = resultFilename.split("_")[2]
 
         LatexPrettyPrinterTransposed().printTable(result, allNetworks[distributionName], distributionNameDict[distributionName], distributionName)
         # print(LatexPrettyPrinterTransposed().generateLatexGraphHeader(result))
@@ -149,6 +151,21 @@ def generateBasicNetworks():
             plotTitles = ["A", "B"]
             networks = [ networksDict[group] for group in networksDict ]
             multiGraphChart(plotTitles, networks, f"{distributionName}_{test_group}.png") 
+
+def generateBasicNetworksParallel():
+    world = MPI.COMM_WORLD
+    world_rank = world.Get_rank()
+    size = world.Get_size()
+    
+    distributionName = list(allNetworks.keys())[world_rank//3]
+    test_group = list(allNetworks[distributionName].keys())[world_rank % 3]
+    print(f"Proces {world_rank} is calculating graphs for {distributionName} for test group: {test_group}")
+
+    networksDict = allNetworks[distributionName][test_group]
+    # plotTitles = [ f"Sieć próbki {group} dla {distributionNameDict[distributionName]}" for group in networksDict] 
+    plotTitles = ["A", "B"]
+    networks = [ networksDict[group] for group in networksDict ]
+    multiGraphChart(plotTitles, networks, f"{distributionName}_{test_group}.png") 
 
 
 
@@ -216,6 +233,21 @@ def generateResultTables():
         result = optResultDict[distributionName]
         LatexPrettyPrinterTransposed().printOptTable(result, distributionNameDict[distributionName])
 
+def makeAllCovidGraphs():
+    world = MPI.COMM_WORLD
+    world_rank = world.Get_rank()
+    size = world.Get_size()
+
+    resultFilename = resultList[world_rank//10]
+
+    resultPath = dataDir + resultFilename
+    with open(resultPath, "rb") as f:
+        result = pickle.load(f)
+    result = { resname:result[resname] for resname in result if resname != "universal"}
+    distributionName = resultFilename.split("_")[1]
+
+
+
 
 
 
@@ -232,7 +264,7 @@ if __name__ == "__main__":
     if args.tables:
         generateBasicTables()
     if args.networks:
-        generateBasicNetworks()
+        generateBasicNetworksParallel()
     if args.save_results:
         saveResults()
     if args.result_tables:

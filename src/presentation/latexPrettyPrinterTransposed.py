@@ -254,7 +254,7 @@ class LatexPrettyPrinterTransposed:
 
 
         headerContent = headerPrefix.copy()
-        headerContent.extend([ str(i) for i in range(len(results))])
+        headerContent.extend([ str(i+1) for i in range(len(results))])
         headerContent = [ bold(header) for header in headerContent]
         headerBegin = "\\begin{tabular}{|"+"|".join(["c" for _ in headerContent])+"|}\n"
         headerEnd = " \\\\\n"
