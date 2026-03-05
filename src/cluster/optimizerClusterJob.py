@@ -6,7 +6,7 @@ import uuid
 import pickle
 import argparse
 import os
-from mpi4py import MPI
+from multiprocessing import Process, Pool;
 import random
 
 from src.analysis.optunaObjectives import optimizerObjectiveBuilder
@@ -102,90 +102,38 @@ def stopIfThresholdReached(study, trial):
         study.stop()
 
         
-def runClusterJob(allRepertoires, run_id, numOfTrials=100, testCase=False):
-    distributionNames = ["degreeDistribution", "componentSizeDistribution", "componentProportionDistribution"]
-
-    world = MPI.COMM_WORLD
-    world_rank = world.Get_rank()
-    size = world.Get_size()
+def runClusterJob(allRepertoires, distributionName, run_id, rank, numOfTrials=100, testCase=False):
     
-    cluster_size = len(allRepertoires)
-    cluster_id = world_rank // cluster_size
-
-    cluster = world.Split(color=cluster_id, key=world_rank)
-    cluster_rank = cluster.Get_rank()
-
-
-
-    if size != len(distributionNames)*len(allRepertoires):
-        raise ValueError(f"The number of processes ({size}) must be equal to number of considered variants {len(distributionNames)*len(allRepertoires)}")
-
-    distributionName = distributionNames[cluster_id]
-    print(f"Process {world_rank} is starting computation for {distributionName}.")
-    results = {}
+    print(f"Process {rank} is starting computation for {distributionName}.")
     
-    repertoire_group = list(allRepertoires.keys())[cluster_rank]
     distanceType = PairwiseDistributionDistance(distributionName)
     scoringParadigm = PairwiseScoringParadigm(distanceType)
 
-    if cluster_rank == 0:
-        print(f"Process {world_rank} is running study for {repertoire_group} repertoires")
-        analyzed_repertoires = allRepertoires[repertoire_group]
-        study = optuna.create_study(direction="maximize")
-        objectiveFunction = optimizerObjectiveBuilder(repertoires=analyzed_repertoires,
-                                             repertoire_group=repertoire_group,
-                                             scoringParadigm=scoringParadigm,
-                                             cluster=cluster,
-                                             world_com=world
-                                            )
-        study.optimize(func=objectiveFunction,n_trials=numOfTrials, callbacks=[stopIfThresholdReached])
+    study = optuna.create_study(direction="maximize")
+    objectiveFunction = optimizerObjectiveBuilder(allRepertoires=allRepertoires,
+                                         scoringParadigm=scoringParadigm,
+                                         rank=rank
+                                        )
+    study.optimize(func=objectiveFunction,n_trials=numOfTrials, callbacks=[stopIfThresholdReached])
 
-        for i in range(1,cluster.Get_size()):
-            cluster.send(obj=False,dest=i, tag=1)
+    # Best result
+    print(f"Process {rank}: Best score: {study.best_value}")
+    print(f"Process {rank}: Best params: {study.best_params}" )
 
-        # Best result
-        print(f"Process {world_rank}: Best score: {study.best_value}")
-        print(f"Process {world_rank}: Best params: {study.best_params}" )
-
-        if not testCase:  
-            with open(f"results_optimizer_{distributionName}_{run_id}.pkl", "wb") as f:
-                pickle.dump(study, f)
-        else:
-            filename = f"proc_{world_rank}_{run_id}.txt"
-            print(f"This is testcase. Process rank is {world_rank}. Id is {run_id} and thus filename is {filename}.")
-
-            with open(filename, "w") as f:
-                f.write("a")
-
-        print(f"Finished processing for {distributionName}")
-
-
+    if not testCase:  
+        with open(f"results_optimizer_{distributionName}_{run_id}.pkl", "wb") as f:
+            pickle.dump(study, f)
     else:
-        print(f"Process {world_rank} is computing {repertoire_group} repertoires for main cluster process")
-        # Gather parameters from main cluster process
-        continueSignal = cluster.recv(source=0, tag=1)
-        
-        while(continueSignal):
-            print(f"Process {world_rank}, cluster_rank: {cluster_rank} got signal to resume computation")
-            algorithm_name = cluster.recv(source=0, tag=1)
-            threshold = cluster.recv(source=0, tag=1)
-            distance_fun = cluster.recv(source=0, tag=1)
-            scoringParadigmFun = cluster.recv(source=0, tag=1)
+        filename = f"proc_{rank}_{run_id}.txt"
+        print(f"This is testcase. Process rank is {rank}. Id is {run_id} and thus filename is {filename}.")
 
-            result = compareGroups(repertoires=allRepertoires[repertoire_group],
-                                   algorithm_name=algorithm_name,
-                                   threshold=threshold,
-                                   distance_fun=distance_fun,
-                                   scoringParadigmFun=scoringParadigmFun) 
+        with open(filename, "w") as f:
+            f.write("a")
 
-            print(f"Process {world_rank}, cluster_rank: {cluster_rank} has computed score {result} for {repertoire_group} ")
+    print(f"Finished processing for {distributionName}")
 
 
-            groupList = cluster.gather(repertoire_group, root=0)
-            resultList = cluster.gather(result, root=0)
-            print(f"Process {world_rank}, cluster_rank: {cluster_rank} has finished computation and is waiting for further instructions")
-            continueSignal = cluster.recv(source=0, tag=1)
-        print(f"Process {world_rank}, cluster_rank: {cluster_rank} got stop signal")
+
         
     
 
@@ -206,8 +154,17 @@ if __name__ == '__main__':
 
     all_repertoires = loadClusterJobDatasetsFromFile(groupPaths)
 
-    runClusterJob(all_repertoires, run_id)
+    distributionNames = ["degreeDistribution", "componentSizeDistribution", "componentProportionDistribution"]
+    processes = []
+   
+    for distributionName in distributionNames:
+        p = Process(target=runClusterJob,
+                    args=(all_repertoires, distributionName, run_id))
+        p.start()
+        processes.append(p)
 
+    for p in processes:
+        p.join()
 
 
 

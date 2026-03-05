@@ -6,7 +6,7 @@ from src.entities import GraphStats
 from src.creation.algorithms.simpleBetaDistance import simpleBetaDistance
 from src.creation.algorithms.simpleVectorBetaDistance import simpleVectorBetaDistance
 
-def compareGroups(repertoires, algorithm_name, threshold, distance_fun, scoringParadigmFun):
+def compareGroups(repertoires, repertoire_group, algorithm_name, threshold, distance_fun, scoringParadigmFun, worldRank, clusterRank):
     match algorithm_name:
         case "simpleBetaDistance":
             algorithm = simpleBetaDistance
@@ -15,7 +15,7 @@ def compareGroups(repertoires, algorithm_name, threshold, distance_fun, scoringP
         case _:
             algorithm = simpleBetaDistance #default
 
-
+    print(f"Worker with id {clusterRank} of main process {worldRank} is commencing computation for {repertoire_group}")
 
     groups = [group for group in repertoires]
     group_results = { group:[] for group in groups}
@@ -36,6 +36,9 @@ def compareGroups(repertoires, algorithm_name, threshold, distance_fun, scoringP
                 return 0.0
             group_results[group].append(stats)
             # print(f"{group} stats: {str(stats.toList())}")
+
+    result = scoringParadigmFun(group_results) 
+    print(f"Worker with id {clusterRank} of main process {worldRank} has finished processing {repertoire_group} with result {result}")
                 
-    return scoringParadigmFun(group_results) 
+    return result 
 
