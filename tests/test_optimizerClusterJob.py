@@ -1,7 +1,7 @@
 import unittest
 from pathlib import Path
 from src.factories import ImmuneRepertoireFactory
-from src.cluster.optimizerClusterJob import runClusterJob
+from src.cluster.optimizerClusterJob import runProcesses
 
 class TestClusterJob(unittest.TestCase):
     @classmethod
@@ -32,7 +32,7 @@ class TestClusterJob(unittest.TestCase):
                                     }
                                 }
     def test_clusterJob(self):
-        runClusterJob(self.all_repertoires, run_id=0, numOfTrials=3, testCase=True)
+        runProcesses(self.all_repertoires, run_id=0, numOfTrials=3, testCase=True)
 
 if __name__ == '__main__':
     unittest.main()

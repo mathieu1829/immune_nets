@@ -134,9 +134,18 @@ def runClusterJob(allRepertoires, distributionName, run_id, rank, numOfTrials=10
 
 
 
-        
-    
+def runProcesses(all_repertoires, run_id, numOfTrials=100, testCase=False):
+    distributionNames = ["degreeDistribution", "componentSizeDistribution", "componentProportionDistribution"]
+    processes = []
+   
+    for rank, distributionName in enumerate(distributionNames):
+        p = Process(target=runClusterJob,
+                    args=(all_repertoires, distributionName, run_id, rank, numOfTrials, testCase))
+        p.start()
+        processes.append(p)
 
+    for p in processes:
+        p.join()
 
 
 if __name__ == '__main__':
@@ -154,17 +163,9 @@ if __name__ == '__main__':
 
     all_repertoires = loadClusterJobDatasetsFromFile(groupPaths)
 
-    distributionNames = ["degreeDistribution", "componentSizeDistribution", "componentProportionDistribution"]
-    processes = []
-   
-    for distributionName in distributionNames:
-        p = Process(target=runClusterJob,
-                    args=(all_repertoires, distributionName, run_id))
-        p.start()
-        processes.append(p)
+    runProcesses(all_repertoires, run_id)
 
-    for p in processes:
-        p.join()
+
 
 
 
