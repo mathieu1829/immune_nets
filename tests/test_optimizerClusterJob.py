@@ -12,24 +12,14 @@ class TestClusterJob(unittest.TestCase):
         healthy0Path = testDataPath / "healthy_test_clonotypes_0.csv"
         healthy1Path = testDataPath / "healthy_test_clonotypes_1.csv"
         cls.all_repertoires = {
-                                "covid vs healthy": {
-                                    "covid": [
-                                        ImmuneRepertoireFactory.fromCSV(path=covid0Path, name=f"test covid 0", desc="test repertoire"),
-                                        ImmuneRepertoireFactory.fromCSV(path=covid1Path, name=f"test covid 1", desc="test repertoire"),
-                                        ],
-                                    "healthy": [
-                                        ImmuneRepertoireFactory.fromCSV(path=healthy0Path, name=f"test healthy 0", desc="test repertoire"),
-                                        ImmuneRepertoireFactory.fromCSV(path=healthy1Path, name=f"test healthy 1", desc="test repertoire"),
-                                        ]
-                                    },
-                                "covid_0 vs covid_1": {
-                                    "covid_0": [ImmuneRepertoireFactory.fromCSV(path=covid0Path, name=f"test covid 0", desc="test repertoire")],
-                                    "covid_1": [ImmuneRepertoireFactory.fromCSV(path=covid1Path, name=f"test covid 1", desc="test repertoire")]
-                                    },
-                                "healthy_0 vs healthy_1": {
-                                    "healthy_0": [ImmuneRepertoireFactory.fromCSV(path=healthy0Path, name=f"test healthy 0", desc="test repertoire")],
-                                    "healthy_1": [ImmuneRepertoireFactory.fromCSV(path=healthy1Path, name=f"test healthy 1", desc="test repertoire")]
-                                    }
+                                "covid": [
+                                    ImmuneRepertoireFactory.fromCSV(path=covid0Path, name=f"test covid 0", desc="test repertoire"),
+                                    ImmuneRepertoireFactory.fromCSV(path=covid1Path, name=f"test covid 1", desc="test repertoire"),
+                                    ],
+                                "healthy": [
+                                    ImmuneRepertoireFactory.fromCSV(path=healthy0Path, name=f"test healthy 0", desc="test repertoire"),
+                                    ImmuneRepertoireFactory.fromCSV(path=healthy1Path, name=f"test healthy 1", desc="test repertoire"),
+                                    ]
                                 }
     def test_clusterJob(self):
         runProcesses(self.all_repertoires, run_id=0, numOfTrials=3, testCase=True)

@@ -11,6 +11,7 @@ from src.entities import ImmuneRepertoire
 from src.mappers import RepertoireMapper, NetworkMapper
 from src.creation.algorithms.simpleBetaDistance import simpleBetaDistance
 from src.creation.distance.alignment import sequenceAligner
+from src.cluster.utils.commonMethods import loadDatasetsFromFile
 
 #move to some utils
 def max_string_lengths_across_dfs(repertoires):
@@ -35,18 +36,11 @@ def loadClusterJobDatasetsToDB(groupPaths):
     with Session(engine) as session: 
         datasets = {group:Dataset(name=f"{group} dataset", description=" ") for group in groupPaths}
         datasetList = [] 
+        repertoireDatasets = loadDatasetsFromFile(groupPaths, db=True) 
 
-        for group in groupPaths:
-            repertoireList = []
-            for file in os.listdir(groupPaths[group]):
-                path = groupPaths[group] + "/" + file
-                metadaGroups = ["group", "id", "description"]
-                metadata = { group:data for group, data in zip(metadaGroups, file.split("_"))}
-                repertoireList.append(RepertoireFactory.fromCSV(name=f"{metadata['group']} {metadata['id']}",desc=f"{metadata['description']}",path=path))
-
-
+        for group in repertoireDatasets:
             # print(max_string_lengths_across_dfs(repertoireList))
-            datasets[group].repertoires = repertoireList
+            datasets[group].repertoires = repertoireDatasets[group]
             datasetList.append(datasets[group])
 
         session.add_all(datasetList)
@@ -79,7 +73,7 @@ if __name__ == "__main__":
     groupPaths = groupPaths.split(",")
     groupPaths = { pair.split(":")[0]:pair.split(":")[1] for pair in groupPaths}
 
-    loadClusterJobDatasets(groupPaths)
+    loadClusterJobDatasetsToDB(groupPaths)
     showDBContents(groupPaths)
 
 

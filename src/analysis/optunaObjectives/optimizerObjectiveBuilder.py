@@ -3,14 +3,15 @@ import numpy as np
 from itertools import combinations
 from multiprocessing import Pool
 
-from .compareGroups import compareGroups
+from .computeGraphStats import computeGraphStats 
 
 from src.creation.distance.alignment import sequenceAligner
 from src.creation.distance.levenshtein import levenshteinDistance 
 
 from src.analysis.scoringParadigms import ScoringParadigm
+from src.cluster.utils.commonMethods import createTestGroups
 
-def optimizerObjectiveBuilder(allRepertoires, scoringParadigm: ScoringParadigm, rank):
+def optimizerObjectiveBuilder(repertoireDatasets, scoringParadigm: ScoringParadigm, rank):
     scoringParadigmFun = scoringParadigm.compute_score
     def objective(trial):
         threshold = trial.suggest_float("threshold",low=0.2,high=0.4)
@@ -35,17 +36,28 @@ def optimizerObjectiveBuilder(allRepertoires, scoringParadigm: ScoringParadigm, 
             case _:
                 distance_fun = levenshteinDistance()
 
-        args = [(allRepertoires[repertoire_group],
-                 repertoire_group,
-                 algorithm_name,
-                 threshold,
-                 distance_fun,
-                 scoringParadigmFun,
-                 rank,
-                 clusterRank
-                 ) for clusterRank, repertoire_group in enumerate(allRepertoires)]
+        repertoireStats = { group:[None for _ in repertoireDatasets[group]] for group in repertoireDatasets}
+        args = [{"repertoire": repertoire,
+                 "repertoireDataset": repertoireDataset,
+                 "repertoireIdx": idx,
+                 "algorithm_name": algorithm_name,
+                 "threshold": threshold,
+                 "distance_fun": distance_fun,
+                 "worldRank": rank,
+                 } for repertoireDataset in repertoireDatasets for idx, repertoire in enumerate(repertoireDatasets[repertoireDataset]) ]
+
+        with Pool(3) as pool:
+            for result in pool.imap_unordered(computeGraphStats, args, chunksize=1):
+                if result is None:
+                    pool.terminate()
+                    return 0.0
+                else:
+                    repertoireStats[result["dataset"]][result["idx"]] = result["value"]
+
+        testGroups = createTestGroups(repertoireStats)
+        args = [testGroup for testGroup in testGroups.values()]
         with Pool(3) as p:
-            resultList = p.starmap(compareGroups, args)
+            resultList = p.map(scoringParadigmFun, args)
 
         between = resultList[0]
         within = np.mean(resultList[1:])
