@@ -4,6 +4,8 @@ __pycache__/
 *$py.class
 .virtual_documents/
 
+results/
+
 # C extensions
 *.so
 
