@@ -1,9 +1,9 @@
 import unittest
 from pathlib import Path
 from src.factories import ImmuneRepertoireFactory
-from src.cluster.comparisonClusterJob import runClusterJob
+from src.cluster.initialAnalysisClusterJob import runClusterJob
 
-class TestClusterJob(unittest.TestCase):
+class TestInitialAnalysisClusterJob(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         testDataPath = Path(__file__).parent / "test_data"
