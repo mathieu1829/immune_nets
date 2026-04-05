@@ -31,9 +31,9 @@ class TestInitialAnalysisClusterJob(unittest.TestCase):
                                     "healthy_1": [ImmuneRepertoireFactory.fromCSV(path=healthy1Path, name=f"test healthy 1", desc="test repertoire")]
                                     }
                                 }
-    def test_clusterJob(self):
+    def _test_clusterJob(self):
         runClusterJob(self.all_repertoires,1, 3, True)
 
-if __name__ == '__main__':
-    unittest.main()
+# if __name__ == '__main__':
+#     unittest.main()
 

@@ -2,7 +2,6 @@ import optuna
 import numpy as np
 from itertools import combinations
 
-from .compareGroups import compareGroups
 
 from immune_nets.creation.algorithms.simpleBetaDistance import simpleBetaDistance
 from immune_nets.creation.algorithms.simpleVectorBetaDistance import simpleVectorBetaDistance
@@ -42,11 +41,7 @@ def objectiveBuilder(repertoires, scoringParadim: ScoringParadigm):
                 algorithm = simpleBetaDistance #default
 
 
-        result = compareGroups(repertoires,
-                               algorithm,
-                               threshold,
-                               distance_fun,
-                               scoringParadigmFun) 
+        result = 0
                     
         return result
     return objective

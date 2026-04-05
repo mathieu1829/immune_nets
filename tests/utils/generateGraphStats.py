@@ -8,9 +8,9 @@ def generateGraphStats():
     root_dir = Path(__file__).parent.parent.parent
     test_data_path = root_dir / "tests/test_data"
 
-    leukemia_network_path = test_data_path  / "leukemia_test_network.pkl" # leukemia
-    covid_network_path = test_data_path / "covid_test_network.pkl" # covid
-    healthy_network_path = test_data_path / "healthy_test_network.pkl" #healthy
+    leukemia_network_path = test_data_path  / "leukemia_test_network_0.pkl" # leukemia
+    covid_network_path = test_data_path / "covid_test_network_0.pkl" # covid
+    healthy_network_path = test_data_path / "healthy_test_network_0.pkl" #healthy
 
     networkPaths = [healthy_network_path, leukemia_network_path, covid_network_path]
     
