@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import random
-from src.creation.distance.alignment import sequenceAligner
+from immune_nets.creation.distance.alignment import sequenceAligner
 
 class cdr3SeqGeneratorUtil:
     def generate_random_cdr3(self,min_length = 11,max_length=16):

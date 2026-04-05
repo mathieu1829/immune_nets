@@ -3,7 +3,7 @@ import unittest
 from tests.utils.tcrGenerationPipeline import *
 from tests.utils.frequencyGenerator import *
 from unittest.mock import MagicMock
-from src.creation.distance.alignment import sequenceAligner
+from immune_nets.creation.distance.alignment import sequenceAligner
 
 class TestTcrGenerationPipeline(unittest.TestCase):
 

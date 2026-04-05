@@ -1,14 +1,14 @@
 import unittest
-from src.models import *
-from src.db import engine,SessionLocal
+from immune_nets.models import *
+from immune_nets.db import engine,SessionLocal
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from pathlib import Path
 
-from src.entities import GraphStats
-from src.entities import ImmuneNetwork
-from src.factories import RepertoireFactory, ImmuneNetworkFactory, ImmuneRepertoireFactory
-from src.mappers import RepertoireMapper, NetworkMapper, ImmuneNetworkMapper, NetworkStatMapper
+from immune_nets.entities import GraphStats
+from immune_nets.entities import ImmuneNetwork
+from immune_nets.factories import RepertoireFactory, ImmuneNetworkFactory, ImmuneRepertoireFactory
+from immune_nets.mappers import RepertoireMapper, NetworkMapper, ImmuneNetworkMapper, NetworkStatMapper
 
 class testORM(unittest.TestCase):
     @classmethod

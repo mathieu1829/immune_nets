@@ -1,13 +1,13 @@
 import unittest
 from pathlib import Path
-from src.entities import RepertoireStats
+from immune_nets.entities import RepertoireStats
 import pickle 
 
-from src.creation.algorithms.common_methods import *
-from src.creation.algorithms.simpleDistance import *
-from src.creation.enums.matrices import *
-from src.creation.enums.utils import * 
-from src.factories import ImmuneRepertoireFactory
+from immune_nets.creation.algorithms.common_methods import *
+from immune_nets.creation.algorithms.simpleDistance import *
+from immune_nets.creation.enums.matrices import *
+from immune_nets.creation.enums.utils import * 
+from immune_nets.factories import ImmuneRepertoireFactory
 
 
 class TestRepertoireAnalysis(unittest.TestCase):

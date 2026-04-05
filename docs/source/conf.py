@@ -22,12 +22,6 @@ templates_path = ['_templates']
 exclude_patterns = []
 
 
-import sys
-from pathlib import Path
-
-sys.path.insert(0, str(Path('..', '..', 'src').resolve()))
-# sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
-
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 

@@ -1,11 +1,11 @@
 from pathlib import Path
 
-from src.creation.algorithms.simpleBetaDistance import simpleBetaDistance
-from src.creation.distance.alignment import sequenceAligner
+from immune_nets.creation.algorithms.simpleBetaDistance import simpleBetaDistance
+from immune_nets.creation.distance.alignment import sequenceAligner
 
-from src.mappers import ImmuneNetworkMapper, GraphStatsMapper
-from src.entities import GraphStats
-from src.factories import ImmuneRepertoireFactory
+from immune_nets.mappers import ImmuneNetworkMapper, GraphStatsMapper
+from immune_nets.entities import GraphStats
+from immune_nets.factories import ImmuneRepertoireFactory
 
 def generateBasicNetworks():
     root_dir = Path(__file__).parent.parent.parent

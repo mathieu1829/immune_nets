@@ -2,12 +2,12 @@ import unittest
 import pandas as pd
 from pathlib import Path
 
-from src.creation.algorithms.common_methods import *
-from src.creation.algorithms.simpleVectorDistanceV2 import *
-from src.creation.enums.matrices import *
-from src.creation.enums.utils import * 
-from src.creation.distance.alignment import sequenceAligner
-from src.factories import ImmuneRepertoireFactory
+from immune_nets.creation.algorithms.common_methods import *
+from immune_nets.creation.algorithms.simpleVectorDistanceV2 import *
+from immune_nets.creation.enums.matrices import *
+from immune_nets.creation.enums.utils import * 
+from immune_nets.creation.distance.alignment import sequenceAligner
+from immune_nets.factories import ImmuneRepertoireFactory
 
 class TestSimpleVectorDistance(unittest.TestCase):
 

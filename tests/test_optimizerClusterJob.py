@@ -1,7 +1,7 @@
 import unittest
 from pathlib import Path
-from src.factories import ImmuneRepertoireFactory
-from src.cluster.optimizerClusterJob import runProcesses
+from immune_nets.factories import ImmuneRepertoireFactory
+from immune_nets.cluster.optimizerClusterJob import runProcesses
 
 class TestClusterJob(unittest.TestCase):
     @classmethod

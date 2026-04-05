@@ -2,8 +2,8 @@ import pandas as pd
 from pathlib import Path
 import unittest
 
-from src.analysis.methods.skeletonPrivateNairSimilarity import skeletonPrivateNairSimilarity
-from src.factories import ImmuneRepertoireFactory
+from immune_nets.analysis.methods.skeletonPrivateNairSimilarity import skeletonPrivateNairSimilarity
+from immune_nets.factories import ImmuneRepertoireFactory
 
 
 class testSkeletonPrivateNairSimilarity(unittest.TestCase):

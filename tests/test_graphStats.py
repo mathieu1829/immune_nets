@@ -3,19 +3,19 @@ import pandas as pd
 from pathlib import Path
 import numpy as np
 import uuid
-from src.entities import GraphStats
+from immune_nets.entities import GraphStats
 import pickle 
 
-import src.creation.algorithms.simpleDistance 
-import src.creation.distance.alignment
-from src.creation.algorithms.common_methods import *
-from src.creation.distance.alignment import sequenceAligner
-from src.creation.algorithms.simpleDistance import *
-from src.creation.enums.matrices import *
-from src.creation.enums.utils import * 
-from src.factories import ImmuneRepertoireFactory
-from src.creation.utils.pathManager import pathManager
-from src.creation.distance.hamming import hammingDistance
+import immune_nets.creation.algorithms.simpleDistance 
+import immune_nets.creation.distance.alignment
+from immune_nets.creation.algorithms.common_methods import *
+from immune_nets.creation.distance.alignment import sequenceAligner
+from immune_nets.creation.algorithms.simpleDistance import *
+from immune_nets.creation.enums.matrices import *
+from immune_nets.creation.enums.utils import * 
+from immune_nets.factories import ImmuneRepertoireFactory
+from immune_nets.creation.utils.pathManager import pathManager
+from immune_nets.creation.distance.hamming import hammingDistance
 
 
 class TestGraphletComposition(unittest.TestCase):
@@ -33,9 +33,9 @@ class TestGraphletComposition(unittest.TestCase):
     def test_graphletComposition(self):
         graphStats = GraphStats(self.df_net)
         graphStatsList = self.listToStr(graphStats.toList())
-        # with open("expected_graphStats","wb") as f:
+        # with open("tests/expected/expected_graphStats.pkl","wb") as f:
         #     pickle.dump(graphStatsList,f)
-        with open(Path(__file__).parent / "expected/expected_graphStats", "rb") as f:
+        with open(Path(__file__).parent / "expected/expected_graphStats.pkl", "rb") as f:
             expectedGraphStatList = pickle.load(f)
         # for i,j in zip(graphStatsList, expectedGraphletComposition):
         #     print(i == j)

@@ -2,8 +2,8 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 import unittest
-from src.analysis.methods.publicSimilarity import publicSimilarity
-from src.factories import ImmuneRepertoireFactory
+from immune_nets.analysis.methods.publicSimilarity import publicSimilarity
+from immune_nets.factories import ImmuneRepertoireFactory
 
 
 class testPublicSimilarity(unittest.TestCase):

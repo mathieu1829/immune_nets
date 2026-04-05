@@ -1,14 +1,14 @@
 
-from src.models import Repertoire,Dataset, Network
-from src.db import engine
+from immune_nets.models import Repertoire,Dataset, Network
+from immune_nets.db import engine
 from sqlalchemy.orm import Session, selectinload
 from sqlalchemy import select
 from pathlib import Path
-from src.factories import ImmuneRepertoireFactory, ImmuneNetworkFactory
-from src.entities import ImmuneRepertoire
-from src.mappers import RepertoireMapper, NetworkMapper
-from src.creation.algorithms.simpleBetaDistance import simpleBetaDistance
-from src.creation.distance.alignment import sequenceAligner
+from immune_nets.factories import ImmuneRepertoireFactory, ImmuneNetworkFactory
+from immune_nets.entities import ImmuneRepertoire
+from immune_nets.mappers import RepertoireMapper, NetworkMapper
+from immune_nets.creation.algorithms.simpleBetaDistance import simpleBetaDistance
+from immune_nets.creation.distance.alignment import sequenceAligner
 
 def loadRepertoires():
     root_dir = Path(__file__).parent.parent.parent

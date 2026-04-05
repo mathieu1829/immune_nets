@@ -1,0 +1,6 @@
+[project]
+name = "immune-nets"
+version = "0.1.0"
+
+[tool.setuptools.packages.find]
+where = ["src"]

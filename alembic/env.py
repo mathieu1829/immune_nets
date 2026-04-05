@@ -8,7 +8,7 @@ import os
 from dotenv import load_dotenv
 from pathlib import Path
 
-from src.models import Base
+from immune_nets.models import Base
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

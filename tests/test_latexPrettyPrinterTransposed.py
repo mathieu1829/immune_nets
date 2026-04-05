@@ -2,9 +2,9 @@ import pickle
 import re
 import os
 
-from src.presentation import LatexPrettyPrinterTransposed
+from immune_nets.presentation import LatexPrettyPrinterTransposed
 
-from src.analysis.visualization.multiGraphChart import multiGraphChart
+from immune_nets.analysis.visualization.multiGraphChart import multiGraphChart
 from tqdm import tqdm
 
 from pathlib import Path
