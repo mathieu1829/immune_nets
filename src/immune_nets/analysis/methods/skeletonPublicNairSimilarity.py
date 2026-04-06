@@ -12,6 +12,50 @@ path = pathManager().testDataPath / "healthy_test_clonotypes_0.csv"
 
 
 def skeletonPublicNairSimilarity(repertoire, top_k = 20, absoulutePublic=False, minCoverage = 2, minClusterSize=2):
+    """
+    Identify public T-cell clusters using a skeleton-based per-sample approach as shown in NAIR artice.
+
+    This function first constructs separate networks per sample, identifies
+    the top-k clusters per sample, and selects a representative "skeleton" clone
+    from each cluster (the highest-frequency clone). Skeleton clones from all
+    samples are then merged into a global network, clustered, and filtered
+    based on sample coverage and minimum cluster size. The final clusters
+    are expanded to include all original clones from each representative's
+    initial cluster.
+
+    Key differences from `publicSimilarity`:
+        - Uses a per-sample skeletonization step before global clustering.
+        - Reduces cross-sample noise and computational load.
+        - Expands skeleton clusters back to include all original clones.
+
+    Parameters
+    ----------
+    repertoire : ImmuneRepertoire
+        The immune repertoire object containing clones with TCR sequences.
+    top_k : int, optional
+        Number of largest clusters to retain per sample. Default is 20.
+    absoulutePublic : bool, optional
+        If True, considers clusters as public only if they are present in all samples.
+        Default is False.
+    minCoverage : int, optional
+        Minimum number of samples in which a cluster must appear to be retained.
+        Default is 2.
+    minClusterSize : int, optional
+        Minimum size (number of clones) of clusters to retain. Default is 2.
+
+    Returns
+    -------
+    list[list[int]]
+        List of public clusters. Each cluster is a list of indices referring
+        to the clones in the original repertoire DataFrame.
+
+    Notes
+    -----
+    - Skeletonization involves selecting a representative clone per cluster per sample.
+    - Cluster expansion ensures that each final cluster contains all original clones
+      from the representative clone's initial cluster.
+    """
+
     prepared_clones = repertoire.clones.dropna(subset = ["tcra_aa", "tcrb_aa"]) 
     # print(prepared_clones)
 

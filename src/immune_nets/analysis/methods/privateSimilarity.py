@@ -14,6 +14,46 @@ path = pathManager().testDataPath / "healthy_test_clonotypes_0.csv"
 
 
 def privateSimilarity(repertoire, frequencyCutoff = None, top_k = 20, absoulutePublic=False, minCoverage = 2, minClusterSize=2, minPrivateClusterSize=1):
+    """
+    Identify private T-cell clusters in a repertoire by constructing a global network.
+
+    This function first identifies public clusters using the `publicSimilarity` method,
+    then builds a network across all samples in the repertoire based on
+    Levenshtein distances between TCR sequences. Clusters are extracted from the network,
+    filtered to remove overlaps with public clusters, and grouped by sample.
+
+    Note:
+        - Clustering is performed globally across all samples.
+        - Frequency cutoff filter (if provided) is applied to clone frequencies.
+        - Clusters containing clones from multiple samples are excluded.
+
+    Parameters
+    ----------
+    repertoire : ImmuneRepertoire
+        The immune repertoire object containing clones with TCR sequences.
+    frequencyCutoff : float, optional
+        Minimum clone frequency to include in analysis. Clones below this frequency are excluded.
+        Default is None (no cutoff).
+    top_k : int, optional
+        Number of largest clusters to retain per sample. Default is 20.
+    absoulutePublic : bool, optional
+        Whether to use absolute public clonotype definition in `publicSimilarity`.
+        Default is False.
+    minCoverage : int, optional
+        Minimum coverage for public clusters. Default is 2.
+    minClusterSize : int, optional
+        Minimum size of clusters to consider in public similarity. Default is 2.
+    minPrivateClusterSize : int, optional
+        Minimum size of private clusters to retain. Default is 1.
+
+    Returns
+    -------
+    list[list[list[int]]]
+        Nested list of private clusters grouped by sample.
+        Outer list: samples
+        Middle list: clusters in sample
+        Inner list: indices of clones in the original DataFrame
+    """
     public_clusters = publicSimilarity(repertoire=repertoire, 
                                        frequencyCutoff=frequencyCutoff,
                                        top_k=top_k,absoulutePublic=absoulutePublic,

@@ -14,6 +14,43 @@ path = pathManager().testDataPath / "healthy_test_clonotypes_0.csv"
 
 
 def skeletonPrivateNairSimilarity(repertoire, top_k = 20, absoulutePublic=False, minCoverage = 2, minClusterSize=2, minPrivateClusterSize=1):
+    """
+    Identify private T-cell clusters per sample using the skeleton public similarity approach utilized in NAIR article.
+
+    This function computes public clusters using `skeletonPublicNairSimilarity`,
+    then constructs separate networks for each sample. Clusters are extracted from each
+    sample-specific network and filtered to exclude overlaps with public clusters.
+
+    Key differences from `privateSimilarity`:
+        - Networks are constructed **per sample**, not globally.
+        - Clustering is entirely intra-sample.
+        - No cross-sample contamination occurs.
+
+    Parameters
+    ----------
+    repertoire : ImmuneRepertoire
+        The immune repertoire object containing clones with TCR sequences.
+    top_k : int, optional
+        Number of largest clusters to retain per sample. Default is 20.
+    absoulutePublic : bool, optional
+        Whether to use absolute public clonotype definition in `skeletonPublicNairSimilarity`.
+        Default is False.
+    minCoverage : int, optional
+        Minimum coverage for public clusters. Default is 2.
+    minClusterSize : int, optional
+        Minimum size of clusters to consider in public similarity. Default is 2.
+    minPrivateClusterSize : int, optional
+        Minimum size of private clusters to retain. Default is 1.
+
+    Returns
+    -------
+    list[list[list[int]]]
+        Nested list of private clusters grouped by sample.
+        Outer list: samples
+        Middle list: clusters in sample
+        Inner list: indices of clones in the original DataFrame
+    """
+    
     public_clusters = skeletonPublicNairSimilarity(repertoire=repertoire, 
                                        top_k=top_k,absoulutePublic=absoulutePublic,
                                        minCoverage=minCoverage,

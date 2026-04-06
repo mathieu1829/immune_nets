@@ -11,6 +11,45 @@ path = pathManager().testDataPath / "healthy_test_clonotypes_0.csv"
 
 
 def publicSimilarity(repertoire, frequencyCutoff = None, top_k = 20, absoulutePublic=False, minCoverage = 2, minClusterSize=2):
+    """
+    Identify public T-cell clusters across all samples in a repertoire.
+
+    This function constructs a network from all clones in the repertoire using
+    Levenshtein distance between TCR sequences, then performs clustering with
+    the Fast Greedy algorithm. The top-k largest clusters are retained and
+    filtered based on minimum cluster size and sample coverage.
+
+    Note:
+        - Clustering is performed on the global network including all samples.
+        - Clusters containing clones from fewer than `minCoverage` samples are excluded.
+        - Frequency cutoff can be applied to ignore low-frequency clones
+          (currently requires assignment to take effect).
+
+    Parameters
+    ----------
+    repertoire : ImmuneRepertoire
+        The immune repertoire object containing clones with TCR sequences.
+    frequencyCutoff : float, optional
+        Minimum clone frequency to include in analysis. Clones below this frequency are excluded.
+        Default is None (no cutoff).
+    top_k : int, optional
+        Number of largest clusters to retain. Default is 20.
+    absoulutePublic : bool, optional
+        If True, considers clusters as public only if they are present in all samples.
+        Default is False.
+    minCoverage : int, optional
+        Minimum number of samples in which a cluster must appear to be retained.
+        Default is 2.
+    minClusterSize : int, optional
+        Minimum size (number of clones) of clusters to retain. Default is 2.
+
+    Returns
+    -------
+    list[list[int]]
+        List of public clusters. Each cluster is a list of indices referring
+        to the clones in the original repertoire DataFrame.
+    """
+
     prepared_clones = repertoire.clones.dropna(subset = ["tcra_aa", "tcrb_aa"]) 
     prepared_clones.name = repertoire.clones.name
 
