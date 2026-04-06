@@ -3,7 +3,7 @@ import numpy as np
 from itertools import combinations
 from multiprocessing import Pool
 
-from .computeGraphStats import computeGraphStats 
+from .utils.computeGraphStats import computeGraphStats 
 
 from immune_nets.creation.distance.alignment import sequenceAligner
 from immune_nets.creation.distance.levenshtein import levenshteinDistance 
@@ -11,9 +11,16 @@ from immune_nets.creation.distance.levenshtein import levenshteinDistance
 from immune_nets.analysis.scoringParadigms import ScoringParadigm
 from immune_nets.cluster.utils.commonMethods import createTestGroups
 
-def optimizerObjectiveBuilder(repertoireDatasets, scoringParadigm: ScoringParadigm, rank):
-    scoringParadigmFun = scoringParadigm.compute_score
-    def objective(trial):
+class optimizerObjectiveBuilder:
+    def __init__(self, repertoireDatasets, scoringParadigm: ScoringParadigm, rank: int, statComputingPoolSize=3, resultGatheringPoolSize=3):
+        self.repertoireDatasets = repertoireDatasets
+        self.scoringParadigmFun = scoringParadigm.compute_score
+        self.rank = rank
+        self.statComputingPoolSize = statComputingPoolSize
+        self.resultGatheringPoolSize = resultGatheringPoolSize
+
+
+    def __call__(self, trial):
         threshold = trial.suggest_float("threshold",low=0.2,high=0.4)
         distance = trial.suggest_categorical("distance", ["alignment", "levenshtein"])
         algorithm_name = trial.suggest_categorical("algorithm_name", ["simpleBetaDistance", "simpleVectorBetaDistance"])
@@ -36,17 +43,17 @@ def optimizerObjectiveBuilder(repertoireDatasets, scoringParadigm: ScoringParadi
             case _:
                 distance_fun = levenshteinDistance()
 
-        repertoireStats = { group:[None for _ in repertoireDatasets[group]] for group in repertoireDatasets}
+        repertoireStats = { group:[None for _ in self.repertoireDatasets[group]] for group in self.repertoireDatasets}
         args = [{"repertoire": repertoire,
-                 "repertoireDataset": repertoireDataset,
+                 "repertoireDatasetName": repertoireDatasetName,
                  "repertoireIdx": idx,
                  "algorithm_name": algorithm_name,
                  "threshold": threshold,
                  "distance_fun": distance_fun,
-                 "worldRank": rank,
-                 } for repertoireDataset in repertoireDatasets for idx, repertoire in enumerate(repertoireDatasets[repertoireDataset]) ]
+                 "worldRank": self.rank,
+                 } for repertoireDatasetName in self.repertoireDatasets for idx, repertoire in enumerate(self.repertoireDatasets[repertoireDatasetName]) ]
 
-        with Pool(3) as pool:
+        with Pool(self.statComputingPoolSize) as pool:
             for result in pool.imap_unordered(computeGraphStats, args, chunksize=1):
                 if result is None:
                     pool.terminate()
@@ -56,8 +63,8 @@ def optimizerObjectiveBuilder(repertoireDatasets, scoringParadigm: ScoringParadi
 
         testGroups = createTestGroups(repertoireStats)
         args = [testGroup for testGroup in testGroups.values()]
-        with Pool(3) as p:
-            resultList = p.map(scoringParadigmFun, args)
+        with Pool(self.resultGatheringPoolSize) as p:
+            resultList = p.map(self.scoringParadigmFun, args)
 
         between = resultList[0]
         within = np.mean(resultList[1:])
@@ -69,7 +76,6 @@ def optimizerObjectiveBuilder(repertoireDatasets, scoringParadigm: ScoringParadi
         # within * 0.95
         # within * heuristic progress (temperature)
         return ((between - within)/between)  
-    return objective
 
 
 

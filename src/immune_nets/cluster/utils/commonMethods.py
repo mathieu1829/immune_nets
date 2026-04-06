@@ -36,12 +36,12 @@ def loadDatasetsFromFile(groupPaths, db=False):
         repertoireDatasets[group] = repertoireList
     return repertoireDatasets
 
-def createTestGroups(repertoireStatsDatasets):
-    groups = [group for group in repertoireStatsDatasets]
-    testGroups = { f"healthy vs {group}":{"healthy":repertoireStatsDatasets["healthy"], group:repertoireStatsDatasets[group]} for group in groups if not group == "healthy"}
+def createTestGroups(repertoireDatasets):
+    groups = [group for group in repertoireDatasets]
+    testGroups = { f"healthy vs {group}":{"healthy":repertoireDatasets["healthy"], group:repertoireDatasets[group]} for group in groups if not group == "healthy"}
     # all_repertoires["universal"] = dataset_repertoires
     for group in groups:
-      testGroups[f"{group}_1 vs {group}_2"] = divideIntoSubgroups(repertoireStatsDatasets, group)
+      testGroups[f"{group}_1 vs {group}_2"] = divideIntoSubgroups(repertoireDatasets, group)
     return testGroups
 
 def makeBestNetwork(repertoire: ImmuneRepertoire, study) -> ImmuneNetwork:

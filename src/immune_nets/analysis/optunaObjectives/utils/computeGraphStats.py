@@ -8,7 +8,7 @@ from immune_nets.creation.algorithms.simpleVectorBetaDistance import simpleVecto
 
 def computeGraphStats(args):
     repertoire = args["repertoire"]
-    repertoireDataset = args["repertoireDataset"]
+    repertoireDatasetName = args["repertoireDatasetName"]
     repertoireIdx = args["repertoireIdx"]
     algorithm_name = args["algorithm_name"]
     threshold = args["threshold"]
@@ -23,7 +23,7 @@ def computeGraphStats(args):
         case _:
             algorithm = simpleBetaDistance #default
 
-    print(f"Worker of the main process {worldRank} is commencing computation for repertoire {repertoireIdx} of group: {repertoireDataset}")
+    print(f"Worker of the main process {worldRank} is commencing computation for repertoire {repertoireIdx} of group: {repertoireDatasetName}")
 
 
     network = algorithm(
@@ -41,7 +41,7 @@ def computeGraphStats(args):
         return None
     # print(f"{group} stats: {str(stats.toList())}")
 
-    print(f"Worker of the main process {worldRank} has finished processing {repertoireDataset} ")
+    print(f"Worker of the main process {worldRank} has finished processing {repertoireDatasetName} ")
                 
-    return {"value":stats, "dataset":repertoireDataset, "idx": repertoireIdx} 
+    return {"value":stats, "dataset":repertoireDatasetName, "idx": repertoireIdx} 
 

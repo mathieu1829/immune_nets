@@ -3,6 +3,6 @@ The distributionInference package contains various methods of indentifying the d
 """
 
 from .distributionIdentifier import DistributionIdentifier
-from .klDivergenceIdentifier import KlDivergenceIndentifier
+from .klDivergenceIdentifier import KlDivergenceIdentifier
 from .kolomogorovIdentifier import KolomogorovIndentifier
 from .naiveIdentifier import NaiveIdentifier
