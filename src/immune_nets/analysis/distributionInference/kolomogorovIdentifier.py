@@ -4,7 +4,17 @@ from scipy import stats as scipy_stats
 from .distributionIdentifier import DistributionIdentifier
 
 class KolomogorovIndentifier(DistributionIdentifier):
+    """
+    Identifies distributions using Kolomogorov-Smirov test.
+
+    Generates samples from the input distribution, fits :candidate theoretical
+    distributions, then compares them using either Kolomogorov-Smirov value or pvalue.
+
+    """
     def __init__(self, usePvalue=True):
+        """
+        :param usePvalue: If True, compare distributions using p-value; otherwise use the KS statistic. 
+        """
         self.usePvalueFlag = usePvalue
 
     def identify_distribution(self, statDict):
@@ -24,9 +34,9 @@ class KolomogorovIndentifier(DistributionIdentifier):
                 theoretical = dist.pdf(values, *params)
                 theoretical /= theoretical.sum()
                
-                usePvalue = 1 if self.usePvalueFlag else 0
+                statistic, pvalue = scipy_stats.kstest(sample, name, params)
 
-                results[name] = scipy_stats.kstest(sample, name, params)[usePvalue]
+                results[name] = pvalue if self.usePvalueFlag else statistic
                 # if that fails assign high score to guarantee choosing different distribution
             except:
                 results[name] = 100000

@@ -3,22 +3,31 @@ from scipy import stats as scipy_stats
 
 class DistributionIdentifier(ABC):
     """
-    Interface, base class for distribution identifiers. Enforces implementation of identify_distribution method
+    Base class for distribution identifiers.
+
+    Provides an interface for identifying a probability distribution based on
+    input data, and defines a set of candidate distributions.
     """
     candidates = {
         "powerlaw": scipy_stats.powerlaw,
-        "norm": scipy_stats.norm,
+        "normal": scipy_stats.norm,
         "uniform": scipy_stats.uniform,
         "gamma": scipy_stats.gamma,
     }
+    """Mapping of distribution names to corresponding ``scipy.stats`` objects.
+
+    Defines the set of candidate distributions used during identification.
+    """
 
     @abstractmethod
     def identify_distribution(self, statDict) -> str:
         """
-        Abstract method for identifying provided distribution. 
+        Identify the distribution represented by the given data.
 
-        :param statDict: dictionairy containing probability mass function, keys are arguments of probability mass function and values of the dictionairy represent values of probability mass function
-        :return: name of the distribution
+        :param statDict: Dictionary representing a probability mass function,
+            where keys are input values and values are the corresponding
+            probabilities.
+        :return: Name of the identified distribution.
         """
 
         pass

@@ -2,8 +2,23 @@ import numpy as np
 
 from .distributionIdentifier import DistributionIdentifier
 
-class KlDivergenceIndentifier(DistributionIdentifier):
+class KlDivergenceIdentifier(DistributionIdentifier):
+    """
+    Identifies distributions using Kullback–Leibler divergence.
+
+    Generates samples from the input distribution and candidate theoretical
+    distributions, then compares them using KL-divergence.
+    """
+
     def kl_div(self, P, Q, eps=1e-12):
+        """
+        Calculate the KL-divergence between two discrete distributions.
+
+        :param P: Empirical probability distribution.
+        :param Q: Theoretical probability distribution.
+        :param eps: Small value to avoid division by zero.
+        :return: KL-divergence value.
+        """
         P = P + eps
         Q = Q + eps
         P /= P.sum()
