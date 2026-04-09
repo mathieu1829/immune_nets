@@ -9,7 +9,7 @@ import os
 import random
 from multiprocessing import Process, Pool;
 
-from immune_nets.analysis.optunaObjectives.initialAnalysisOjectiveBuilder import initialAnalysisObjectiveBuilder 
+from immune_nets.analysis.optunaObjectives.initialAnalysisObjectiveBuilder import initialAnalysisObjectiveBuilder 
 
 # from immune_nets.models import Repertoire,Dataset
 # from immune_nets.db import engine

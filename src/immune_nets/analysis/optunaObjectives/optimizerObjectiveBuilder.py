@@ -1,9 +1,9 @@
-import optuna
+from optuna import Trial
 import numpy as np
-from itertools import combinations
 from multiprocessing import Pool
 
 from .utils.computeGraphStats import computeGraphStats 
+from .objectiveBuilder import objectiveBuilder
 
 from immune_nets.creation.distance.alignment import sequenceAligner
 from immune_nets.creation.distance.levenshtein import levenshteinDistance 
@@ -11,16 +11,23 @@ from immune_nets.creation.distance.levenshtein import levenshteinDistance
 from immune_nets.analysis.scoringParadigms import ScoringParadigm
 from immune_nets.cluster.utils.commonMethods import createTestGroups
 
-class optimizerObjectiveBuilder:
-    def __init__(self, repertoireDatasets, scoringParadigm: ScoringParadigm, rank: int, statComputingPoolSize=3, resultGatheringPoolSize=3):
+class optimizerObjectiveBuilder(objectiveBuilder):
+    def __init__(self, repertoireDatasets, scoringParadigm: ScoringParadigm, rank: int, statComputingPoolSize: int, resultGatheringPoolSize: int):
         self.repertoireDatasets = repertoireDatasets
         self.scoringParadigmFun = scoringParadigm.compute_score
         self.rank = rank
-        self.statComputingPoolSize = statComputingPoolSize
-        self.resultGatheringPoolSize = resultGatheringPoolSize
+        if statComputingPoolSize > 0:
+            self.statComputingPoolSize = statComputingPoolSize
+        else:
+            raise ValueError("Number of threads in stat computing pool (statComputingPoolSize) must be higher than 0")
+
+        if resultGatheringPoolSize > 0:
+            self.resultGatheringPoolSize = resultGatheringPoolSize
+        else:
+            raise ValueError("Number of threads in result gathering pool (resultGatheringPoolSize) must be higher than 0")
 
 
-    def __call__(self, trial):
+    def __call__(self, trial: Trial) -> float:
         threshold = trial.suggest_float("threshold",low=0.2,high=0.4)
         distance = trial.suggest_categorical("distance", ["alignment", "levenshtein"])
         algorithm_name = trial.suggest_categorical("algorithm_name", ["simpleBetaDistance", "simpleVectorBetaDistance"])
@@ -75,7 +82,7 @@ class optimizerObjectiveBuilder:
 
         # within * 0.95
         # within * heuristic progress (temperature)
-        return ((between - within)/between)  
+        return float((between - within)/between)  
 
 
 

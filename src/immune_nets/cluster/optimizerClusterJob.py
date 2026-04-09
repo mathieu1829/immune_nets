@@ -24,7 +24,7 @@ def stopIfThresholdReached(study, trial):
         study.stop()
 
         
-def runClusterJob(allRepertoires, distributionName, run_id, rank, numOfTrials=100, testCase=False):
+def runClusterJob(allRepertoires, distributionName: str, run_id: int, rank: int, statComputingPoolSize: int, resultGatheringPoolSize: int, numOfTrials=100,  testCase=False):
     
     print(f"Process {rank} is starting computation for {distributionName}.")
     
@@ -34,7 +34,9 @@ def runClusterJob(allRepertoires, distributionName, run_id, rank, numOfTrials=10
     study = optuna.create_study(direction="maximize")
     objectiveFunction = optimizerObjectiveBuilder(repertoireDatasets=allRepertoires,
                                          scoringParadigm=scoringParadigm,
-                                         rank=rank
+                                         rank=rank,
+                                         statComputingPoolSize=statComputingPoolSize,
+                                         resultGatheringPoolSize=resultGatheringPoolSize
                                         )
     study.optimize(func=objectiveFunction,n_trials=numOfTrials, callbacks=[stopIfThresholdReached])
 
@@ -42,27 +44,30 @@ def runClusterJob(allRepertoires, distributionName, run_id, rank, numOfTrials=10
     print(f"Process {rank}: Best score: {study.best_value}")
     print(f"Process {rank}: Best params: {study.best_params}" )
 
+    filename = f"results_optimizer_{distributionName}_{run_id}.pkl"
     if not testCase:  
-        with open(f"results_optimizer_{distributionName}_{run_id}.pkl", "wb") as f:
+        with open(filename, "wb") as f:
             pickle.dump(study, f)
     else:
-        filename = f"proc_{rank}_{run_id}.txt"
         print(f"This is testcase. Process rank is {rank}. Id is {run_id} and thus filename is {filename}.")
 
-        with open(filename, "w") as f:
-            f.write("a")
+
 
     print(f"Finished processing for {distributionName}")
 
 
 
-def runProcesses(repertoireDatasets, run_id, numOfTrials=100, testCase=False):
+def runProcesses(repertoireDatasets, run_id, statComputingPoolSize=None, resultGatheringPoolSize=None, numOfTrials=100,  testCase=False):
     distributionNames = ["degreeDistribution", "componentSizeDistribution", "componentProportionDistribution"]
     processes = []
+    if statComputingPoolSize is None:
+        statComputingPoolSize = len(distributionNames)
+    if resultGatheringPoolSize is None:
+        resultGatheringPoolSize = len(distributionNames)
    
     for rank, distributionName in enumerate(distributionNames):
         p = Process(target=runClusterJob,
-                    args=(repertoireDatasets, distributionName, run_id, rank, numOfTrials, testCase))
+                    args=(repertoireDatasets, distributionName, run_id, rank, statComputingPoolSize, resultGatheringPoolSize, numOfTrials, testCase))
         p.start()
         processes.append(p)
 

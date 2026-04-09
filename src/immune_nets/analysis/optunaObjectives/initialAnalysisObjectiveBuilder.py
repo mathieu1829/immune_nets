@@ -1,6 +1,4 @@
-import optuna
-import numpy as np
-from itertools import combinations
+from optuna import Trial
 from multiprocessing import Pool
 
 
@@ -10,8 +8,9 @@ from immune_nets.creation.distance.alignment import sequenceAligner
 from immune_nets.creation.distance.levenshtein import levenshteinDistance 
 from immune_nets.analysis.scoringParadigms import ScoringParadigm
 from .utils.computeGraphStats import computeGraphStats
+from .objectiveBuilder import objectiveBuilder
 
-class initialAnalysisObjectiveBuilder:
+class initialAnalysisObjectiveBuilder(objectiveBuilder):
     """
     
     """
@@ -21,7 +20,7 @@ class initialAnalysisObjectiveBuilder:
         self.rank = rank
         self.statComputingPoolSize = statComputingPoolSize
 
-    def __call__(self, trial):
+    def __call__(self, trial: Trial) -> float:
         threshold = trial.suggest_float("threshold",low=0.2,high=0.4)
         distance = trial.suggest_categorical("distance", ["alignment", "levenshtein"])
         distance_fun = None
