@@ -7,6 +7,23 @@ from immune_nets.creation.algorithms.simpleBetaDistance import simpleBetaDistanc
 from immune_nets.creation.algorithms.simpleVectorBetaDistance import simpleVectorBetaDistance
 
 def computeGraphStats(args):
+    """
+    Compute a similarity network and its statistics for a given repertoire.
+
+    This function is designed for use with ``multiprocessing.Pool``, where
+    arguments must be passed as a single object.
+
+    :param args: Dictionary containing the following keys:
+        - ``repertoire`` (ImmuneRepertoire): Input repertoire.
+        - ``repertoireDatasetName`` (str): Name of the dataset/cohort.
+        - ``repertoireIdx`` (int): Index of the repertoire within the dataset.
+        - ``algorithm_name`` (str): Name of the network construction algorithm.
+        - ``threshold`` (float): Threshold parameter for network construction.
+        - ``distance_fun`` (callable): Distance function used by the algorithm.
+        - ``worldRank`` (int): Identifier of the parent process (for logging).
+    :return: Dictionary with computed statistics (``value``, ``dataset``, ``idx``),
+        or ``None`` if the generated network is empty or fully connected.
+    """
     repertoire = args["repertoire"]
     repertoireDatasetName = args["repertoireDatasetName"]
     repertoireIdx = args["repertoireIdx"]

@@ -12,7 +12,40 @@ from immune_nets.analysis.scoringParadigms import ScoringParadigm
 from immune_nets.cluster.utils.commonMethods import createTestGroups
 
 class optimizerObjectiveBuilder(objectiveBuilder):
+    """
+    Objective builder for optimizing separation between groups of similarity networks.
+
+    Constructs an objective function that:
+    - generates similarity networks for all repertoires,
+    - partitions them into test groups and cohorts,
+    - maximizes distances between cohorts from different disease states,
+    - minimizes distances within cohorts from the same disease state.
+
+    The objective encourages parameter configurations that produce well-separated
+    disease groups while maintaining internal consistency within each group. In effect
+    it is trying to find network construction parameters which give maximal distance between 
+    groups and minimal distance within groups.
+
+    If any generated network is empty or fully connected, the evaluation is aborted
+    and a value of 0.0 is returned.
+    
+    The final objective value is computed as:
+
+    (between - within) / between
+
+    where:
+    - between: distance between cohorts of different disease states,
+    - within: mean distance within cohorts of the same disease state.
+    """
     def __init__(self, repertoireDatasets, scoringParadigm: ScoringParadigm, rank: int, statComputingPoolSize: int, resultGatheringPoolSize: int):
+        """
+        :param repertoireDatasets: Dictionary mapping disease state names to lists of ``ImmuneRepertoire`` objects.
+        :param scoringParadigm: Scoring paradigm used to find the distance between cohorts of networks
+        :param rank: Identifier of the process (used for parallel execution and logging).
+        :param statComputingPoolSize: number of processes which concurently compute similarity networks from repertoires.
+        :param resultGatheringPoolSize: number of processes which compute distances of individual test groups that will be later used to compute final value of returned by objective function.
+        """
+
         self.repertoireDatasets = repertoireDatasets
         self.scoringParadigmFun = scoringParadigm.compute_score
         self.rank = rank

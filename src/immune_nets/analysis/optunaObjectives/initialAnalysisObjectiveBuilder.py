@@ -7,15 +7,33 @@ from immune_nets.creation.algorithms.simpleVectorBetaDistance import simpleVecto
 from immune_nets.creation.distance.alignment import sequenceAligner
 from immune_nets.creation.distance.levenshtein import levenshteinDistance 
 from immune_nets.analysis.scoringParadigms import ScoringParadigm
+from immune_nets.entities import ImmuneRepertoire
 from .utils.computeGraphStats import computeGraphStats
 from .objectiveBuilder import objectiveBuilder
 
 class initialAnalysisObjectiveBuilder(objectiveBuilder):
     """
-    
+    Objective builder for initial exploration of the solution space.
+
+    Constructs an objective function that optimizes network construction
+    parameters across cohorts in a test group. For each cohort, it generates 
+    similarity networks and computes the mean distance between them using 
+    a specified scoring paradigm.
+
+    If any network from any cohort is either empty or full, rest of calculations
+    is skipped and 0.0 value of objective function is returned
+
+    The goal is to find network construction parameter values that maximize the
+    separation (distance) between cohorts.
     """
-    def __init__(self,repertoires, scoringParadim: ScoringParadigm, rank: int, statComputingPoolSize=1):
-        self.repertoires = repertoires
+    def __init__(self,repertoireTestGroup: dict[str, list[ImmuneRepertoire]], scoringParadim: ScoringParadigm, rank: int, statComputingPoolSize=1):
+        """
+        :param repertoireTestGroup: Dictionary mapping cohort names to lists of ``ImmuneRepertoire`` objects.
+        :param scoringParadigm: Scoring paradigm used to find the distance between cohorts of networks
+        :param rank: Identifier of the process (used for parallel execution and logging).
+        :param statComputingPoolSize: number of processes which concurently compute similarity networks from repertoires
+        """
+        self.repertoirTestGroup = repertoireTestGroup 
         self.scoringParadigmFun = scoringParadim.compute_score
         self.rank = rank
         self.statComputingPoolSize = statComputingPoolSize
@@ -49,15 +67,15 @@ class initialAnalysisObjectiveBuilder(objectiveBuilder):
             case _:
                 algorithm = simpleBetaDistance #default
 
-        repertoireStats = { group:[None for _ in self.repertoires[group]] for group in self.repertoires}
+        repertoireStats = { group:[None for _ in self.repertoirTestGroup[group]] for group in self.repertoirTestGroup}
         args = [{"repertoire": repertoire,
-                 "repertoireDatasetName": testGroup,
+                 "repertoireDatasetName": cohortName,
                  "repertoireIdx": idx,
                  "algorithm_name": algorithm_name,
                  "threshold": threshold,
                  "distance_fun": distance_fun,
                  "worldRank": self.rank,
-                 } for testGroup in self.repertoires for idx, repertoire in enumerate(self.repertoires[testGroup]) ]
+                 } for cohortName in self.repertoirTestGroup for idx, repertoire in enumerate(self.repertoirTestGroup[cohortName]) ]
 
         with Pool(self.statComputingPoolSize) as pool:
             for result in pool.imap_unordered(computeGraphStats, args, chunksize=1):
