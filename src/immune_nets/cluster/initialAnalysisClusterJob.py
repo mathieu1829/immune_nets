@@ -40,7 +40,7 @@ def stopIfThresholdReached(study, trial):
 
 
         
-def runClusterJob(repertoireTestGroup, test_group, distributionName, run_id, rank, numOfTrials=100, distributionComputingPoolSize=3, testCase=False):
+def runClusterJob(repertoireTestGroup, testGroupName, distributionName, run_id, rank, numOfTrials=100, distributionComputingPoolSize=3, testCase=False):
     distributionNames = ["degreeDistribution", "componentSizeDistribution", "componentProportionDistribution"]
 
     print(f"Process {rank} is starting computation for {distributionName}.")
@@ -48,10 +48,9 @@ def runClusterJob(repertoireTestGroup, test_group, distributionName, run_id, ran
     
     # print(f"Process {rank} is running study for {test_group} repertoires")
 
-    analyzed_repertoires = repertoireTestGroup
     distanceType = PairwiseDistributionDistance(distributionName)
     scoringParadigm = PairwiseScoringParadigm(distanceType)
-    objectiveFunction = initialAnalysisObjectiveBuilder(repertoires=analyzed_repertoires,
+    objectiveFunction = initialAnalysisObjectiveBuilder(repertoireTestGroup=repertoireTestGroup,
                                          scoringParadim=scoringParadigm,
                                          rank=rank
                                         )
@@ -64,7 +63,7 @@ def runClusterJob(repertoireTestGroup, test_group, distributionName, run_id, ran
 
     # Best result
 
-    filename = f"results_initial_analysis_{distributionName}_{test_group}_{run_id}.pkl"
+    filename = f"results_initial_analysis_{distributionName}_{testGroupName}_{run_id}.pkl"
     if not testCase: 
         with open(filename, "wb") as f:
             pickle.dump(results, f)
@@ -82,9 +81,9 @@ def runProcesses(repertoireDatasets, run_id, numOfTrials=100, testCase=False):
     repertoireTestGroups = createTestGroups(repertoireDatasets)
    
     for rank, distributionName in enumerate(distributionNames):
-        for test_group in repertoireTestGroups:
+        for testGroupName in repertoireTestGroups:
             p = Process(target=runClusterJob,
-                        args=(repertoireTestGroups[test_group], test_group, distributionName, run_id, rank, numOfTrials, testCase))
+                        args=(repertoireTestGroups[testGroupName], testGroupName, distributionName, run_id, rank, numOfTrials, testCase))
             p.start()
             processes.append(p)
 
