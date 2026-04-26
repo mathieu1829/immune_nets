@@ -5,7 +5,19 @@ from immune_nets.analysis.statDistanceTypes import PairwiseStatDistance
 from .scoringParadigm import ScoringParadigm
 
 class PairwiseScoringParadigm(ScoringParadigm):
+    """
+    Computes a score by performing pairwise comparisons between samples of groups.
+
+    For each pair of groups, all pairwise distances between their samples are computed.
+    These values are aggregated into a single group-to-group distance. The final score
+    is the mean of all inter-group distances penalized by their standard deviation.
+    """
+
     def __init__(self, statDistance: PairwiseStatDistance):
+        """
+        :param statDistance: Computes a distance between two individual GraphStats
+                             instances (samples).
+        """
         self.statDistance = statDistance
 
     def compute_score(self, groupedStats):

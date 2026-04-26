@@ -5,7 +5,18 @@ from immune_nets.analysis.statDistanceTypes import InterGroupStatDistance
 from .scoringParadigm import ScoringParadigm
 
 class InterGroupScoringParadigm(ScoringParadigm):
+    """
+    Computes a score by comparing groups directly.
+
+    For each pair of groups, a group-level distance is computed using the
+    provided statDistance which has to be of InterGroupDistance type. The
+    final score is the mean inter-group distance penalized by its standard
+    deviation.
+    """
     def __init__(self, statDistance: InterGroupStatDistance):
+        """
+        :param statDistance: Computes a distance between two groups of GraphStats.
+        """
         self.statDistance = statDistance
     
     def compute_score(self, groupedStats):
