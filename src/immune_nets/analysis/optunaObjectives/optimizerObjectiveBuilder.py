@@ -10,8 +10,9 @@ from immune_nets.creation.distance.levenshtein import levenshteinDistance
 
 from immune_nets.analysis.scoringParadigms import ScoringParadigm
 from immune_nets.cluster.utils.commonMethods import createTestGroups
+from immune_nets.entities.immuneRepertoire import ImmuneRepertoire
 
-class optimizerObjectiveBuilder(objectiveBuilder):
+class OptimizerObjectiveBuilder(objectiveBuilder):
     """
     Objective builder for optimizing separation between groups of similarity networks.
 
@@ -37,7 +38,7 @@ class optimizerObjectiveBuilder(objectiveBuilder):
     - between: distance between cohorts of different disease states,
     - within: mean distance within cohorts of the same disease state.
     """
-    def __init__(self, repertoireDatasets, scoringParadigm: ScoringParadigm, rank: int, statComputingPoolSize: int, resultGatheringPoolSize: int):
+    def __init__(self, repertoireDatasets: dict[str, list[ImmuneRepertoire]], scoringParadigm: ScoringParadigm, rank: int, statComputingPoolSize: int, resultGatheringPoolSize: int):
         """
         :param repertoireDatasets: Dictionary mapping disease state names to lists of ``ImmuneRepertoire`` objects.
         :param scoringParadigm: Scoring paradigm used to find the distance between cohorts of networks

@@ -6,7 +6,7 @@ import pickle
 import argparse
 from multiprocessing import Process, Pool;
 
-from immune_nets.analysis.optunaObjectives import optimizerObjectiveBuilder
+from immune_nets.analysis.optunaObjectives import OptimizerObjectiveBuilder
 
 from immune_nets.analysis.statDistances import WassersteinStatDistance, PairwiseDistributionDistance
 from immune_nets.analysis.scoringParadigms import PairwiseScoringParadigm
@@ -32,7 +32,7 @@ def runClusterJob(allRepertoires, distributionName: str, run_id: int, rank: int,
     scoringParadigm = PairwiseScoringParadigm(distanceType)
 
     study = optuna.create_study(direction="maximize")
-    objectiveFunction = optimizerObjectiveBuilder(repertoireDatasets=allRepertoires,
+    objectiveFunction = OptimizerObjectiveBuilder(repertoireDatasets=allRepertoires,
                                          scoringParadigm=scoringParadigm,
                                          rank=rank,
                                          statComputingPoolSize=statComputingPoolSize,

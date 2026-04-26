@@ -9,7 +9,7 @@ import os
 import random
 from multiprocessing import Process, Pool;
 
-from immune_nets.analysis.optunaObjectives.initialAnalysisObjectiveBuilder import initialAnalysisObjectiveBuilder 
+from immune_nets.analysis.optunaObjectives.initialAnalysisObjectiveBuilder import InitialAnalysisObjectiveBuilder 
 
 # from immune_nets.models import Repertoire,Dataset
 # from immune_nets.db import engine
@@ -50,7 +50,7 @@ def runClusterJob(repertoireTestGroup, testGroupName, distributionName, run_id, 
 
     distanceType = PairwiseDistributionDistance(distributionName)
     scoringParadigm = PairwiseScoringParadigm(distanceType)
-    objectiveFunction = initialAnalysisObjectiveBuilder(repertoireTestGroup=repertoireTestGroup,
+    objectiveFunction = InitialAnalysisObjectiveBuilder(repertoireTestGroup=repertoireTestGroup,
                                          scoringParadim=scoringParadigm,
                                          rank=rank
                                         )

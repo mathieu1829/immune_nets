@@ -11,7 +11,7 @@ from immune_nets.entities import ImmuneRepertoire
 from .utils.computeGraphStats import computeGraphStats
 from .objectiveBuilder import objectiveBuilder
 
-class initialAnalysisObjectiveBuilder(objectiveBuilder):
+class InitialAnalysisObjectiveBuilder(objectiveBuilder):
     """
     Objective builder for initial exploration of the solution space.
 
@@ -26,7 +26,7 @@ class initialAnalysisObjectiveBuilder(objectiveBuilder):
     The goal is to find network construction parameter values that maximize the
     separation (distance) between cohorts.
     """
-    def __init__(self,repertoireTestGroup: dict[str, list[ImmuneRepertoire]], scoringParadim: ScoringParadigm, rank: int, statComputingPoolSize=1):
+    def __init__(self,repertoireTestGroup: dict[str, list[ImmuneRepertoire]], scoringParadim: ScoringParadigm, rank: int, statComputingPoolSize:int=1):
         """
         :param repertoireTestGroup: Dictionary mapping cohort names to lists of ``ImmuneRepertoire`` objects.
         :param scoringParadigm: Scoring paradigm used to find the distance between cohorts of networks
