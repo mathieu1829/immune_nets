@@ -6,7 +6,7 @@ from immune_nets.entities import GraphStats
 from immune_nets.creation.algorithms.simpleBetaDistance import simpleBetaDistance
 from immune_nets.creation.algorithms.simpleVectorBetaDistance import simpleVectorBetaDistance
 
-def computeGraphStats(args):
+def computeGraphStats(args: dict):
     """
     Compute a similarity network and its statistics for a given repertoire.
 
