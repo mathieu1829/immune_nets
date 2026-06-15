@@ -11,12 +11,12 @@ from typing import List
 from .base import Base
 
 class NetworkData(Base):
-    __tablename__ = "network_data"
+    __tablename__ = "NETWORK_DATA"
 
     network_record_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), 
                                                           primary_key=True,
                                                           default=uuid.uuid4)
-    network_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("network.network_id"), nullable = False)
+    network_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("NETWORKS.network_id"), nullable = False)
     r1: Mapped[int] = mapped_column(Integer, nullable = False)
     r2: Mapped[int] = mapped_column(Integer, nullable = False)
     weights: Mapped[str] = mapped_column(String, nullable = True, default = None)

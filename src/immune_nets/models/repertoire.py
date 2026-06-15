@@ -17,7 +17,7 @@ from immune_nets.globalSettings import GlobalSettings
 from immune_nets.creation.algorithms.common_methods import split_tcr_column
 
 class Repertoire(Base):
-    __tablename__ = "repertoire"
+    __tablename__ = "REPERTOIRES"
 
     repertoire_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), 
                                                      primary_key=True,

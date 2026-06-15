@@ -16,12 +16,12 @@ from immune_nets.globalSettings import GlobalSettings
 from immune_nets.entities import ImmuneNetwork
 
 class Network(Base):
-    __tablename__ = "network"
+    __tablename__ = "NETWORKS"
 
     network_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), 
                                                           primary_key=True,
                                                           default=uuid.uuid4)
-    repertoire_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("repertoire.repertoire_id"))
+    repertoire_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("REPERTOIRES.repertoire_id"))
 
     name: Mapped[str] =  mapped_column(String(30), nullable = True, default=None)
     algorithm: Mapped[str] =  mapped_column(String(50), nullable = False)

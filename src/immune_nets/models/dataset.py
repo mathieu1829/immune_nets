@@ -13,7 +13,7 @@ from .base import Base
 from immune_nets.globalSettings import GlobalSettings
 
 class Dataset(Base):
-    __tablename__ = "dataset"
+    __tablename__ = "DATASETS"
 
     dataset_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), 
                                                   primary_key=True,
