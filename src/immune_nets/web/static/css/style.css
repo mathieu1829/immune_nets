@@ -1,0 +1,148 @@
+:root {
+    --bg: #181818;
+    --panel: #242424;
+    --panel-hover: #2d2d2d;
+
+    --text: #e8e8e8;
+    --text-muted: #b0b0b0;
+
+    --accent: #ff8c00;
+    --accent-hover: #ff9f2f;
+
+    --border: #3a3a3a;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+
+    background-color: var(--bg);
+    color: var(--text);
+
+    font-family: "Segoe UI", sans-serif;
+}
+
+/* Header */
+
+nav {
+    display: flex;
+    gap: 0.75rem;
+
+    padding: 1rem;
+
+    background-color: var(--panel);
+    border-bottom: 1px solid var(--border);
+}
+
+/* Menu buttons */
+
+nav a {
+    text-decoration: none;
+
+    color: var(--text);
+
+    background-color: var(--panel-hover);
+
+    border: 1px solid var(--border);
+    border-radius: 8px;
+
+    padding: 0.6rem 1rem;
+
+    transition: 0.2s;
+}
+
+nav a:hover {
+    background-color: var(--accent);
+    color: black;
+
+    border-color: var(--accent);
+}
+
+/* Main page content */
+
+main {
+    padding: 2rem;
+}
+
+/* Cards */
+
+.card {
+    background-color: var(--panel);
+
+    border: 1px solid var(--border);
+    border-radius: 10px;
+
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+/* Forms */
+
+input,
+select,
+textarea {
+    width: 100%;
+
+    background-color: #303030;
+    color: var(--text);
+
+    border: 1px solid var(--border);
+    border-radius: 6px;
+
+    padding: 0.6rem;
+    margin-top: 0.25rem;
+    margin-bottom: 1rem;
+}
+
+/* Buttons */
+
+button {
+    background-color: var(--accent);
+    color: black;
+
+    border: none;
+    border-radius: 6px;
+
+    padding: 0.75rem 1.25rem;
+
+    font-weight: bold;
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+button:hover {
+    background-color: var(--accent-hover);
+}
+
+/* Tables */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+
+    background-color: var(--panel);
+}
+
+th,
+td {
+    padding: 0.75rem;
+
+    border: 1px solid var(--border);
+}
+
+th {
+    background-color: #2e2e2e;
+}
+
+/* Headings */
+
+h1,
+h2,
+h3 {
+    color: var(--accent);
+}

@@ -2,6 +2,8 @@
 
 {% block content %}
 
+<div class="card">
+
 <h1>Compare Networks</h1>
 
 <form method="POST">
@@ -31,6 +33,8 @@
     </button>
 
 </form>
+
+</div>
 
 {% if result is not none %}
 <p>Similarity: {{ result }}</p>

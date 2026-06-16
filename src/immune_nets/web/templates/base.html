@@ -1,22 +1,31 @@
-<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
+
 <head>
-    <title>ImmuneNets</title>
+    <title>{% block title %}Network Analysis Tool{% endblock %}</title>
+
+    <link rel="icon"
+          href="{{ url_for('static', filename='favicon.ico') }}">
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
 </head>
+
 <body>
 
 <nav>
     <a href="{{ url_for('main.index') }}">Main</a>
     <a href="{{ url_for('upload.index') }}">Upload</a>
     <a href="{{ url_for('datasets.index') }}">Datasets</a>
-    <a href="{{ url_for('networks.index') }}">Build Network</a>
+    <a href="{{ url_for('networks.index') }}">Networks</a>
     <a href="{{ url_for('comparison.index') }}">Compare</a>
 </nav>
 
-<hr>
-
+<main>
 {% block content %}
 {% endblock %}
+</main>
 
 </body>
+
 </html>
