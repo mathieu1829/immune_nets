@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Build Network</h1>
+
+<form method="POST">
+
+    <label>Dataset</label>
+
+    <select name="dataset_id">
+
+        {% for ds in datasets %}
+        <option value="{{ ds.id }}">
+            {{ ds.name }}
+        </option>
+        {% endfor %}
+
+    </select>
+
+    <br>
+
+    <label>Threshold</label>
+
+    <input
+        type="number"
+        step="0.01"
+        name="threshold">
+
+    <br>
+
+    <button type="submit">
+        Build
+    </button>
+
+</form>
+
+{% endblock %}

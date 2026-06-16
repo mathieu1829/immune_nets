@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Compare Networks</h1>
+
+<form method="POST">
+
+    <select name="network_a">
+
+        {% for n in networks %}
+        <option value="{{ n.id }}">
+            {{ n.name }}
+        </option>
+        {% endfor %}
+
+    </select>
+
+    <select name="network_b">
+
+        {% for n in networks %}
+        <option value="{{ n.id }}">
+            {{ n.name }}
+        </option>
+        {% endfor %}
+
+    </select>
+
+    <button type="submit">
+        Compare
+    </button>
+
+</form>
+
+{% if result is not none %}
+<p>Similarity: {{ result }}</p>
+{% endif %}
+
+{% endblock %}

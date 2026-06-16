@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}
+Datasets
+{% endblock %}
+
+{% block content %}
+
+<h1>Datasets</h1>
+
+<table>
+
+{% for ds in datasets %}
+<tr>
+    <td>{{ ds.id }}</td>
+    <td>{{ ds.name }}</td>
+</tr>
+{% endfor %}
+
+</table>
+
+{% endblock %}

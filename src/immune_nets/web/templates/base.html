@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ImmuneNets</title>
+</head>
+<body>
+
+<nav>
+    <a href="{{ url_for('main.index') }}">Main</a>
+    <a href="{{ url_for('upload.index') }}">Upload</a>
+    <a href="{{ url_for('datasets.index') }}">Datasets</a>
+    <a href="{{ url_for('networks.index') }}">Build Network</a>
+    <a href="{{ url_for('comparison.index') }}">Compare</a>
+</nav>
+
+<hr>
+
+{% block content %}
+{% endblock %}
+
+</body>
+</html>
