@@ -146,3 +146,38 @@ h2,
 h3 {
     color: var(--accent);
 }
+
+.spinner {
+
+    width: 30px;
+    height: 30px;
+
+    border: 4px solid #ccc;
+
+    border-top: 4px solid #333;
+
+    border-radius: 50%;
+
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.cards-row {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.cards-row .card {
+    flex: 1; /* makes both take equal width */
+}

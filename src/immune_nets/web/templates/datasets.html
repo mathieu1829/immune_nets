@@ -6,21 +6,129 @@ Datasets
 
 {% block content %}
 
+{% with messages =
+    get_flashed_messages(with_categories=true)
+%}
+
+{% if messages %}
+    {% for category, message in messages %}
+        <div class="flash {{ category }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+{% endwith %}
+
 <div class="card">
 
-<h1>Datasets</h1>
+    <h1>Create Dataset</h1>
 
-<table>
+    <form method="POST">
 
-{% for ds in datasets %}
-<tr>
-    <td>{{ ds.id }}</td>
-    <td>{{ ds.name }}</td>
-</tr>
-{% endfor %}
+        <label>Name *</label>
 
-</table>
+        <input
+            type="text"
+            name="name"
+            required>
 
+        <label>Description</label>
+
+        <textarea
+            name="description">
+        </textarea>
+
+        <button type="submit">
+            Create Dataset
+        </button>
+
+    </form>
+
+</div>
+
+<div class="card">
+
+    <h2>Datasets</h2>
+
+	<form method="GET" action="{{ url_for('datasets.index') }}">
+    
+		<input
+			type="text"
+			name="q"
+			placeholder="Search by dataset name ..."
+			value="{{ request.args.get('q', '') }}"
+		>
+
+		<button type="submit">
+			Search
+		</button>
+
+	</form>
+
+    <table>
+
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Repertoires</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+        {% for ds in datasets %}
+
+            <tr>
+
+                <td>
+                    <a href="{{ url_for(
+                        'repertoires.dataset_view',
+                        dataset_id=ds.dataset_id
+                    ) }}">
+                        {{ ds.name }}
+                    </a>
+                </td>
+
+                <td>{{ ds.description }}</td>
+
+                <td>{{ ds.repertoires|length }}</td>
+
+				<td>
+
+					<form
+						method="POST"
+						action="{{ url_for(
+							'datasets.delete',
+							dataset_id=ds.dataset_id
+						) }}"
+						style="display:inline;"
+					>
+
+						<button
+							type="submit"
+							onclick="return confirm('Delete dataset?')"
+							style="
+								background-color: darkred;
+								color: white;
+							"
+						>
+							Delete
+						</button>
+
+					</form>
+
+				</td>
+
+            </tr>
+
+        {% endfor %}
+
+        </tbody>
+
+    </table>
 
 </div>
 

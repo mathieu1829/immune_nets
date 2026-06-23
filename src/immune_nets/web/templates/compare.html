@@ -11,8 +11,8 @@
     <select name="network_a">
 
         {% for n in networks %}
-        <option value="{{ n.id }}">
-            {{ n.name }}
+        <option value="{{ n.network_id }}">
+            {{ n.network_id }}
         </option>
         {% endfor %}
 
@@ -21,8 +21,8 @@
     <select name="network_b">
 
         {% for n in networks %}
-        <option value="{{ n.id }}">
-            {{ n.name }}
+        <option value="{{ n.network_id }}">
+            {{ n.network_id }}
         </option>
         {% endfor %}
 

@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="card">
+
+    <h1>
+        {{ dataset.name }}
+    </h1>
+
+    <p>
+        {{ dataset.description }}
+    </p>
+
+</div>
+
+<div class="card">
+
+	<h2>Repertoires</h2>
+
+	<form method="GET" action="{{ url_for('repertoires.dataset_view', dataset_id=dataset.dataset_id) }}">
+    
+		<input
+			type="text"
+			name="q"
+			placeholder="Search by repertoire name ..."
+			value="{{ request.args.get('q', '') }}"
+		>
+
+		<button type="submit">
+			Search
+		</button>
+
+	</form>
+
+<table>
+
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Description</th>
+			<th>Action</th>
+		</tr>
+	</thead>
+
+	<tbody>
+
+		{% for rep in dataset.repertoires %}
+
+		<tr>
+
+			<td>
+				<a href="{{ url_for(
+					'clonotypes.repertoire_view',
+					dataset_id=dataset.dataset_id,
+					repertoire_id=rep.repertoire_id
+				) }}">
+					{{ rep.name }}
+				</a>
+			</td>
+
+			<td>{{ rep.description }}</td>
+
+			<td>
+
+				<form
+					method="POST"
+					action="{{ url_for(
+						'repertoires.delete',
+						dataset_id=dataset.dataset_id,
+						repertoire_id=rep.repertoire_id
+					) }}"
+					style="display:inline;"
+				>
+
+					<button
+						type="submit"
+						onclick="return confirm('Delete repertoire?')"
+						style="
+							background-color: darkred;
+							color: white;
+						"
+					>
+						Delete
+					</button>
+
+				</form>
+
+			</td>
+
+		</tr>
+
+		{% endfor %}
+
+	</tbody>
+
+</table>
+
+</div>
+
+<a
+class="button-link"
+href="{{ url_for('datasets.index') }}">
+
+    ← Back to datasets
+
+</a>
+
+
+{% endblock %}

@@ -1,20 +1,78 @@
 {% extends "base.html" %}
 
 {% block title %}
-Upload
+Upload Repertoire
 {% endblock %}
 
 {% block content %}
 
 <div class="card">
 
-<h1>Upload Dataset</h1>
+<h1>Upload Repertoire</h1>
 
-<form method="POST"
-      enctype="multipart/form-data">
+<form
+    method="POST"
+    enctype="multipart/form-data">
 
-    <input type="file"
-           name="dataset">
+    <label>
+        Dataset
+    </label>
+
+    <select
+        name="dataset_id"
+        required>
+
+        <option value="">
+            -- Select dataset --
+        </option>
+
+        {% for ds in datasets %}
+
+        <option
+            value="{{ ds.dataset_id }}">
+
+            {{ ds.name }}
+
+        </option>
+
+        {% endfor %}
+
+    </select>
+
+	<label>Name *</label>
+
+    <input
+        type="text"
+        name="repertoire_name">
+
+
+    <label>
+
+        <input
+            type="checkbox"
+            name="use_filename">
+
+        Use filename as repertoire name
+
+    </label>
+
+
+    <label>Description</label>
+
+    <textarea
+        name="repertoire_desc">
+    </textarea>
+
+
+    <label>
+        Repertoire CSV
+    </label>
+
+    <input
+        type="file"
+        name="repertoire_file"
+        accept=".csv"
+        required>
 
     <button type="submit">
         Upload

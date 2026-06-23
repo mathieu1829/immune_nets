@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="card">
+
+    <h1>
+        {{ dataset.name }}
+    </h1>
+
+    <p>
+        {{ dataset.description }}
+    </p>
+
+    <h2>
+        {{ repertoire.name }}
+    </h1>
+
+    <p>
+        {{ repertoire.description }}
+    </p>
+
+</div>
+
+<div class="card">
+
+	<h2>Clonotypes</h2>
+
+	<form method="GET" action="{{ url_for('clonotypes.repertoire_view',
+					dataset_id=dataset.dataset_id,
+					repertoire_id=repertoire.repertoire_id
+				) }}">
+    
+		<input
+			type="text"
+			name="q"
+			placeholder="Search by beta sequence ..."
+			value="{{ request.args.get('q', '') }}"
+		>
+
+		<button type="submit">
+			Search
+		</button>
+
+	</form>
+
+<table>
+
+	<thead>
+		<tr>
+			<th>Clone record id</th>
+			<th>Proportion</th>
+			<th>tcra_aa</th>
+			<th>tcrb_aa</th>
+			<th>cdr3s_nt</th>
+			<th>inkt_evidence</th>
+			<th>mait_evidence</th>
+		</tr>
+	</thead>
+
+	<tbody>
+
+		{% for clone in repertoire.clonotypes %}
+
+		<tr>
+
+			<td>{{ clone.clone_record_id }}</td>
+
+			<td>{{ clone.proportion }}</td>
+
+			<td>{{ clone.tcra_aa }}</td>
+
+			<td>{{ clone.tcrb_aa }}</td>
+
+			<td>{{ clone.cdr3s_nt }}</td>
+
+			<td>{{ clone.inkt_evidence }}</td>
+
+			<td>{{ clone.mait_evidence }}</td>
+
+
+
+		{% endfor %}
+
+	</tbody>
+
+</table>
+
+</div>
+
+<a
+class="button-link"
+href="{{ url_for('repertoires.dataset_view',
+				 dataset_id=dataset.dataset_id) }}">
+
+    ← Back to dataset repertoire list
+
+</a>
+
+
+{% endblock %}
