@@ -30,7 +30,7 @@ class Repertoire(Base):
     creationDate: Mapped[date] =  mapped_column(Date, nullable = False, default=datetime.now())
 
     datasets: Mapped[List["Dataset"]] = relationship( # type: ignore
-        secondary="repertoire_datasets",   
+        secondary="REPERTOIRE_DATASETS",   
         back_populates="repertoires",
     )
     clonotypes: Mapped[List["ClonotypeData"]] = relationship(back_populates="source_repertoire", cascade="all, delete-orphan") # type: ignore
@@ -45,8 +45,8 @@ class Repertoire(Base):
                                          tcra_aa = row['tcra_aa'],
                                          tcrb_aa = row['tcrb_aa'],
                                          cdr3s_nt = row['cdr3s_nt'],
-                                         inkt_evidence = row['inkt_evidence'],
-                                         mait_evidence = row['mait_evidence']
+                                         inkt_evidence = row['inkt_evidence'] if 'inkt_evidence' in row else None,
+                                         mait_evidence = row['mait_evidence'] if 'mait_evidence' in row else None
                                         ) 
                            for index,row in new_clones.iterrows()]
 
